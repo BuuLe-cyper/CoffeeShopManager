@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Pages
+namespace CoffeeShop.Areas.Customer.Pages
 {
     public class IndexModel : PageModel
     {

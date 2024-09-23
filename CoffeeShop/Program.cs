@@ -60,6 +60,8 @@ namespace CoffeeShop
                 app.UseHsts();
             }
 
+
+
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -76,6 +78,26 @@ namespace CoffeeShop
 
             //Add Session
             app.UseSession();
+
+
+            app.Use(async (context, next) =>
+            {
+                var userRole = context.Session.GetString("UserRole");
+                var path = context.Request.Path.ToString().ToLower();
+                if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
+                {
+                    context.Response.Redirect("/AccessDenied");
+                    return;
+                }
+
+                if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
+                {
+                    context.Response.Redirect("/AccessDenied");
+                    return;
+                }
+
+                await next.Invoke();
+            });
 
             app.UseRouting();
 

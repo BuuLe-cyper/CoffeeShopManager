@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{00E8DE78-EBFC-4420-A25D-77EC537C57F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeShop", "CoffeeShop\CoffeeShop.csproj", "{5D351A1D-846D-43F6-8F02-CB4A6BD51D00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeShop", "CoffeeShop\CoffeeShop.csproj", "{5D351A1D-846D-43F6-8F02-CB4A6BD51D00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{D3A21698-823F-456B-A865-B8B7121C696E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{D3A21698-823F-456B-A865-B8B7121C696E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BussinessObjects", "BussinessObjects\BussinessObjects.csproj", "{030077A0-A38F-4279-80CE-85ACCFA6ED9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BussinessObjects", "BussinessObjects\BussinessObjects.csproj", "{030077A0-A38F-4279-80CE-85ACCFA6ED9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
