@@ -21,9 +21,13 @@ namespace CoffeeShop
             });
 
             builder.Services.AddHttpContextAccessor();
+            
+            // Add SignalR
+            builder.Services.AddSignalR();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("CoffeeShop"),
                     sqlServerOptions => sqlServerOptions.MigrationsAssembly("DataAccess"));
