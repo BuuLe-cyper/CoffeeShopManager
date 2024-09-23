@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BussinessObjects.DTOs;
+using DataAccess.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace BussinessObjects.AutoMapper
     {
         public MappingProfile()
         {
+            CreateMap<SizeDto, Size>().ReverseMap();
         }
     }
 }
