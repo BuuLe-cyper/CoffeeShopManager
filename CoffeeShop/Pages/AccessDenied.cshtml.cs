@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CoffeeShop.Pages
 {
-    public class IndexModel : PageModel
+    public class AccessDeniedModel : PageModel
     {
         public void OnGet()
         {
