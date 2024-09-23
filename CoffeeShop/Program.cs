@@ -1,4 +1,6 @@
+using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
+using BussinessObjects.Services;
 using CoffeeShop.AutoMapper;
 using DataAccess.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +34,12 @@ namespace CoffeeShop
                     builder.Configuration.GetConnectionString("CoffeeShop"),
                     sqlServerOptions => sqlServerOptions.MigrationsAssembly("DataAccess"));
             });
+
+            // Register MailSettings by binding to the configuration section "SmtpSettings"
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
+            // Register MailService as a transient service
+            builder.Services.AddTransient<MailService>();
 
             // Add services to the container.
             builder.Services.AddRazorPages();
