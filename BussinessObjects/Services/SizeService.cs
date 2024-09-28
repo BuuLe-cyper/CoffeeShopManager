@@ -25,9 +25,9 @@ namespace BussinessObjects.Services
             var sizeNameExist = await GetSizeName(sizeDto.sizeName);
             if(sizeNameExist == null)
             {
-                var entity = _mapper.Map<Size>(sizeDto);
-                return await _sizeRepository.AddSizeEntity(entity);
-            }
+            var entity = _mapper.Map<Size>(sizeDto);
+            return await _sizeRepository.AddSizeEntity(entity);
+        }
             else
             {
                 throw new Exception("The Size Name Existed");

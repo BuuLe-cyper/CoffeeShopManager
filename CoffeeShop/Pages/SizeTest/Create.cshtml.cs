@@ -19,7 +19,7 @@ namespace CoffeeShop.Pages.SizeTest
         private readonly ISizeService _sizeService;
         private readonly IMapper _mapper;
 
-        public CreateModel(ISizeService sizeService , IMapper mapper)
+        public CreateModel(ISizeService sizeService, IMapper mapper)
         {
             _sizeService = sizeService;
             _mapper = mapper;
@@ -36,9 +36,7 @@ namespace CoffeeShop.Pages.SizeTest
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-
-            
-            if(Size.SizeName != null)
+            if (Size.SizeName != null)
             {
                 SizeDto sizeDto = _mapper.Map<SizeDto>(Size);
                 var isAdd = await _sizeService.AddSize(sizeDto);
@@ -48,7 +46,6 @@ namespace CoffeeShop.Pages.SizeTest
                     return Page();
                 }
             }
-
             return RedirectToPage("./Index");
         }
     }
