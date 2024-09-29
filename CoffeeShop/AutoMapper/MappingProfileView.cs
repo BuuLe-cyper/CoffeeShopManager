@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using BussinessObjects.DTOs;
+using CoffeeShop.ViewModels;
+using DataAccess.Models;
 
 namespace CoffeeShop.AutoMapper
 {
@@ -6,6 +9,8 @@ namespace CoffeeShop.AutoMapper
     {
         public MappingProfileView()
         {
+            CreateMap<Size, SizeVM>()
+         .ForMember(dest => dest.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
         }
     }
 }

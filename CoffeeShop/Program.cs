@@ -1,6 +1,8 @@
 using BussinessObjects.AutoMapper;
+using BussinessObjects.Services;
 using CoffeeShop.AutoMapper;
 using DataAccess.DataContext;
+using DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop
@@ -37,9 +39,9 @@ namespace CoffeeShop
             builder.Services.AddRazorPages();
 
             //Add Services
-
+            builder.Services.AddScoped<ISizeService, SizeService>();
             //Add Repositories
-
+            builder.Services.AddScoped<ISizeRepository, SizeRepository>();
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);
