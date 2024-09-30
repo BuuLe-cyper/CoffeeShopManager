@@ -51,8 +51,8 @@ namespace CoffeeShop
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/User/Login";
-                    options.AccessDeniedPath = "/Privacy";
+                    options.LoginPath = "/Shared/Login";
+                    options.AccessDeniedPath = "/Shared/AccessDenied";
                 });
             builder.Services.AddAuthorization(options =>
             {
@@ -109,27 +109,30 @@ namespace CoffeeShop
             //Add Session
             app.UseSession();
 
+            //Middleware to check user role?
+            //app.Use(async (context, next) =>
+            //{
+            //    var userRole = context.Session.GetString("UserRole");
+            //    var path = context.Request.Path.ToString().ToLower();
+            //    if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
+            //    {
+            //        context.Response.Redirect("/AccessDenied");
+            //        return;
+            //    }
 
-            app.Use(async (context, next) =>
-            {
-                var userRole = context.Session.GetString("UserRole");
-                var path = context.Request.Path.ToString().ToLower();
-                if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
-                {
-                    context.Response.Redirect("/AccessDenied");
-                    return;
-                }
+            //    if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
+            //    {
+            //        context.Response.Redirect("/AccessDenied");
+            //        return;
+            //    }
 
-                if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
-                {
-                    context.Response.Redirect("/AccessDenied");
-                    return;
-                }
-
-                await next.Invoke();
-            });
+            //    await next.Invoke();
+            //});
 
             app.UseRouting();
+
+            //Using authentication
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

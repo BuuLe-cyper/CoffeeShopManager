@@ -3,12 +3,16 @@ using BussinessObjects.DTOs;
 using CoffeeShop.ViewModels;
 using DataAccess.Models;
 
-public class MappingProfileView : Profile
+namespace CoffeeShop.AutoMapper
 {
-    public MappingProfileView()
+    public class MappingProfileView : Profile
     {
-        CreateMap<UsersDTO, UserVM>().ReverseMap();
-        CreateMap<Size, SizeVM>()
-         .ForMember(dest => dest.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+        public MappingProfileView()
+        {
+            CreateMap<UsersDTO, UserVM>().ReverseMap();
+            CreateMap<Size, SizeVM>()
+             .ForMember(dest => dest.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+        }
     }
 }
+

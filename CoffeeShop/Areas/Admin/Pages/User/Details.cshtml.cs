@@ -5,34 +5,28 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Pages.User
+namespace CoffeeShop.Areas.Admin.Pages.User
 {
-    [Authorize(Roles ="Admin")]
-    public class DeleteModel : PageModel
+    [Authorize(Roles = "Admin")]
+    public class DetailsModel : PageModel
     {
-        private readonly IMapper _mapper;
         private readonly IUserService _service;
+        private readonly IMapper _mapper;
 
-        public DeleteModel(IMapper mapper, IUserService service)
+        public DetailsModel(IUserService service, IMapper mapper)
         {
-            _mapper = mapper;
             _service = service;
+            _mapper = mapper;
         }
 
-        [BindProperty]
         public new UserVM User { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(Guid? id)
         {
             var dtoUser = await _service.GetUser(id.Value);
+            if (dtoUser == null) return NotFound();
             User = _mapper.Map<UserVM>(dtoUser);
             return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync(Guid? id)
-        {
-            await _service.DeleteUser(id.Value);
-            return RedirectToPage("./Index");
         }
     }
 }

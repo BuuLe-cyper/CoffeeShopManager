@@ -81,6 +81,21 @@ namespace BussinessObjects.Services
             return _mapper.Map<UsersDTO>(user);
         }
 
+        public async Task Register(string username, string password, string email)
+        {
+            var dtoUser = new UsersDTO
+            {
+                UserName = username,
+                Password = password,
+                Email = email,
+                FullName = string.Empty,
+                PhoneNumber = string.Empty,
+                AccountType = 0,
+            };
+            var registerUser = _mapper.Map<User>(dtoUser);
+            await _rep.CreateAsync(registerUser);
+        }
+
         public async Task UpdateUser(UsersDTO user)
         {
             ArgumentNullException.ThrowIfNull(user);

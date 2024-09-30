@@ -4,9 +4,9 @@ using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Pages.User
+namespace CoffeeShop.Areas.Admin.Pages.User
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles="Admin")]
     public class IndexModel : PageModel
     {
         private readonly IUserService _service;
@@ -23,7 +23,7 @@ namespace CoffeeShop.Pages.User
         public async Task OnGetAsync()
         {
             var dtoUsers = await _service.GetUsers();
-            foreach(var user in dtoUsers)
+            foreach (var user in dtoUsers)
             {
                 var vmUser = _mapper.Map<UserVM>(user);
                 Users.Add(vmUser);

@@ -9,13 +9,13 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
-namespace CoffeeShop.Pages.User
+namespace CoffeeShop.Areas.Shared.Pages
 {
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
         private readonly IMapper _mapper;
-        private readonly IUserService _service; 
+        private readonly IUserService _service;
         public LoginModel(IMapper mapper, IUserService service)
         {
             _mapper = mapper;
@@ -35,17 +35,17 @@ namespace CoffeeShop.Pages.User
         {
             if (ModelState.IsValid)
             {
-                var userDTO = await _service.Login(UserName,Password);
-                if(userDTO != null)
+                var userDTO = await _service.Login(UserName, Password);
+                if (userDTO != null)
                 {
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name,UserName),
                     };
 
-                    if(userDTO.AccountType == 1)
+                    if (userDTO.AccountType == 1)
                     {
-                        claims.Add(new Claim(ClaimTypes.Role, "Admin"));    
+                        claims.Add(new Claim(ClaimTypes.Role, "Admin"));
                     }
                     else
                     {
@@ -63,6 +63,17 @@ namespace CoffeeShop.Pages.User
             }
             else
                 return Page();
+        }
+        public async Task<IActionResult> OnPostLogoutAsync()
+        {
+            // Sign out the user
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Clear the session
+            HttpContext.Session.Clear();
+
+            // Redirect to the login page or home page
+            return RedirectToPage("/Index"); // Adjust the redirect path as necessary
         }
     }
 }

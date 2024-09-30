@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Pages.User
+namespace CoffeeShop.Areas.Admin.Pages.User
 {
     [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
@@ -31,7 +31,7 @@ namespace CoffeeShop.Pages.User
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var dtoUser = _mapper.Map<UsersDTO>(User);
                 await _service.AddUser(dtoUser);
