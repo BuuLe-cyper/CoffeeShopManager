@@ -1,8 +1,12 @@
+using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
 using BussinessObjects.Services;
-using CoffeeShop.AutoMapper;
 using DataAccess.DataContext;
 using DataAccess.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using CoffeeShop.AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop
@@ -23,7 +27,7 @@ namespace CoffeeShop
             });
 
             builder.Services.AddHttpContextAccessor();
-            
+
             // Add SignalR
             builder.Services.AddSignalR();
 
@@ -34,7 +38,31 @@ namespace CoffeeShop
                     builder.Configuration.GetConnectionString("CoffeeShop"),
                     sqlServerOptions => sqlServerOptions.MigrationsAssembly("DataAccess"));
             });
+            //Register User repository and service
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            // Register MailSettings by binding to the configuration section "SmtpSettings"
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
+            // Register MailService as a transient service
+            builder.Services.AddTransient<MailService>();
+
+            //Register and Authorization and Cookie authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Shared/Login";
+                    options.AccessDeniedPath = "/Shared/AccessDenied";
+                });
+            builder.Services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+            });
             // Add services to the container.
             builder.Services.AddRazorPages();
 
@@ -81,27 +109,30 @@ namespace CoffeeShop
             //Add Session
             app.UseSession();
 
+            //Middleware to check user role?
+            //app.Use(async (context, next) =>
+            //{
+            //    var userRole = context.Session.GetString("UserRole");
+            //    var path = context.Request.Path.ToString().ToLower();
+            //    if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
+            //    {
+            //        context.Response.Redirect("/AccessDenied");
+            //        return;
+            //    }
 
-            app.Use(async (context, next) =>
-            {
-                var userRole = context.Session.GetString("UserRole");
-                var path = context.Request.Path.ToString().ToLower();
-                if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
-                {
-                    context.Response.Redirect("/AccessDenied");
-                    return;
-                }
+            //    if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
+            //    {
+            //        context.Response.Redirect("/AccessDenied");
+            //        return;
+            //    }
 
-                if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
-                {
-                    context.Response.Redirect("/AccessDenied");
-                    return;
-                }
-
-                await next.Invoke();
-            });
+            //    await next.Invoke();
+            //});
 
             app.UseRouting();
+
+            //Using authentication
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

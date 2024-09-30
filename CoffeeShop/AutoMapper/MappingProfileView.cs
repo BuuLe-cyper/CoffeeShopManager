@@ -9,8 +9,10 @@ namespace CoffeeShop.AutoMapper
     {
         public MappingProfileView()
         {
+            CreateMap<UsersDTO, UserVM>().ReverseMap();
             CreateMap<Size, SizeVM>()
-         .ForMember(dest => dest.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+             .ForMember(dest => dest.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
         }
     }
 }
+
