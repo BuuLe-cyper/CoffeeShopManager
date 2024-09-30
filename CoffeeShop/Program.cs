@@ -6,6 +6,7 @@ using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using CoffeeShop.AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop
@@ -66,9 +67,9 @@ namespace CoffeeShop
             builder.Services.AddRazorPages();
 
             //Add Services
-
+            builder.Services.AddScoped<ISizeService, SizeService>();
             //Add Repositories
-
+            builder.Services.AddScoped<ISizeRepository, SizeRepository>();
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);
@@ -89,6 +90,8 @@ namespace CoffeeShop
                 app.UseHsts();
             }
 
+
+
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -105,6 +108,26 @@ namespace CoffeeShop
 
             //Add Session
             app.UseSession();
+
+
+            app.Use(async (context, next) =>
+            {
+                var userRole = context.Session.GetString("UserRole");
+                var path = context.Request.Path.ToString().ToLower();
+                if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
+                {
+                    context.Response.Redirect("/AccessDenied");
+                    return;
+                }
+
+                if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
+                {
+                    context.Response.Redirect("/AccessDenied");
+                    return;
+                }
+
+                await next.Invoke();
+            });
 
             app.UseRouting();
 

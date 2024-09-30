@@ -8,6 +8,7 @@ namespace BussinessObjects.AutoMapper
         public MappingProfile()
         {
             CreateMap<UsersDTO, User>().ReverseMap();
+            CreateMap<SizeDto,Size>().ReverseMap();
         }
     }
 }
