@@ -1,8 +1,11 @@
 using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
 using BussinessObjects.Services;
-using CoffeeShop.AutoMapper;
 using DataAccess.DataContext;
+using DataAccess.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop
@@ -23,7 +26,7 @@ namespace CoffeeShop
             });
 
             builder.Services.AddHttpContextAccessor();
-            
+
             // Add SignalR
             builder.Services.AddSignalR();
 
@@ -34,13 +37,31 @@ namespace CoffeeShop
                     builder.Configuration.GetConnectionString("CoffeeShop"),
                     sqlServerOptions => sqlServerOptions.MigrationsAssembly("DataAccess"));
             });
-
+            //Register User repository and service
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             // Register MailSettings by binding to the configuration section "SmtpSettings"
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
             // Register MailService as a transient service
             builder.Services.AddTransient<MailService>();
 
+            //Register and Authorization and Cookie authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/User/Login";
+                    options.AccessDeniedPath = "/Privacy";
+                });
+            builder.Services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+            });
             // Add services to the container.
             builder.Services.AddRazorPages();
 

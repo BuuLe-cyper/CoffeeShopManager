@@ -1,17 +1,13 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-
+using BussinessObjects.DTOs;
+using DataAccess.Models;
 namespace BussinessObjects.AutoMapper
 {
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
+            CreateMap<UsersDTO, User>().ReverseMap();
         }
     }
 }

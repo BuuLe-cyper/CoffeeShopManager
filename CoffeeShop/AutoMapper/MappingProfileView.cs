@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using BussinessObjects.DTOs;
+using CoffeeShop.ViewModels;
 
-namespace CoffeeShop.AutoMapper
+public class MappingProfileView : Profile
 {
-    public class MappingProfileView : Profile
+    public MappingProfileView()
     {
-        public MappingProfileView()
-        {
-        }
+        CreateMap<UsersDTO, UserVM>().ReverseMap();
     }
 }
