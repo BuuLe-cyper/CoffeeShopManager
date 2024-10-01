@@ -8,21 +8,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using DataAccess.DataContext;
 using DataAccess.Models;
 using AutoMapper;
-using BussinessObjects.Services;
-using System.Drawing;
 using BussinessObjects.DTOs;
+using BussinessObjects.Services;
 using CoffeeShop.Helper;
 
-namespace CoffeeShop.Pages.SizeTest
+namespace CoffeeShop.Pages.CategoryTest
 {
     public class CreateModel : PageModel
     {
-        private readonly ISizeService _sizeService;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
-        public CreateModel(ISizeService sizeService, IMapper mapper)
+        public CreateModel(ICategoryService categoryService, IMapper mapper)
         {
-            _sizeService = sizeService;
+            _categoryService = categoryService;
             _mapper = mapper;
         }
 
@@ -32,27 +31,27 @@ namespace CoffeeShop.Pages.SizeTest
         }
 
         [BindProperty]
-        public DataAccess.Models.Size Size { get; set; } = default!;
+        public DataAccess.Models.Category Category { get; set; } = default!;
 
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            ArgumentNullException.ThrowIfNull(nameof(Size.SizeName));
-            Size.SizeName = Size.SizeName.Trim();
-            bool isValidData = Validations.IsString(Size.SizeName);
+            ArgumentNullException.ThrowIfNull(nameof(Category.CategoryName));
+            Category.CategoryName = Category.CategoryName.Trim();
+            bool isValidData = Validations.IsString(Category.CategoryName);
             if (isValidData)
             {
-                SizeDto sizeDto = _mapper.Map<SizeDto>(Size);
-                var isAdd = await _sizeService.AddSize(sizeDto);
+                CategoryDto cateDto = _mapper.Map<CategoryDto>(Category);
+                var isAdd = await _categoryService.AddCategory(cateDto);
                 if (!isAdd)
                 {
-                    ModelState.AddModelError(string.Empty, "Unable to create size, size name existed. Please try again.");
+                    ModelState.AddModelError(string.Empty, "Unable to create size , category name existed. Please try again.");
                     return Page();
                 }
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Size Name Must Be String. Please try again.");
+                ModelState.AddModelError(string.Empty, "Size Must Be String. Please try again.");
                 return Page();
             }
             return RedirectToPage("./Index");

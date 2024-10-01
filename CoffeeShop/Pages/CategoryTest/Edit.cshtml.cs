@@ -8,27 +8,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.DataContext;
 using DataAccess.Models;
-using AutoMapper;
-using BussinessObjects.Services;
 using CoffeeShop.Helper;
+using BussinessObjects.Services;
 using CoffeeShop.ViewModels;
+using AutoMapper;
 using BussinessObjects.DTOs;
 
-namespace CoffeeShop.Pages.SizeTest
+namespace CoffeeShop.Pages.CategoryTest
 {
     public class EditModel : PageModel
     {
-        private readonly ISizeService _sizeService;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
-
-        public EditModel(ISizeService sizeService, IMapper mapper)
+        public EditModel(ICategoryService categoryService, IMapper mapper)
         {
-            _sizeService = sizeService;
+            _categoryService = categoryService;
             _mapper = mapper;
         }
 
         [BindProperty]
-        public SizeVM Size { get; set; } = default!;
+        public CategoryVM Category { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -37,12 +36,12 @@ namespace CoffeeShop.Pages.SizeTest
                 return NotFound();
             }
 
-            var size = await _sizeService.GetSize((int)id);
-            if (size == null)
+            var cate = await _categoryService.GetCategory((int)id);
+            if (cate == null)
             {
                 return NotFound();
             }
-            Size = _mapper.Map<SizeVM>(size);
+            Category = _mapper.Map<CategoryVM>(cate);
             return Page();
         }
 
@@ -50,14 +49,14 @@ namespace CoffeeShop.Pages.SizeTest
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            ArgumentNullException.ThrowIfNull(nameof(Size.SizeName));
-            Size.SizeName = Size.SizeName.ToUpper().Trim();
-            bool isValidData = Validations.IsString(Size.SizeName);
+            ArgumentNullException.ThrowIfNull(nameof(Category.CategoryName));
+            Category.CategoryName = Category.CategoryName.ToUpper().Trim();
+            bool isValidData = Validations.IsString(Category.CategoryName);
             try
             {
                 if (isValidData)
                 {
-                    var isUpdate = await _sizeService.UpdateSize(_mapper.Map<SizeViewDto>(Size));
+                    var isUpdate = await _categoryService.UpdateCategory(_mapper.Map<CategoryViewDto>(Category));
 
                     if (!isUpdate)
                     {
@@ -67,13 +66,13 @@ namespace CoffeeShop.Pages.SizeTest
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Size Name Must Be String. Please try again.");
+                    ModelState.AddModelError(string.Empty, "Category Name Must Be String. Please try again.");
                     return Page();
                 }
             }
             catch (DbUpdateConcurrencyException)
             {
-                    throw;
+                throw;
             }
 
             return RedirectToPage("./Index");

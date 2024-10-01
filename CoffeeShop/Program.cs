@@ -1,6 +1,9 @@
 using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
+using BussinessObjects.ImageService;
 using BussinessObjects.Services;
+using BussinessObjects.Utility;
+using CoffeeShop.AutoMapper;
 using DataAccess.DataContext;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -66,10 +69,19 @@ namespace CoffeeShop
             // Add services to the container.
             builder.Services.AddRazorPages();
 
-            //Add Services
-            builder.Services.AddScoped<ISizeService, SizeService>();
-            //Add Repositories
-            builder.Services.AddScoped<ISizeRepository, SizeRepository>();
+            // Add Firebase Uility
+            builder.Services.Configure<FireBaseOptions>(builder.Configuration.GetSection("FireBase"));
+            builder.Services.AddTransient(typeof(IImageService), typeof(ImageService));
+            // Add Services
+            builder.Services.AddScoped(typeof(ISizeService), typeof(SizeService));
+            builder.Services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
+            builder.Services.AddScoped(typeof(IProductService), typeof(ProductService));
+            
+           
+            // Add Repositories
+            builder.Services.AddScoped(typeof(ISizeRepository), typeof(SizeRepository));
+            builder.Services.AddScoped(typeof(ICategoryRepository), typeof(CategoryRepository));
+            builder.Services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);
@@ -83,13 +95,22 @@ namespace CoffeeShop
             }
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            //if (!app.Environment.IsDevelopment())
+            //{
+            //    app.UseExceptionHandler("/Error");
+            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            //    app.UseHsts();
+            //}
+            // C?u hình middleware
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
 
 
             using (var scope = app.Services.CreateScope())

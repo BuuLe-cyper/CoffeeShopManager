@@ -7,23 +7,25 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.DataContext;
 using DataAccess.Models;
-using AutoMapper;
 using BussinessObjects.Services;
 using CoffeeShop.ViewModels;
+using AutoMapper;
 
-namespace CoffeeShop.Pages.SizeTest
+namespace CoffeeShop.Pages.CategoryTest
 {
     public class DeleteModel : PageModel
     {
-        private readonly ISizeService _sizeService;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
-        public DeleteModel(ISizeService sizeService, IMapper mapper)
+
+        public DeleteModel(ICategoryService categoryService, IMapper mapper)
         {
-            _sizeService = sizeService;
+            _categoryService = categoryService;
             _mapper = mapper;
         }
+
         [BindProperty]
-        public SizeVM Size { get; set; } = default!;
+        public CategoryVM Category { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -32,15 +34,15 @@ namespace CoffeeShop.Pages.SizeTest
                 return NotFound();
             }
 
-            var size = await _sizeService.GetSize((int)id);
+            var cate = await _categoryService.GetCategory((int)id);
 
-            if (size == null)
+            if (cate == null)
             {
                 return NotFound();
             }
             else
             {
-                Size = _mapper.Map<SizeVM>(size);
+                Category = _mapper.Map<CategoryVM>(cate);
             }
             return Page();
         }
@@ -52,14 +54,14 @@ namespace CoffeeShop.Pages.SizeTest
                 return NotFound();
             }
 
-            var size = await _sizeService.GetSize((int)id);
-            if (size != null)
+            var cate = await _categoryService.GetCategory((int)id);
+            if (cate != null)
             {
-                Size = _mapper.Map<SizeVM>(size);
-                var isRemove =  await _sizeService.SoftDeleteSize(size.SizeID);
+                Category = _mapper.Map<CategoryVM>(cate);
+                var isRemove = await _categoryService.SoftDeleteCategory(cate.CategoryID);
                 if (!isRemove)
                 {
-                    ModelState.AddModelError(string.Empty, "Unable to delete size. Please try again.");
+                    ModelState.AddModelError(string.Empty, "Unable to delete category. Please try again.");
                     return Page();
                 }
             }
