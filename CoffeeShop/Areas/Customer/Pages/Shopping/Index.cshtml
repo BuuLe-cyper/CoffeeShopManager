@@ -1,0 +1,11 @@
+﻿@page "{tableId:int}"
+@model CoffeeShop.Areas.Customer.Pages.Shopping.IndexModel
+@{
+    ViewData["Title"] = "Shopping";
+}
+
+<h2>Shopping Page</h2>
+
+<p>You are viewing table: @Model.TableId</p>
+
+<a asp-page="/Chats/Chat" asp-route-tableId="@Model.TableId" class="btn btn-primary">Chat</a>

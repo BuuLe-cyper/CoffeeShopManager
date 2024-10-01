@@ -41,6 +41,7 @@ namespace CoffeeShop.Areas.Shared.Pages
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name,UserName),
+                         new Claim("userId", userDTO.UserID.ToString())
                     };
 
                     if (userDTO.AccountType == 1)
