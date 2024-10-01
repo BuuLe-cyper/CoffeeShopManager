@@ -1,6 +1,8 @@
 using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
 using BussinessObjects.Services;
+using CoffeeShop.AutoMapper;
+using CoffeeShop.CoffeeShopHub;
 using DataAccess.DataContext;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,6 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using CoffeeShop.AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using DataAccess.QR;
+using System.Threading.RateLimiting;
 
 namespace CoffeeShop
 {
@@ -27,6 +32,16 @@ namespace CoffeeShop
             });
 
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
 
             // Add SignalR
             builder.Services.AddSignalR();
@@ -67,14 +82,44 @@ namespace CoffeeShop
             builder.Services.AddRazorPages();
 
             //Add Services
+            builder.Services.AddScoped<ITableService, TableService>();
+            builder.Services.AddScoped<IMessService, MessService>();
             builder.Services.AddScoped<ISizeService, SizeService>();
+
             //Add Repositories
+            builder.Services.AddScoped<ITableRepository, TableRepository>();
+            builder.Services.AddScoped<IMessRepository, MessRepository>();
             builder.Services.AddScoped<ISizeRepository, SizeRepository>();
+
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);
 
+
+            // Add QR Code
+            builder.Services.AddScoped<GenerateQRCode>();
+
+
+            // Add rate limiting
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: context.Connection
+                            .RemoteIpAddress?.ToString() ?? "anonymous",
+                        factory: partition => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 2
+                        })
+                );
+            });
+
             var app = builder.Build();
+
+            app.UseRateLimiter();
 
             using (var scope = app.Services.CreateScope())
             {
@@ -89,8 +134,6 @@ namespace CoffeeShop
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-
 
             using (var scope = app.Services.CreateScope())
             {
@@ -109,25 +152,7 @@ namespace CoffeeShop
             //Add Session
             app.UseSession();
 
-            //Middleware to check user role?
-            //app.Use(async (context, next) =>
-            //{
-            //    var userRole = context.Session.GetString("UserRole");
-            //    var path = context.Request.Path.ToString().ToLower();
-            //    if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
-            //    {
-            //        context.Response.Redirect("/AccessDenied");
-            //        return;
-            //    }
 
-            //    if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
-            //    {
-            //        context.Response.Redirect("/AccessDenied");
-            //        return;
-            //    }
-
-            //    await next.Invoke();
-            //});
 
             app.UseRouting();
 
@@ -137,6 +162,30 @@ namespace CoffeeShop
             app.UseAuthorization();
 
             app.MapRazorPages();
+
+            app.UseCors("AllowAll");
+
+            app.UseEndpoints(endpoints =>
+            {
+                // Map Razor Pages
+                endpoints.MapRazorPages();
+
+                // Map SignalR hub
+                endpoints.MapHub<ChatHub>("/chatHub");
+
+                // Map controller routes for admin chat
+                endpoints.MapControllerRoute(
+                    name: "adminChat",
+                    pattern: "Admin/Chats/Chat/{tableId:int}",
+                    defaults: new { area = "Admin", page = "/Chat" });
+
+                // Map controller routes for customer chat
+                endpoints.MapControllerRoute(
+                    name: "customerChat",
+                    pattern: "Customer/Chats/Chat/{tableId:int}",
+                    defaults: new { area = "Customer", page = "/Chat" });
+            });
+
 
             app.Run();
         }
