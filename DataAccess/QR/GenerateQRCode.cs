@@ -1,27 +1,24 @@
 ﻿using Microsoft.AspNetCore.Http;
 using QRCoder;
+using SkiaSharp;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace DataAccess.QR
 {
     public class GenerateQRCode
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public GenerateQRCode(IHttpContextAccessor httpContextAccessor) 
+        public GenerateQRCode(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
+
         public string GenerateQRCodeForTable(int tableId)
         {
-            var request = _httpContextAccessor?.HttpContext?.Request;
-
-            if (request == null)
-            {
-                throw new InvalidOperationException("Unable to access the HTTP request.");
-            }
-
-            // Build the URL dynamically from request
+            // Get the current request's scheme and host to build the URL dynamically
+            var request = _httpContextAccessor.HttpContext.Request;
             string baseUrl = $"{request.Scheme}://{request.Host}";
             string chatUrl = $"{baseUrl}/Customer/Shopping/Index/{tableId}";
 
@@ -30,6 +27,7 @@ namespace DataAccess.QR
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(chatUrl, QRCodeGenerator.ECCLevel.Q);
                 using (QRCode qrCode = new QRCode(qrCodeData))
                 {
+                    // Use the GetGraphic method from QRCoder
                     using (Bitmap qrCodeImage = qrCode.GetGraphic(20))
                     {
                         using (MemoryStream ms = new MemoryStream())
@@ -43,6 +41,5 @@ namespace DataAccess.QR
                 }
             }
         }
-
     }
 }
