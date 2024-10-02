@@ -13,6 +13,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using CoffeeShop.Qr;
 using BussinessObjects.DTOs.Tables;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CoffeeShop.Areas.Admin.Pages.Tables
 {
@@ -39,6 +40,11 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return Page(); // Stay on the same page to show errors
+                }
+
                 if (string.IsNullOrWhiteSpace(Description))
                 {
                     return RedirectToPage("./Index");
