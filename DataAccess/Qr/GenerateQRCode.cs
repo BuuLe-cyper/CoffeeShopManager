@@ -1,10 +1,12 @@
-﻿using QRCoder;
-using System.Drawing.Imaging;
-using System.Drawing;
-using Microsoft.AspNetCore.Authorization;
-using SkiaSharp;
+﻿using Microsoft.AspNetCore.Http;
+using QRCoder;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CoffeeShop.Qr
+namespace DataAccess.Qr
 {
     public class GenerateQRCode
     {

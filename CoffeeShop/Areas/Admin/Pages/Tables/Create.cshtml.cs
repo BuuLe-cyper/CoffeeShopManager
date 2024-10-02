@@ -11,7 +11,6 @@ using BussinessObjects.Services;
 using CoffeeShop.ViewModels.Tables;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using CoffeeShop.Qr;
 using BussinessObjects.DTOs.Tables;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -22,13 +21,12 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
     {
         private readonly ITableService _tableService;
         private readonly IMapper _mapper;
-        private readonly GenerateQRCode _generateQRCode;
+    
 
-        public CreateModel(ITableService tableService, IMapper mapper, GenerateQRCode generateQRCode)
+        public CreateModel(ITableService tableService, IMapper mapper)
         {
             _tableService = tableService;
             _mapper = mapper;
-            _generateQRCode = generateQRCode;
         }
 
         [BindProperty]
@@ -52,8 +50,6 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                 }
 
                 Table = _mapper.Map<TableVM>(await _tableService.CreateTableAsync(Description));
-                Table.QRCodeTable = _generateQRCode.GenerateQRCodeForTable(Table.TableID);
-                await _tableService.UpdateTableAsync(_mapper.Map<TableDTO>(Table));
 
                 return RedirectToPage("./Index");
             }

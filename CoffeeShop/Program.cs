@@ -12,7 +12,7 @@ using CoffeeShop.AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Threading.RateLimiting;
-using CoffeeShop.Qr;
+using DataAccess.Qr;
 
 namespace CoffeeShop
 {
