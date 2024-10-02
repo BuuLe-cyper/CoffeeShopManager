@@ -99,27 +99,8 @@ namespace CoffeeShop
             // Add QR Code
             builder.Services.AddScoped<GenerateQRCode>();
 
-
-            // Add rate limiting
-            builder.Services.AddRateLimiter(options =>
-            {
-                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-                    RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: context.Connection
-                            .RemoteIpAddress?.ToString() ?? "anonymous",
-                        factory: partition => new FixedWindowRateLimiterOptions
-                        {
-                            PermitLimit = 10,
-                            Window = TimeSpan.FromMinutes(1),
-                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                            QueueLimit = 2
-                        })
-                );
-            });
-
             var app = builder.Build();
 
-            app.UseRateLimiter();
 
             using (var scope = app.Services.CreateScope())
             {
