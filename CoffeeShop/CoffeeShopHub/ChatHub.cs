@@ -77,7 +77,7 @@ namespace CoffeeShop.CoffeeShopHub
             var role = Context.User?.FindFirst(ClaimTypes.Role)?.Value?.Equals("Admin") == true ? "Admin" : userNameFromClaim;
 
             var userRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value.Equals("Admin");
-            var isAdminPage = userRole?.Equals("Admin") == true ? true : false;
+            var isAdminPage = userRole == true ? true : false;
 
 
             var alignment = isAdminPage
