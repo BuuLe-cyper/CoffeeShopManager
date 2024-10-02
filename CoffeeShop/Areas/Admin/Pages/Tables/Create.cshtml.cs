@@ -33,13 +33,21 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (string.IsNullOrWhiteSpace(Description))
+            try
             {
+                if (string.IsNullOrWhiteSpace(Description))
+                {
+                    return Page();
+                }
+
+                Table = _mapper.Map<TableVM>(await _tableService.CreateTableAsync(Description));
                 return Page();
             }
-
-            Table = _mapper.Map<TableVM>(await _tableService.CreateTableAsync(Description));
-            return Page();
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+           
         }
     }
 }

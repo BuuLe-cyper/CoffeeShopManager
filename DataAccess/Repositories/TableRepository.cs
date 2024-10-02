@@ -28,8 +28,8 @@ namespace DataAccess.Repositories
             _context.Tables.Add(table);
             await _context.SaveChangesAsync();
 
-            table.QRCodeTable = _generateQRCode.GenerateQRCodeForTable(table.TableID);
-            await _context.SaveChangesAsync();
+            //table.QRCodeTable = _generateQRCode.GenerateQRCodeForTable(table.TableID);
+            //await _context.SaveChangesAsync();
 
             return table;
         }
