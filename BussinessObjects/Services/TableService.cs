@@ -39,7 +39,7 @@ namespace BussinessObjects.Services
 
         public async Task UpdateTableAsync(TableDTO table)
         {
-            await _tableRepository.UpdateAsync(_mapper.Map<Table>(table));
+            await _tableRepository.UpdateTableAsync(_mapper.Map<Table>(table));
         }
 
         public async Task SoftDeleteTable(int id)

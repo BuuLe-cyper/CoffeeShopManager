@@ -1,6 +1,5 @@
 ﻿using DataAccess.DataContext;
 using DataAccess.Models;
-using DataAccess.QR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,10 +11,8 @@ namespace DataAccess.Repositories
 {
     public class TableRepository : Repository<Table>, ITableRepository
     {
-        private readonly GenerateQRCode _generateQRCode;
-        public TableRepository(ApplicationDbContext context, GenerateQRCode generateQRCode) : base(context)
+        public TableRepository(ApplicationDbContext context) : base(context)
         {
-            _generateQRCode = generateQRCode;
         }
 
         public async Task<Table> CreateTableAsync(string description)
@@ -28,8 +25,8 @@ namespace DataAccess.Repositories
             _context.Tables.Add(table);
             await _context.SaveChangesAsync();
 
-            table.QRCodeTable = _generateQRCode.GenerateQRCodeForTable(table.TableID);
-            await _context.SaveChangesAsync();
+            //table.QRCodeTable = _generateQRCode.GenerateQRCodeForTable(table.TableID);
+            //await _context.SaveChangesAsync();
 
             return table;
         }

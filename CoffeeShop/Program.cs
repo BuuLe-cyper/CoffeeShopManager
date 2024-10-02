@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using CoffeeShop.AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using DataAccess.QR;
 using System.Threading.RateLimiting;
+using CoffeeShop.Qr;
 
 namespace CoffeeShop
 {
