@@ -14,8 +14,14 @@ namespace DataAccess.QR
         }
         public string GenerateQRCodeForTable(int tableId)
         {
-            // Get the current request's scheme and host to build the URL dynamically
-            var request = _httpContextAccessor.HttpContext.Request;
+            var request = _httpContextAccessor?.HttpContext?.Request;
+
+            if (request == null)
+            {
+                throw new InvalidOperationException("Unable to access the HTTP request.");
+            }
+
+            // Build the URL dynamically from request
             string baseUrl = $"{request.Scheme}://{request.Host}";
             string chatUrl = $"{baseUrl}/Customer/Shopping/Index/{tableId}";
 
@@ -37,5 +43,6 @@ namespace DataAccess.QR
                 }
             }
         }
+
     }
 }
