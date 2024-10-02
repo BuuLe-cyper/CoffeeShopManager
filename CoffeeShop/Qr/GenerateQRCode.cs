@@ -1,9 +1,11 @@
 ﻿using QRCoder;
 using System.Drawing.Imaging;
 using System.Drawing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoffeeShop.Qr
 {
+    [AllowAnonymous]
     public class GenerateQRCode
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
