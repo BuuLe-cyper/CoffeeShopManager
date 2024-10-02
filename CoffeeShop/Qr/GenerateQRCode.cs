@@ -20,18 +20,19 @@ namespace CoffeeShop.Qr
             var request = _httpContextAccessor.HttpContext.Request;
             string baseUrl = $"{request.Scheme}://{request.Host}";
             string chatUrl = $"{baseUrl}/Customer/Shopping/Index/{tableId}";
-            
-                using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
-                {
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(chatUrl, QRCodeGenerator.ECCLevel.Q);
+            return chatUrl;
 
-                    using (Base64QRCode qrCode = new Base64QRCode(qrCodeData))
-                    {
-                        // Use the GetGraphic method from QRCoder
-                        string qrCodeImageAsBase64 = qrCode.GetGraphic(20);
-                        return $"data:image/png;base64,{qrCodeImageAsBase64}";
-                    }
-                } 
+            //using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            //{
+            //    QRCodeData qrCodeData = qrGenerator.CreateQrCode(chatUrl, QRCodeGenerator.ECCLevel.Q);
+
+            //    using (Base64QRCode qrCode = new Base64QRCode(qrCodeData))
+            //    {
+            //        // Use the GetGraphic method from QRCoder
+            //        string qrCodeImageAsBase64 = qrCode.GetGraphic(20);
+            //        return $"data:image/png;base64,{qrCodeImageAsBase64}";
+            //    }
+            //} 
         }
     }
 }

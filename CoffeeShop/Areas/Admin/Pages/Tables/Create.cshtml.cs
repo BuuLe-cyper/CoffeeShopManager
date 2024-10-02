@@ -52,7 +52,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                 }
 
                 Table = _mapper.Map<TableVM>(await _tableService.CreateTableAsync(Description));
-                //Table.QRCodeTable = _generateQRCode.GenerateQRCodeForTable(Table.TableID);
+                Table.QRCodeTable = _generateQRCode.GenerateQRCodeForTable(Table.TableID);
                 await _tableService.UpdateTableAsync(_mapper.Map<TableDTO>(Table));
 
                 return RedirectToPage("./Index");
