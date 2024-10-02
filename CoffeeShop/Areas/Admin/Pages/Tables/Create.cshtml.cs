@@ -37,11 +37,12 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
             {
                 if (string.IsNullOrWhiteSpace(Description))
                 {
-                    return Page();
+                    return RedirectToPage("/Admin/Tables/Index");
+
                 }
 
                 Table = _mapper.Map<TableVM>(await _tableService.CreateTableAsync(Description));
-                return Page();
+                return RedirectToPage("/Admin/Tables/Index");
             }
             catch (Exception ex)
             {
