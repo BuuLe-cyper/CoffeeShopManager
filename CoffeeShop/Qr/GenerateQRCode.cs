@@ -23,19 +23,12 @@ namespace CoffeeShop.Qr
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(chatUrl, QRCodeGenerator.ECCLevel.Q);
-                using (QRCode qrCode = new QRCode(qrCodeData))
+               
+                using (Base64QRCode qrCode = new Base64QRCode(qrCodeData))
                 {
                     // Use the GetGraphic method from QRCoder
-                    using (Bitmap qrCodeImage = qrCode.GetGraphic(20))
-                    {
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            qrCodeImage.Save(ms, ImageFormat.Png);
-                            byte[] imageBytes = ms.ToArray();
-                            string base64String = Convert.ToBase64String(imageBytes);
-                            return $"data:image/png;base64,{base64String}";
-                        }
-                    }
+                    string qrCodeImageAsBase64 = qrCode.GetGraphic(20);
+                    return $"data:image/png;base64,{qrCodeImageAsBase64}";
                 }
             }
         }
