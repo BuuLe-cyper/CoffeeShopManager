@@ -1,27 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using DataAccess.DataContext;
-using DataAccess.Models;
 using AutoMapper;
 using BussinessObjects.Services;
+using CoffeeShop.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Pages.SizeTest
+namespace CoffeeShop.Areas.Admin.Pages.Size
 {
-    public class DeleteModel : PageModel
+    [Authorize(Roles = "Admin")]
+    public class DeleteSizeModel : PageModel
     {
         private readonly ISizeService _sizeService;
-
-        public DeleteModel(ISizeService sizeService)
+        private readonly IMapper _mapper;
+        public DeleteSizeModel(ISizeService sizeService, IMapper mapper)
         {
             _sizeService = sizeService;
+            _mapper = mapper;
         }
         [BindProperty]
-        public Size Size { get; set; } = default!;
+        public SizeVM Size { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -38,7 +35,7 @@ namespace CoffeeShop.Pages.SizeTest
             }
             else
             {
-                Size = size;
+                Size = _mapper.Map<SizeVM>(size);
             }
             return Page();
         }
@@ -53,8 +50,8 @@ namespace CoffeeShop.Pages.SizeTest
             var size = await _sizeService.GetSize((int)id);
             if (size != null)
             {
-                Size = size;
-                var isRemove =  await _sizeService.SoftDeleteSize(size.SizeID);
+                Size = _mapper.Map<SizeVM>(size);
+                var isRemove = await _sizeService.SoftDeleteSize(size.SizeID);
                 if (!isRemove)
                 {
                     ModelState.AddModelError(string.Empty, "Unable to delete size. Please try again.");
@@ -62,7 +59,7 @@ namespace CoffeeShop.Pages.SizeTest
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToAction("ListSizes", "Product", new { area = "Admin" });
         }
     }
 }

@@ -1,14 +1,15 @@
 using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
+using BussinessObjects.ImageService;
 using BussinessObjects.Services;
 using CoffeeShop.AutoMapper;
 using CoffeeShop.CoffeeShopHub;
+using BussinessObjects.Utility;
 using DataAccess.DataContext;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using CoffeeShop.AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Threading.RateLimiting;
@@ -81,6 +82,20 @@ namespace CoffeeShop
             // Add services to the container.
             builder.Services.AddRazorPages();
 
+            // Add Firebase Uility
+            builder.Services.Configure<FireBaseOptions>(builder.Configuration.GetSection("FireBase"));
+            builder.Services.AddTransient(typeof(IImageService), typeof(ImageService));
+            // Add Services
+            builder.Services.AddScoped(typeof(ISizeService), typeof(SizeService));
+            builder.Services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
+            builder.Services.AddScoped(typeof(IProductService), typeof(ProductService));
+            builder.Services.AddScoped(typeof(IProductSizesService), typeof(ProductSizesService));
+
+            // Add Repositories
+            builder.Services.AddScoped(typeof(ISizeRepository), typeof(SizeRepository));
+            builder.Services.AddScoped(typeof(ICategoryRepository), typeof(CategoryRepository));
+            builder.Services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
+            builder.Services.AddScoped(typeof(IProductSizesRepository), typeof(ProductSizesRepository));
             //Add Services
             builder.Services.AddScoped<ITableService, TableService>();
             builder.Services.AddScoped<IMessService, MessService>();
@@ -132,6 +147,7 @@ namespace CoffeeShop
 
             //Add Session
             app.UseSession();
+
 
 
 
