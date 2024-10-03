@@ -15,12 +15,13 @@ namespace CoffeeShop.AutoMapper
         {
             CreateMap<MessageVM,MessageDTO>().ReverseMap();
             CreateMap<TableVM,TableDTO>().ReverseMap();
-            CreateMap<Size, SizeVM>().ForMember(dest => dest.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
             CreateMap<UsersDTO, UserVM>().ReverseMap();
             CreateMap<SizeViewDto, SizeVM>().ReverseMap();
             CreateMap<CategoryViewDto, CategoryVM>().ReverseMap();
             CreateMap<ProductViewDto, ProductVM>().ReverseMap();
             CreateMap<ProductDto, ProductVM>().ReverseMap();
+            CreateMap<CategoryDto, CategoryVM>().ReverseMap();
+            CreateMap<SizeDto, SizeVM>().ReverseMap();
         }
     }
 }

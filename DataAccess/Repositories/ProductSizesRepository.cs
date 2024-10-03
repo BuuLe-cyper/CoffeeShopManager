@@ -19,11 +19,10 @@ namespace DataAccess.Repositories
         {
             try
             {
-                ProductSize? existingProductSize = await _context.ProductSizes.FirstOrDefaultAsync(p => p.ProductSizeID == productSizeID && p.IsDeleted == false && p.IsActive == true && p.IsActive == true);
+                ProductSize? existingProductSize = await _context.ProductSizes.FirstOrDefaultAsync(p => p.ProductSizeID == productSizeID && p.IsDeleted == false && p.IsActive == true);
                 if (existingProductSize != null)
                 {
                     existingProductSize.IsDeleted = true;
-                    existingProductSize.IsActive = false;
                     existingProductSize.IsActive = false;
                     existingProductSize.ModifyDate = DateTime.Now;
 

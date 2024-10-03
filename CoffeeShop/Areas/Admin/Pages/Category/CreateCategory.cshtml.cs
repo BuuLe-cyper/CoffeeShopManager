@@ -2,6 +2,7 @@ using AutoMapper;
 using BussinessObjects.DTOs;
 using BussinessObjects.Services;
 using CoffeeShop.Helper;
+using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -26,9 +27,8 @@ namespace CoffeeShop.Areas.Admin.Pages.Category
         }
 
         [BindProperty]
-        public DataAccess.Models.Category Category { get; set; } = default!;
-
-        // For more information, see https://aka.ms/RazorPagesCRUD.
+        public CategoryVM Category { get; set; } = new CategoryVM();
+   
         public async Task<IActionResult> OnPostAsync()
         {
             ArgumentNullException.ThrowIfNull(nameof(Category.CategoryName));

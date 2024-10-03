@@ -59,10 +59,12 @@ namespace CoffeeShop
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             // Register MailSettings by binding to the configuration section "SmtpSettings"
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
-
+            // Configure FireBase
+            builder.Services.Configure<FireBaseOptions>(builder.Configuration.GetSection("FireBase"));
             // Register MailService as a transient service
             builder.Services.AddTransient<MailService>();
-
+            // Add Firebase Uility
+            builder.Services.AddTransient(typeof(IImageService), typeof(ImageService));
             //Register and Authorization and Cookie authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -82,29 +84,20 @@ namespace CoffeeShop
             // Add services to the container.
             builder.Services.AddRazorPages();
 
-            // Add Firebase Uility
-            builder.Services.Configure<FireBaseOptions>(builder.Configuration.GetSection("FireBase"));
-            builder.Services.AddTransient(typeof(IImageService), typeof(ImageService));
-            // Add Services
+            //Add Services
+            builder.Services.AddScoped<ITableService, TableService>();
+            builder.Services.AddScoped<IMessService, MessService>();
             builder.Services.AddScoped(typeof(ISizeService), typeof(SizeService));
             builder.Services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
             builder.Services.AddScoped(typeof(IProductService), typeof(ProductService));
             builder.Services.AddScoped(typeof(IProductSizesService), typeof(ProductSizesService));
-
-            // Add Repositories
+            //Add Repositories
+            builder.Services.AddScoped<ITableRepository, TableRepository>();
+            builder.Services.AddScoped<IMessRepository, MessRepository>();
             builder.Services.AddScoped(typeof(ISizeRepository), typeof(SizeRepository));
             builder.Services.AddScoped(typeof(ICategoryRepository), typeof(CategoryRepository));
             builder.Services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
             builder.Services.AddScoped(typeof(IProductSizesRepository), typeof(ProductSizesRepository));
-            //Add Services
-            builder.Services.AddScoped<ITableService, TableService>();
-            builder.Services.AddScoped<IMessService, MessService>();
-            builder.Services.AddScoped<ISizeService, SizeService>();
-
-            //Add Repositories
-            builder.Services.AddScoped<ITableRepository, TableRepository>();
-            builder.Services.AddScoped<IMessRepository, MessRepository>();
-            builder.Services.AddScoped<ISizeRepository, SizeRepository>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
