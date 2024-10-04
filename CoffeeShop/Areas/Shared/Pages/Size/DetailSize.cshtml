@@ -1,13 +1,11 @@
 ﻿@page
-@model CoffeeShop.Pages.SizeTest.DeleteModel
-
+@model CoffeeShop.Areas.Shared.Pages.Size.DetailSizeModel
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Details";
 }
 
-<h1>Delete</h1>
+<h1>Details</h1>
 
-<h3>Are you sure you want to delete this?</h3>
 <div>
     <h4>Size</h4>
     <hr />
@@ -43,10 +41,8 @@
             @Html.DisplayFor(model => model.Size.ModifyDate)
         </dd>
     </dl>
-    
-    <form method="post">
-        <input type="hidden" asp-for="Size.SizeID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-page="./Index">Back to List</a>
-    </form>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Size.SizeID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
 </div>

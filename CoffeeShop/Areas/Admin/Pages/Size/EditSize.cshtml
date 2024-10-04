@@ -1,6 +1,5 @@
 ﻿@page
-@model CoffeeShop.Pages.SizeTest.EditModel
-
+@model CoffeeShop.Areas.Admin.Pages.Size.EditSizeModel
 @{
     ViewData["Title"] = "Edit";
 }
@@ -31,5 +30,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,6 +1,5 @@
 ﻿@page
-@model CoffeeShop.Pages.SizeTest.IndexModel
-
+@model CoffeeShop.Areas.Shared.Pages.Category.ListCategoriesModel
 @{
     ViewData["Title"] = "Index";
 }
@@ -8,13 +7,13 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-area="Admin" asp-page="/Category/CreateCategory">Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayName("Size Id")
+                @Html.DisplayName("Category Name")
             </th>
             <th>
                 @Html.DisplayName("Is Deleted")
@@ -31,12 +30,11 @@
             <th></th>
         </tr>
     </thead>
-
     <tbody>
-@foreach (var item in Model.Size) {
+@foreach (var item in Model.Category) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.SizeName)
+                @Html.DisplayFor(modelItem => item.CategoryName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsDeleted)
@@ -51,11 +49,12 @@
                 @Html.DisplayFor(modelItem => item.ModifyDate)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.SizeID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.SizeID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.SizeID">Soft Delete</a>
+                <a asp-area="Admin" asp-page="/Category/EditCategory" asp-route-id="@item.CategoryID">Edit</a> |
+                <a asp-area="Shared" asp-page="/Category/DetailCategory" asp-route-id="@item.CategoryID">Details</a> |
+                <a asp-area="Admin" asp-page="/Category/DeleteCategory" asp-route-id="@item.CategoryID">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+ 
