@@ -1,0 +1,78 @@
+﻿@page
+@model CoffeeShop.Areas.Shared.Pages.Menu.ListMenuModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p2>Menu Items</p2>
+
+<p>
+    <a asp-area="Admin" asp-page="/Menu/CreateItem">Create Item</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Product")
+            </th>
+            <th>
+                @Html.DisplayName("Size")
+            </th>
+            <th>
+                @Html.DisplayName("Price")
+            </th>
+            <th>
+                @Html.DisplayName("OriginalPrice")
+            </th>
+            <th>
+                @Html.DisplayName("IsDeleted")
+            </th>
+            <th>
+                @Html.DisplayName("IsActive")
+            </th>
+            <th>
+                @Html.DisplayName("CreateDate")
+            </th>
+            <th>
+                @Html.DisplayName("ModifyDate")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ProductSize)
+        {
+            <tr>
+                <td>
+                    <img src="@item.Product.ImageUrl" alt="Product Image" style="max-width: 100px; max-height: 100px;" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Size.SizeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OriginalPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDeleted)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModifyDate)
+                </td>
+                <td>
+                   @*  <a asp-page="./Edit" asp-route-id="@item.ProductSizeID">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.ProductSizeID">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.ProductSizeID">Delete</a> *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
