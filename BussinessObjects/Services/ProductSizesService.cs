@@ -65,7 +65,7 @@ namespace BussinessObjects.Services
 
         public async Task<IEnumerable<ProductSizesViewDto>> GetAllProductSizes()
         {
-            var results = await _productSizesRepository.GetAllAsync(item => item.IsDeleted == false && item.IsActive == true, includeProperties: "Category,Product");
+            var results = await _productSizesRepository.GetAllAsync(item => item.IsDeleted == false && item.IsActive == true, includeProperties: "Size,Product");
             return _mapper.Map<IEnumerable<ProductSizesViewDto>>(results);
         }
 

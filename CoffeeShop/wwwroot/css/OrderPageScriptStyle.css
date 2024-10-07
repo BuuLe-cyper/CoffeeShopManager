@@ -1,0 +1,69 @@
+﻿.cart-item {
+    position: relative;
+}
+
+.cart-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.cart-item-left {
+    text-align: left;
+}
+
+.cart-item-right {
+    text-align: right;
+}
+
+.cart-product-name, .cart-product-total {
+    font-weight: 500;
+    display: inline-block;
+    margin: 0;
+    margin-bottom: 7px;
+}
+
+.remove-from-cart {
+    text-decoration: underline;
+    color: #e74c3c;
+    cursor: pointer;
+    margin: 0;  
+}
+
+.remove-from-cart:hover {
+    color: #d64532;
+}
+
+.quantity-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.quantity-controls button {
+    width: 23px; /* Chiều rộng nút */
+    height: 23px; /* Chiều cao nút */
+    background-color: #e0e0e0; /* Màu nền xám */
+    color: black; /* Màu chữ đen */
+    border: none;
+    border-radius: 50%; /* Tạo hình tròn */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Căn giữa chữ bên trong nút */
+    font-size: 18px;
+    font-weight: 500;
+    padding-bottom: 4px;
+    margin-left: 2px;
+}
+
+.quantity-controls button:hover {
+    background-color: #d3d3d3; /* Thay đổi màu khi di chuột qua */
+}
+
+.cart-divider {
+    height: 2px; 
+    background-color: #ddd;
+    margin: 10px 0; 
+    width: 100%;
+}
