@@ -58,8 +58,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Size
                     return Page();
                 }
             }
-
-            return RedirectToAction("ListSizes", "Product", new { area = "Admin" });
+            return RedirectToPage("/Size/ListSizes", new { area = "Shared" });
         }
     }
 }

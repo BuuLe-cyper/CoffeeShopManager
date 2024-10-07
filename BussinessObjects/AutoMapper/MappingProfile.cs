@@ -21,6 +21,8 @@ namespace BussinessObjects.AutoMapper
             CreateMap<CategoryViewDto, Category>().ReverseMap();
             CreateMap<ProductViewDto, Product>().ReverseMap();
             CreateMap<ProductSizesViewDto, ProductSize>().ReverseMap();
+            CreateMap<ProductSizeDto, ProductSize>().ReverseMap();
+
         }
     }
 }

@@ -1,0 +1,63 @@
+﻿@page
+@model CoffeeShop.Areas.Shared.Pages.Menu.ListMenuModel
+@{
+    ViewData["Title"] = "Index";
+}
+<h2>Menu Items</h2>
+
+<p>
+    <a asp-area="Admin" asp-page="/Menu/CreateItem">Create New Item</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Sizes and Prices</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var productGroup in Model.ProductSize.GroupBy(p => new { p.Product.ProductName, p.Product.ImageUrl }))
+        {
+            <tr>
+                <td>
+                    <strong>@productGroup.Key.ProductName</strong>
+                    <div>
+                        <img src="@productGroup.Key.ImageUrl" alt="Product Image" class="product-image" />
+                    </div>
+                </td>
+                <td>
+                    @foreach (var item in productGroup)
+                    {
+                        <p>@item.Size.SizeName - @item.Price.ToString("C")</p>
+                    }
+                </td>
+                <td>
+                    @if (User.Identity.Name == "staff1")
+                    {
+                        @foreach (var item in productGroup)
+                        {
+                            <div>
+                                <a asp-page="./Edit" asp-route-id="@item.ProductSizeID">Edit</a> |
+                                <a asp-page="./Delete" asp-route-id="@item.ProductSizeID">Delete</a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var item in productGroup)
+                        {
+                            <div>
+                                <form asp-page="./AddToCart" method="post">
+                                    <input type="hidden" name="ProductSizeID" value="@item.ProductSizeID" />
+                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                </form>
+                            </div>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
