@@ -65,9 +65,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Product
                 ViewData["CategoryID"] = new SelectList(await _categoryService.GetAllCategory(), "CategoryID", "CategoryName", Product.CategoryID);
                 return Page();
             }
-
-            return RedirectToAction("ListProducts", "Product", new { area = "Admin" });
-
+            return RedirectToPage("/Product/ListProducts", new { area = "Shared" });
         }
     }
 }

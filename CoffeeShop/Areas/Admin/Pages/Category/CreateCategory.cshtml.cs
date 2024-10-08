@@ -49,7 +49,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Category
                 ModelState.AddModelError(string.Empty, "Size Must Be String. Please try again.");
                 return Page();
             }
-            return RedirectToAction("ListCategories", "Category", new { area = "Admin" });
+            return RedirectToPage("/Category/ListCategories", new { area = "Shared" });
         }
     }
 }

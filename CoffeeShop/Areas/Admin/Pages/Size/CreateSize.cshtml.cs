@@ -48,7 +48,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Size
                 ModelState.AddModelError(string.Empty, "Size Name Must Be String. Please try again.");
                 return Page();
             }
-            return RedirectToAction("ListSizes", "Product", new { area = "Admin" });
+            return RedirectToPage("/Size/ListSizes", new { area = "Shared" });
         }
     }
 }

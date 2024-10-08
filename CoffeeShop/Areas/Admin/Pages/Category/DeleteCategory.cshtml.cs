@@ -61,7 +61,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Category
                 }
             }
 
-            return RedirectToAction("ListCategories", "Category", new { area = "Admin" });
+            return RedirectToPage("/Category/ListCategories", new { area = "Shared" });
         }
     }
 }
