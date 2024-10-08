@@ -22,7 +22,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Menu
         public async Task OnGetAsync()
         {
             var result = await _productSizesService.GetAllProductSizes();
-            ProductSize = _mapper.Map<IEnumerable<ProductSizeVM>>(result);
+            ProductSize = _mapper.Map<IEnumerable<ProductSizeVM>>(result.Where(x => x.Size.IsDeleted == false));
         }
     }
 }

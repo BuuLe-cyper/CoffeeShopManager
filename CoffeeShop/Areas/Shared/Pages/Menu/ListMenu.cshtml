@@ -3,74 +3,61 @@
 @{
     ViewData["Title"] = "Index";
 }
+<h2>Menu Items</h2>
 
 <p2>Menu Items</p2>
 
 <p>
-    <a asp-area="Admin" asp-page="/Menu/CreateItem">Create Item</a>
+    <a asp-area="Admin" asp-page="/Menu/CreateItem">Create New Item</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayName("Product")
-            </th>
-            <th>
-                @Html.DisplayName("Size")
-            </th>
-            <th>
-                @Html.DisplayName("Price")
-            </th>
-            <th>
-                @Html.DisplayName("OriginalPrice")
-            </th>
-            <th>
-                @Html.DisplayName("IsDeleted")
-            </th>
-            <th>
-                @Html.DisplayName("IsActive")
-            </th>
-            <th>
-                @Html.DisplayName("CreateDate")
-            </th>
-            <th>
-                @Html.DisplayName("ModifyDate")
-            </th>
-            <th></th>
+            <th>Product</th>
+            <th>Sizes and Prices</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.ProductSize)
+        @foreach (var productGroup in Model.ProductSize.GroupBy(p => new { p.Product.ProductName, p.Product.ImageUrl }))
         {
             <tr>
                 <td>
-                    <img src="@item.Product.ImageUrl" alt="Product Image" style="max-width: 100px; max-height: 100px;" />
+                    <strong>@productGroup.Key.ProductName</strong>
+                    <div>
+                        <img src="@productGroup.Key.ImageUrl" alt="Product Image" class="product-image" />
+                    </div>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Size.SizeName)
+                    @foreach (var item in productGroup)
+                    {
+                        <p>@item.Size.SizeName - @item.Price.ToString("C")</p>
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OriginalPrice)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsDeleted)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsActive)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreateDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ModifyDate)
-                </td>
-                <td>
-                   @*  <a asp-page="./Edit" asp-route-id="@item.ProductSizeID">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.ProductSizeID">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.ProductSizeID">Delete</a> *@
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @foreach (var item in productGroup)
+                        {
+                            <div>
+                                <a asp-page="./Edit" asp-route-id="@item.ProductSizeID">Edit</a> |
+                                <a asp-page="./Delete" asp-route-id="@item.ProductSizeID">Delete</a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var item in productGroup)
+                        {
+                            <div>
+                                <form asp-page="./AddToCart" method="post">
+                                    <input type="hidden" name="ProductSizeID" value="@item.ProductSizeID" />
+                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                </form>
+                            </div>
+                        }
+                    }
                 </td>
             </tr>
         }

@@ -34,23 +34,41 @@ namespace CoffeeShop.Areas.Admin.Pages.Menu
         }
 
         [BindProperty]
-        public ProductSizeVM ProductSize { get; set; } = default!;
-
+        public MenuItemVMDto ProductSize { get; set; } = default!;
         public async Task<IActionResult> OnPostAsync()
         {
-            var item = _mapper.Map<ProductSizeDto>(ProductSize);
-            bool isAdd = await _productSizesService.AddProductSize(item);
-            if (!isAdd)
+            // Handle list SizePrices
+            bool isAnySizeAdded = false;
+            foreach (var itemSizePrice in ProductSize.SizePrices)
             {
-                ModelState.AddModelError(string.Empty, "Unable to create size , category name existed. Please try again.");
+                if (itemSizePrice.Price > 0)
+                {
+                    ProductSizeVM productSize = _mapper.Map<ProductSizeVM>(ProductSize);
+                    productSize.SizeID = itemSizePrice.SizeID;
+                    productSize.Price = itemSizePrice.Price;
+                    var item = _mapper.Map<ProductSizeDto>(productSize);
+                    bool isAdd = await _productSizesService.AddProductSize(item);
+                    if (isAdd)
+                    {
+                        isAnySizeAdded = true;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, $"Unable to create size for SizeID: {itemSizePrice.SizeID}. Please try again.");
+                        ViewData["ProductID"] = new SelectList(await _productService.GetAllProduct(), "ProductID", "ProductName");
+                        ViewData["SizeID"] = new SelectList(await _sizeService.GetAllSize(), "SizeID", "SizeName");
+                        return Page();
+                    }
+                }
+            }
+            if (!isAnySizeAdded)
+            {
+                ModelState.AddModelError(string.Empty, "No sizes were added successfully. Please check the size prices and try again.");
                 ViewData["ProductID"] = new SelectList(await _productService.GetAllProduct(), "ProductID", "ProductName");
                 ViewData["SizeID"] = new SelectList(await _sizeService.GetAllSize(), "SizeID", "SizeName");
                 return Page();
             }
-            else
-            {
-                return Page();
-            }
+            return RedirectToPage("/Menu/ListMenu", new { area = "Shared" });
         }
     }
 }

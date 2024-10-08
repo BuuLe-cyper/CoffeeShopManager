@@ -13,7 +13,7 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ProductSize.ProductID" class="control-label"></label>
+                <label class="control-label">Product Name</label>
                 <select asp-for="ProductSize.ProductID" class="form-control" asp-items="ViewBag.ProductID"></select>
             </div>
             <div class="form-group">
@@ -27,8 +27,38 @@
             </div>
             <div class="form-group">
                 <label asp-for="ProductSize.OriginalPrice" class="control-label"></label>
-                <input asp-for="ProductSize.OriginalPrice" class="form-control" />
+                <input oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null" asp-for="ProductSize.OriginalPrice" class="form-control" min="0" />
                 <span asp-validation-for="ProductSize.OriginalPrice" class="text-danger"></span>
+            </div>
+            <h4>Price</h4>
+            <hr />
+            <div id="prices-container">
+                @{
+                    if (ViewBag.SizeID != null)
+                    {
+                        int index = 0;
+                        foreach (var size in (IEnumerable<SelectListItem>)ViewBag.SizeID)
+                        {
+                            <div class="form-group row">
+                                <label class="control-label col-md-4">For @size.Text</label>
+                                <div class="col-md-4">
+                                    <input id="priceInput_@index" type="hidden" name="ProductSize.SizePrices[@index].SizeID" value="@size.Value" />
+                                    <input id="inputSize_@index" type="number" name="ProductSize.SizePrices[@index].Price" min="0"
+                                           oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"
+                                           class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="excludeCheckbox_@index"
+                                               data-index="@index" onchange="toggleSizePrice(this)" />
+                                        <label class="form-check-label" for="excludeCheckbox_@index">Exclude</label>
+                                    </div>
+                                </div>
+                            </div>
+                            index++;
+                        }
+                    }
+                }
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -40,9 +70,4 @@
 <div>
     <a asp-page="Index">Back to List</a>
 </div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+<script src="~/js/menu/management-menu.js" asp-append-version="true"></script>
