@@ -12,7 +12,7 @@
         <div class="col-lg-2 col-md-9 col-sm-12">
             <div class="sidebar_menu">
                 <ul>
-                    <li><a>Tất Cả</a></li>
+                    <li><a>All</a></li>
                     @foreach (var category in Model.Category)
                     {
                         <li><a>@category.CategoryName</a></li>
@@ -120,7 +120,6 @@
             cartTotalDiv.style.display = 'block';
             checkoutButton.disabled = false;
 
-            // Thêm đường kẻ trên cùng cho sản phẩm đầu tiên
             let firstDivider = document.createElement('div');
             firstDivider.classList.add('cart-divider');
             cartItemsDiv.appendChild(firstDivider);
@@ -145,7 +144,6 @@
                 totalPrice += item.productPrice * item.quantity;
             });
 
-            // Thêm đường kẻ dưới cùng cho sản phẩm cuối cùng
             let lastDivider = document.createElement('div');
             lastDivider.classList.add('cart-divider');
             cartItemsDiv.appendChild(lastDivider);

@@ -41,16 +41,16 @@
 }
 
 .quantity-controls button {
-    width: 23px; /* Chiều rộng nút */
-    height: 23px; /* Chiều cao nút */
-    background-color: #e0e0e0; /* Màu nền xám */
-    color: black; /* Màu chữ đen */
+    width: 23px; 
+    height: 23px; 
+    background-color: #e0e0e0; 
+    color: black;
     border: none;
-    border-radius: 50%; /* Tạo hình tròn */
+    border-radius: 50%; 
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center; /* Căn giữa chữ bên trong nút */
+    justify-content: center; 
     font-size: 18px;
     font-weight: 500;
     padding-bottom: 4px;
@@ -58,7 +58,7 @@
 }
 
 .quantity-controls button:hover {
-    background-color: #d3d3d3; /* Thay đổi màu khi di chuột qua */
+    background-color: #d3d3d3; 
 }
 
 .cart-divider {
