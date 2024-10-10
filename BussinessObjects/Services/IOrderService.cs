@@ -11,7 +11,7 @@ namespace BussinessObjects.Services
     {
         public Task CreateOrder(OrderDTO orderDTO);
         public Task<IEnumerable<OrderDTO>> GetListOrdersByCustomerId(Guid customerId);
-        public Task<string> GetOrderStatus(Guid orderId);
+        public Task<bool?> GetOrderStatus(Guid orderId);
         public Task<decimal> CalculateTotalAmount(Guid orderId);
     }
 }

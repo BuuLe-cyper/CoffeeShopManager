@@ -9,8 +9,6 @@ namespace DataAccess.Repositories
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        public Task<IEnumerable<Order>> GetListOrdersByCustomerId(Guid customerId);
-        public Task<string> GetOrderStatus(Guid orderId);
         public Task<decimal> CalculateTotalAmount(Guid orderId);
     }
 }

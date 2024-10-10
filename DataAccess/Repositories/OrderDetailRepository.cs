@@ -13,9 +13,5 @@ namespace DataAccess.Repositories
         public OrderDetailRepository(ApplicationDbContext context) : base(context)
         {
         }
-        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByOrderId(Guid orderId)
-        {
-            return await GetAllAsync(od => od.OrderID == orderId && !od.IsDeleted);
-        }
     }
 }

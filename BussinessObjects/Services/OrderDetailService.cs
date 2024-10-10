@@ -21,7 +21,7 @@ namespace BussinessObjects.Services
         }
         public async Task<IEnumerable<OrderDetailDTO>> GetOrderDetailsByOrderId(Guid orderId)
         {
-            var orderDetail = await _orderDetailRepository.GetOrderDetailsByOrderId(orderId);
+            var orderDetail = await _orderDetailRepository.GetAllAsync(od => od.OrderID == orderId && !od.IsDeleted);
             var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailDTO>>(orderDetail);
             return orderDetailDTOs;
         }

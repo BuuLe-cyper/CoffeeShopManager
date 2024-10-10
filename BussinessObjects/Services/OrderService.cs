@@ -40,12 +40,20 @@ namespace BussinessObjects.Services
 
         public async Task<IEnumerable<OrderDTO>> GetListOrdersByCustomerId(Guid customerId)
         {
-            return _mapper.Map<IEnumerable<OrderDTO>>(await _orderRepository.GetListOrdersByCustomerId(customerId));
+            return _mapper.Map<IEnumerable<OrderDTO>>(await _orderRepository.
+                GetAllAsync(o => o.UserID == customerId && !o.IsDeleted));
         }
 
-        public async Task<string> GetOrderStatus(Guid orderId)
+        public async Task<bool?> GetOrderStatus(Guid orderId)
         {
-            return await _orderRepository.GetOrderStatus(orderId);
+            var order = await _orderRepository.GetAsync(o => o.OrderID == orderId && !o.IsDeleted);
+
+            if (order == null)
+            {
+                return null; 
+            }
+
+            return order.IsActive; 
         }
     }
 }
