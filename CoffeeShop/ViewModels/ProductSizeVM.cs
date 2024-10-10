@@ -1,14 +1,9 @@
 ﻿using DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
-namespace BussinessObjects.DTOs
+namespace CoffeeShop.ViewModels
 {
-    public class ProductSizesViewDto
+    public class ProductSizeVM
     {
         public int ProductSizeID { get; set; }
         public int ProductID { get; set; }
@@ -17,8 +12,8 @@ namespace BussinessObjects.DTOs
         public Size Size { get; set; }
         public decimal Price { get; set; }
         public decimal OriginalPrice { get; set; }
-        public bool IsDeleted { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public bool IsActive { get; set; } = true;
         public DateTime CreateDate { get; set; }
         public DateTime? ModifyDate { get; set; }
     }
