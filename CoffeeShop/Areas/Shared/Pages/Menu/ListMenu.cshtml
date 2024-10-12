@@ -10,7 +10,13 @@
 <p>
     <a asp-area="Admin" asp-page="/Menu/CreateItem">Create New Item</a>
 </p>
-
+<!-- Global Search Input -->
+<form method="get">
+    <div class="form-inline mb-3">
+        <input type="text" name="searchQuery" class="form-control" placeholder="Global Search" value="@Model.SearchQuery" />
+        <button type="submit" class="btn btn-primary ml-2">Search</button>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -63,3 +69,29 @@
         }
     </tbody>
 </table>
+@{
+    var prevDisabled = !Model.ProductSize.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.ProductSize.HasNextPage ? "disabled" : "";
+    int totalPages = Model.ProductSize.TotalPages;
+    int currentPage = Model.ProductSize.PageIndex;
+}
+<div class="pagination">
+    <button onclick="navigateToPage(@(currentPage - 1))" class="btn btn-primary @prevDisabled">Previous</button>
+
+    @for (int i = 1; i <= 3; i++)
+    {
+        <button onclick="navigateToPage(@i)" class="btn btn-primary @(currentPage == i ? "active" : "")">@i</button>
+    }
+
+    <button onclick="navigateToPage(@(currentPage + 1))" class="btn btn-primary @nextDisabled">Next</button>
+</div>
+
+<script>
+    function navigateToPage(pageIndex) {
+        const searchQuery = '@Model.SearchQuery';
+        const baseUrl = '/Shared/Menu/ListMenu';
+        const url = `${baseUrl}?searchQuery=${encodeURIComponent(searchQuery)}&pageIndex=${pageIndex}`;
+        window.location.href = url;
+    }
+</script>
+
