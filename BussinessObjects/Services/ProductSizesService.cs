@@ -38,6 +38,10 @@ namespace BussinessObjects.Services
             {
                 throw new ArgumentException("OriginalPrice cannot be negative.", nameof(productSizeDto.OriginalPrice));
             }
+            if (productSizeDto.OriginalPrice > productSizeDto.Price)
+            {
+                throw new ArgumentException("OriginalPrice cannot greater than Price.");
+            }
             try
             {
                 var productExist = await _productRepository.GetAsync(p => p.ProductID == productSizeDto.ProductID);
@@ -45,7 +49,7 @@ namespace BussinessObjects.Services
                 var productSizeExist = await _productSizesRepository.GetAsync(item => item.ProductSizeID == productSizeDto.ProductSizeID && item.IsDeleted == false && item.IsActive == true);
                 // Do not create if two item have the same product and size
                 // Do not create if the has current productsize
-                if ((productExist != null && sizeExist != null) || sizeExist != null)
+                if (productExist == null || sizeExist == null || productSizeExist != null)
                 {
                     return false;
                 }

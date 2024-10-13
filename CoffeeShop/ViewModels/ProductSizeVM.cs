@@ -1,5 +1,7 @@
 ﻿using DataAccess.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+
 
 namespace CoffeeShop.ViewModels
 {
