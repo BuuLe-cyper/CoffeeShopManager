@@ -19,7 +19,7 @@ namespace BussinessObjects.DTOs
         public decimal OriginalPrice { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
-        public DateTime CreateDate { get; set; } 
+        public DateTime CreateDate { get; set; }
         public DateTime? ModifyDate { get; set; }
     }
 }
