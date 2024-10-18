@@ -28,10 +28,12 @@ namespace CoffeeShop.Areas.Shared.Pages
         [Required]
         [PasswordPropertyText]
         public string Password { get; set; } = string.Empty;
-        public void OnGet()
+        public string ReturnUrl { get; set; } = null;
+        public void OnGet(string returnUrl)
         {
+            ReturnUrl = returnUrl;
         }
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -55,7 +57,8 @@ namespace CoffeeShop.Areas.Shared.Pages
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                    return RedirectToPage("/Index");
+                    return Redirect(returnUrl);
+                    //return RedirectToPage("/Index");
                 }
                 else
                 {
