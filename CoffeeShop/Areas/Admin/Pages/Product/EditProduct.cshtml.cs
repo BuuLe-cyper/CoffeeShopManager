@@ -61,7 +61,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Product
                 throw;
             }
 
-            return RedirectToAction("ListProducts", "Product", new { area = "Admin" });
+            return RedirectToPage("/Product/ListProducts", new { area = "Shared" });
         }
     }
 }

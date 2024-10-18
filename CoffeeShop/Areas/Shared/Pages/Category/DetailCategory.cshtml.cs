@@ -24,8 +24,6 @@ namespace CoffeeShop.Areas.Shared.Pages.Category
             {
                 return NotFound();
             }
-
-            //var product = await _context.Products.FirstOrDefaultAsync(m => m.ProductID == id);
             var category = await _cateService.GetCategory((int)id);
             if (category == null)
             {
