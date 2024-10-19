@@ -47,7 +47,7 @@
                         @foreach (var item in productGroup)
                         {
                             <div>
-                                <a asp-page="./Edit" asp-route-id="@item.ProductSizeID">Edit</a> |
+                                <a asp-area="Admin" asp-page="/Menu/EditItem" asp-route-id="@item.ProductSizeID">Edit</a> |
                                 <a asp-page="./Delete" asp-route-id="@item.ProductSizeID">Delete</a>
                             </div>
                         }

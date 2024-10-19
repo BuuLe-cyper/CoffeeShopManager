@@ -75,7 +75,7 @@ namespace BussinessObjects.Services
 
         public async Task<ProductSizesViewDto> GetProductSize(int productID)
         {
-            var result = await _productSizesRepository.GetAsync(item => item.IsDeleted == false && item.IsActive == true && item.ProductID == productID, includeProperties: "Category,Product");
+            var result = await _productSizesRepository.GetAsync(item => item.IsDeleted == false && item.IsActive == true && item.ProductSizeID == productID, includeProperties: "Product");
             return _mapper.Map<ProductSizesViewDto>(result);
         }
 
@@ -112,16 +112,16 @@ namespace BussinessObjects.Services
                 var productExist = await _productRepository.GetAsync(p => p.ProductID == productSizeDto.ProductID);
                 var sizeExist = await _sizeRepository.GetAsync(s => s.SizeID == productSizeDto.SizeID);
 
-                if (productExist != null && sizeExist != null)
-                {
-                    return false;
-                }
-                else
-                {
+                //if (productExist != null && sizeExist != null)
+                //{
+                //    return false;
+                //}
+                //else
+                //{
                     ProductSize product = _mapper.Map<ProductSize>(productSizeDto);
                     await _productSizesRepository.UpdateAsync(product);
                     return true;
-                }
+                //}
             }
             catch (Exception)
             {

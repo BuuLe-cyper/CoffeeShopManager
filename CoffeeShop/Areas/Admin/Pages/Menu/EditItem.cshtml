@@ -1,0 +1,37 @@
+﻿@page
+@model CoffeeShop.Areas.Admin.Pages.Menu.EditItemModel
+@{
+    ViewData["Title"] = "Edit Product Size";
+}
+
+<h2>Edit Product Size</h2>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form method="post">
+    <input type="hidden" name="Id" value="@Model.ProductSize.ProductSizeID" />
+
+    <div class="form-group">
+        <label asp-for="ProductSize.Price"></label>
+        <input asp-for="ProductSize.Price" class="form-control" />
+        <span asp-validation-for="ProductSize.Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ProductSize.OriginalPrice"></label>
+        <input asp-for="ProductSize.OriginalPrice" class="form-control" />
+        <span asp-validation-for="ProductSize.OriginalPrice" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-area="Shared" asp-page="/Menu/ListMenu" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
