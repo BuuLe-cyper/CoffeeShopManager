@@ -28,3 +28,24 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: 10px;
 }
+#productName, #titleMenu, #itemSizePrice {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+#productName, #titleMenu {
+    font-size: 2em;
+}
+
+#itemSizePrice {
+    font-size: 1.5em;
+    font-weight: 600;
+}
+#titleMenuItems {
+    color: whitesmoke;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+    font-size: 3.5em;
+    text-align : center;
+}
