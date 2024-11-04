@@ -51,15 +51,21 @@
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-center py-3" style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); margin-top : 150px">
         <div class="container">
-            &copy; 2024 - CoffeeShop - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            <p class="text-white">123 Nguyen Van Linh St, District Hai Chau, Da Nang City - Phone: (123) 456-7890 - Email: support@coffeeshop.com</p>
+            <p class="text-white">
+                <a class="text-white" asp-area="" asp-page="/Terms">Terms of Service</a> |
+                <a class="text-white" href="https://facebook.com/coffeeshop" target="_blank">Facebook</a> |
+                <a class="text-white" href="https://instagram.com/coffeeshop" target="_blank">Instagram</a>
+            </p>
         </div>
     </footer>
 

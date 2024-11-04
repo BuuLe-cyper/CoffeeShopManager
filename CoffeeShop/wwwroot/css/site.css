@@ -20,6 +20,11 @@ html {
 body {
   margin-bottom: 60px;
 }
+footer {
+    backdrop-filter: blur(5px);
+}
+
+
 .product-image {
     width: 200px;
     height: 200px;
