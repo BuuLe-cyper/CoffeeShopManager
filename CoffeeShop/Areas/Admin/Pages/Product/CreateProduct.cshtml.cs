@@ -40,7 +40,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Product
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var checkFile = Validations.IsImageFile(File);
+            var checkFile = CoffeeShop.Helper.Validations.IsImageFile(File);
             if (!checkFile)
             {
                 throw new InvalidOperationException("File Image Not Valid");

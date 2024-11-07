@@ -1,7 +1,6 @@
 using AutoMapper;
 using BussinessObjects.DTOs;
 using BussinessObjects.Services;
-using CoffeeShop.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -32,7 +31,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Size
         {
             ArgumentNullException.ThrowIfNull(nameof(Size.SizeName));
             Size.SizeName = Size.SizeName.Trim();
-            bool isValidData = Validations.IsString(Size.SizeName);
+            bool isValidData = CoffeeShop.Helper.Validations.IsString(Size.SizeName);
             if (isValidData)
             {
                 SizeDto sizeDto = _mapper.Map<SizeDto>(Size);

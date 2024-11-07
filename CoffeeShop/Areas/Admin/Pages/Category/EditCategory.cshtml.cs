@@ -46,7 +46,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Category
         {
             ArgumentNullException.ThrowIfNull(nameof(Category.CategoryName));
             Category.CategoryName = Category.CategoryName.ToUpper().Trim();
-            bool isValidData = Validations.IsString(Category.CategoryName);
+            bool isValidData = CoffeeShop.Helper.Validations.IsString(Category.CategoryName);
             try
             {
                 if (isValidData)
