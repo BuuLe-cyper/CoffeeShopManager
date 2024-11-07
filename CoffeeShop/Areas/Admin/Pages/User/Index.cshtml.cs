@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CoffeeShop.Areas.Admin.Pages.User
 {
-    [Authorize(Roles="Admin")]
+    [Authorize(Policy="AdminOnly")]
     public class IndexModel : PageModel
     {
         private readonly IUserService _service;

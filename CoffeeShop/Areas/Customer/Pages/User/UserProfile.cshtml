@@ -1,0 +1,113 @@
+﻿@page
+@model CoffeeShop.Areas.Customer.Pages.User.UserProfileModel
+@{
+    var user = Model.User;
+    ViewData["Title"] = "UserProfile";
+}
+<div class="card" style="width: 100%; max-width: 600px; margin: 20px auto;">
+    <div class="card-header">
+        <h2 class="text-center">Profile</h2>
+        <p class="text-center text-danger">@Model.ErrorMessage</p>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" asp-for="@Model.User.Password" />
+            <input type="hidden" asp-for="@Model.User.UserID" />
+            <div class="row mb-2">
+                <div class="col-4">
+                    <strong>Username:</strong>
+                </div>
+                <div class="col-8">
+                    <span id="displayUsername">@(!string.IsNullOrWhiteSpace(user.Username) ? user.Username : "Not configured")</span>
+                    <input id="editUsername" class="form-control d-none" asp-for="@Model.User.Username" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-4">
+                    <strong>Full Name:</strong>
+                </div>
+                <div class="col-8">
+                    <span id="displayFullName">@(!string.IsNullOrWhiteSpace(user.FullName) ? user.FullName : "Not configured")</span>
+                    <input id="editFullName" class="form-control d-none" asp-for="@Model.User.FullName" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-4">
+                    <strong>Phone Number:</strong>
+                </div>
+                <div class="col-8">
+                    <span id="displayPhoneNumber">@(!string.IsNullOrWhiteSpace(user.PhoneNumber) ? user.PhoneNumber : "Not configured")</span>
+                    <input id="editPhoneNumber" class="form-control d-none" asp-for="@Model.User.PhoneNumber" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-4">
+                    <strong>Email:</strong>
+                </div>
+                <div class="col-8">
+                    <span id="displayEmail">@(!string.IsNullOrWhiteSpace(user.Email) ? user.Email : "Not configured")</span>
+                    <input id="editEmail" class="form-control d-none" asp-for="@Model.User.Email" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6 mx-auto mt-2">
+                    <button id="editButton" class="btn btn-outline-primary w-100" type="button" onclick="toggleEdit()">Edit</button>
+                    <button id="cancelBtn" class="btn btn-outline-secondary collapse" type="button" onclick="toggleEdit()">Cancel</button>
+                    <button id="saveBtn" class="btn btn-outline-success collapse" type="submit">SaveChange</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleEdit() {
+            // Toggle between display and input fields
+            const isEditing = document.getElementById('editUsername').classList.contains('d-none');
+
+            if (isEditing) {
+                document.getElementById('displayUsername').classList.add('d-none');
+                document.getElementById('editUsername').classList.remove('d-none');
+
+                document.getElementById('displayFullName').classList.add('d-none');
+                document.getElementById('editFullName').classList.remove('d-none');
+
+                document.getElementById('displayPhoneNumber').classList.add('d-none');
+                document.getElementById('editPhoneNumber').classList.remove('d-none');
+
+                document.getElementById('displayEmail').classList.add('d-none');
+                document.getElementById('editEmail').classList.remove('d-none');
+
+                document.getElementById('editButton').classList.add('collapse');
+                document.getElementById('cancelBtn').classList.remove('collapse');
+                document.getElementById('saveBtn').classList.remove('collapse');
+
+            } else {
+                document.getElementById('displayUsername').classList.remove('d-none');
+                document.getElementById('editUsername').classList.add('d-none');
+                document.getElementById('displayUsername').innerText = document.getElementById('editUsername').value;
+
+                document.getElementById('displayFullName').classList.remove('d-none');
+                document.getElementById('editFullName').classList.add('d-none');
+                document.getElementById('displayFullName').innerText = document.getElementById('editFullName').value;
+
+                document.getElementById('displayPhoneNumber').classList.remove('d-none');
+                document.getElementById('editPhoneNumber').classList.add('d-none');
+                document.getElementById('displayPhoneNumber').innerText = document.getElementById('editPhoneNumber').value;
+
+                document.getElementById('displayEmail').classList.remove('d-none');
+                document.getElementById('editEmail').classList.add('d-none');
+                document.getElementById('displayEmail').innerText = document.getElementById('editEmail').value;
+
+                document.getElementById('editButton').classList.remove('collapse');
+                document.getElementById('cancelBtn').classList.add('collapse');
+                document.getElementById('saveBtn').classList.add('collapse');
+            }
+        }
+    </script>
+}
