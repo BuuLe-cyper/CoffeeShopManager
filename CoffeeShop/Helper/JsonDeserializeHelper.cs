@@ -16,11 +16,6 @@ namespace CoffeeShop.Helper
             };
             return JsonConvert.SerializeObject(obj, settings);
         }
-
-        public static T? DeserializeObject<T>(string objString) where T : class 
-        {
-            return JsonConvert.DeserializeObject<T>(objString);
-        }
     }
 
     public class JsonUpperCaseContractResolver : DefaultContractResolver

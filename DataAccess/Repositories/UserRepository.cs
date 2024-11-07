@@ -21,11 +21,5 @@ namespace DataAccess.Repositories
             var user = await _context.Users.FirstOrDefaultAsync(u=>u.Username==username&&u.Password==password);
             return user;
         }
-
-        public async Task UpdateUserAsync(User user)
-        {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-        }
     }
 }

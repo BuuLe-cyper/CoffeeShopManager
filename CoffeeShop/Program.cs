@@ -1,13 +1,19 @@
 using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
+using BussinessObjects.ImageService;
 using BussinessObjects.Services;
+using CoffeeShop.AutoMapper;
+using CoffeeShop.CoffeeShopHub;
+using BussinessObjects.Utility;
 using DataAccess.DataContext;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using CoffeeShop.AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Threading.RateLimiting;
+using DataAccess.Qr;
 
 namespace CoffeeShop
 {
@@ -24,11 +30,19 @@ namespace CoffeeShop
                 options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust session timeout
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-                options.Cookie.MaxAge = TimeSpan.FromDays(7);
             });
 
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
 
             // Add SignalR
             builder.Services.AddSignalR();
@@ -45,10 +59,12 @@ namespace CoffeeShop
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             // Register MailSettings by binding to the configuration section "SmtpSettings"
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
-
+            // Configure FireBase
+            builder.Services.Configure<FireBaseOptions>(builder.Configuration.GetSection("FireBase"));
             // Register MailService as a transient service
             builder.Services.AddTransient<MailService>();
-
+            // Add Firebase Uility
+            builder.Services.AddTransient(typeof(IImageService), typeof(ImageService));
             //Register and Authorization and Cookie authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -69,14 +85,30 @@ namespace CoffeeShop
             builder.Services.AddRazorPages();
 
             //Add Services
-            builder.Services.AddScoped<ISizeService, SizeService>();
+            builder.Services.AddScoped<ITableService, TableService>();
+            builder.Services.AddScoped<IMessService, MessService>();
+            builder.Services.AddScoped(typeof(ISizeService), typeof(SizeService));
+            builder.Services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
+            builder.Services.AddScoped(typeof(IProductService), typeof(ProductService));
+            builder.Services.AddScoped(typeof(IProductSizesService), typeof(ProductSizesService));
             //Add Repositories
-            builder.Services.AddScoped<ISizeRepository, SizeRepository>();
+            builder.Services.AddScoped<ITableRepository, TableRepository>();
+            builder.Services.AddScoped<IMessRepository, MessRepository>();
+            builder.Services.AddScoped(typeof(ISizeRepository), typeof(SizeRepository));
+            builder.Services.AddScoped(typeof(ICategoryRepository), typeof(CategoryRepository));
+            builder.Services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
+            builder.Services.AddScoped(typeof(IProductSizesRepository), typeof(ProductSizesRepository));
+
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);
 
+
+            // Add QR Code
+            builder.Services.AddScoped<GenerateQRCode>();
+
             var app = builder.Build();
+
 
             using (var scope = app.Services.CreateScope())
             {
@@ -91,8 +123,6 @@ namespace CoffeeShop
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-
 
             using (var scope = app.Services.CreateScope())
             {
@@ -111,25 +141,8 @@ namespace CoffeeShop
             //Add Session
             app.UseSession();
 
-            //Middleware to check user role?
-            //app.Use(async (context, next) =>
-            //{
-            //    var userRole = context.Session.GetString("UserRole");
-            //    var path = context.Request.Path.ToString().ToLower();
-            //    if (path.StartsWith("/admin") && (userRole == null || userRole != "Admin"))
-            //    {
-            //        context.Response.Redirect("/AccessDenied");
-            //        return;
-            //    }
 
-            //    if (path.StartsWith("/customer") && (userRole == null || userRole != "Customer"))
-            //    {
-            //        context.Response.Redirect("/AccessDenied");
-            //        return;
-            //    }
 
-            //    await next.Invoke();
-            //});
 
             app.UseRouting();
 
@@ -139,6 +152,30 @@ namespace CoffeeShop
             app.UseAuthorization();
 
             app.MapRazorPages();
+
+            app.UseCors("AllowAll");
+
+            app.UseEndpoints(endpoints =>
+            {
+                // Map Razor Pages
+                endpoints.MapRazorPages();
+
+                // Map SignalR hub
+                endpoints.MapHub<ChatHub>("/chatHub");
+
+                // Map controller routes for admin chat
+                endpoints.MapControllerRoute(
+                    name: "adminChat",
+                    pattern: "Admin/Chats/Chat/{tableId:int}",
+                    defaults: new { area = "Admin", page = "/Chat" });
+
+                // Map controller routes for customer chat
+                endpoints.MapControllerRoute(
+                    name: "customerChat",
+                    pattern: "Customer/Chats/Chat/{tableId:int}",
+                    defaults: new { area = "Customer", page = "/Chat" });
+            });
+
 
             app.Run();
         }

@@ -106,7 +106,8 @@ namespace BussinessObjects.Services
                 if (_user == null)
                     throw new Exception(message: "User doesnt exist!");
                 updatedUser.ModifyDate = DateTime.Now;
-                await _rep.UpdateUserAsync(updatedUser);
+
+                await _rep.UpdateAsync(updatedUser);
             }
             catch (System.Exception)
             {

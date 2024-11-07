@@ -76,11 +76,19 @@ namespace DataAccess.Repositories
             await SaveAsync();
         }
 
-        public async Task UpdateAsync(T entity )
+        public async Task UpdateAsync(T entity)
         {
+            var trackedEntity = _context.Entry(entity).Entity;
 
-
+            if (trackedEntity != null)
+            {
+                _dbSet.Update(trackedEntity);
+            }
+            else
+            {
+                _dbSet.Attach(entity);
                 _dbSet.Update(entity);
+            }
 
             await SaveAsync();
         }

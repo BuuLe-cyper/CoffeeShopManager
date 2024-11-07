@@ -1,0 +1,46 @@
+﻿@page
+@model CoffeeShop.Areas.Admin.Pages.Tables.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Table[0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Table[0].QRCodeTable)
+            </th>
+            <th>Download</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Table) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <img src="@item.QRCodeTable" alt="QR Code" style="width: 100px; height: 100px;" />
+            </td>
+            <td>
+                <a href="?handler=DownloadQRCode&id=@item.TableID" class="btn btn-primary">Download QR Code</a>
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.TableID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.TableID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.TableID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

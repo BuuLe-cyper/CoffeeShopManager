@@ -1,0 +1,128 @@
+﻿@page "{tableId}"
+@model CoffeeShop.Areas.Admin.Pages.Chats.ChatModel
+
+<style>
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .messages-list {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message {
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+        max-width: 60%;
+        word-wrap: break-word;
+    }
+
+    .admin-message {
+        background-color: #d1e7dd;
+        align-self: flex-end;
+    }
+
+    .user-message {
+        background-color: #f8d7da;
+        align-self: flex-start;
+    }
+
+    .input-container {
+        display: flex;
+        padding: 10px;
+        background-color: #fff;
+    }
+
+    #messageInput {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    #sendMessage {
+        margin-left: 10px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+
+<h2>Admin Chat Room @Model.TableId</h2>
+
+<div class="chat-container">
+    <div id="messagesList" class="messages-list"></div>
+
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Type your message..." />
+        <button id="sendMessage">Send</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        connection.on("ReceiveMessage", function (user, role, messageContent, sentAt, alignment) {
+            const msgClass = role === "Admin" ? "admin-message" : "user-message";
+            const li = document.createElement("div");
+            li.className = `message ${msgClass}`;
+
+            li.style.alignSelf = alignment === "right" ? "flex-end" : "flex-start";
+
+            li.innerHTML = `<strong>${role}:</strong> ${messageContent} <br><small>${new Date(sentAt).toLocaleTimeString()}</small>`;
+
+            document.getElementById("messagesList").appendChild(li);
+
+            document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
+        });
+
+        document.getElementById("sendMessage").addEventListener("click", function () {
+            const messageInput = document.getElementById("messageInput");
+            const userId = "@ViewData["UserId"]";
+            const message = messageInput.value.trim();
+
+            if (!message) {
+                alert("Message cannot be empty.");
+                return;
+            }
+
+            connection.invoke("SendMessage", "@Model.TableId", userId, message)
+                .catch(function (err) {
+                    console.error(err.toString());
+                });
+
+            messageInput.value = '';
+        });
+
+        connection.start()
+            .then(function () {
+                const tableId = "@Model.TableId";
+                connection.invoke("JoinRoom", tableId)
+                    .catch(function (err) {
+                        console.error("Error joining room:", err.toString());
+                    });
+            })
+            .catch(function (err) {
+                console.error("Connection failed:", err.toString());
+            });
+    </script>
+}
+
