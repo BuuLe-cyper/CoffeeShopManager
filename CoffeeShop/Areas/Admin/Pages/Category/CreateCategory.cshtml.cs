@@ -33,7 +33,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Category
         {
             ArgumentNullException.ThrowIfNull(nameof(Category.CategoryName));
             Category.CategoryName = Category.CategoryName.Trim();
-            bool isValidData = Validations.IsString(Category.CategoryName);
+            bool isValidData = Helper.Validations.IsString(Category.CategoryName);
             if (isValidData)
             {
                 CategoryDto cateDto = _mapper.Map<CategoryDto>(Category);

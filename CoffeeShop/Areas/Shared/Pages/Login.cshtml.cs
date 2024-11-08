@@ -102,7 +102,7 @@ namespace CoffeeShop.Areas.Shared.Pages
                         new Claim("userId", userDTO.UserID.ToString())
                     };
 
-                    string areaName;
+                    string areaName = "";
                     string pageName = "/Index";
 
                     if (userDTO.AccountType == 1)
@@ -132,7 +132,7 @@ namespace CoffeeShop.Areas.Shared.Pages
 
                     LoginSessionConfigure(userDTO);
 
-                    return RedirectToPage("/Index");
+                    return RedirectToPage(pageName, new { area = areaName });
                 }
                 else
                 {
@@ -147,7 +147,8 @@ namespace CoffeeShop.Areas.Shared.Pages
         {
             // Sign out the user
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
+            //Delete cookie
+            Response.Cookies.Delete("RmLoginUserId");
             // Clear the session
             HttpContext.Session.Clear();
 

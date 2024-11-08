@@ -14,35 +14,47 @@ namespace CoffeeShop.Areas.Customer.Pages.User
     {
         private readonly IUserService _service = service;
         private readonly IMapper _mapper = mapper;
+
         [BindProperty]
-        public new UserVM User { get; set; } = default!;
+        public new UserVM? User { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
-        public void OnGet()
+        public IActionResult OnGet()
         {
             string? userJson = HttpContext.Session.GetString("User");
-            if (userJson != null)
+            if (userJson == null)
+                return RedirectToPage("/Login");
+
+            var userObject = JsonDeserializeHelper.DeserializeObject<UserVM>(userJson);
+            if (userObject != null)
             {
-                var userObject = JsonDeserializeHelper.DeserializeObject<UserVM>(userJson);
-                if (userObject != null)
-                {
-                    User = userObject;
-                }
-                else
-                {
-                    ErrorMessage = "Cast user failed";
-                }
+                User = userObject;
             }
             else
             {
-                ErrorMessage = "Cant get user from session";
+                ErrorMessage = "There are some unexpected error has occur. Please try access this page later!";
             }
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
-                await _service.UpdateUser(_mapper.Map<UsersDTO>(User));
+                try
+                {
+                    var dtoUser = _mapper.Map<UsersDTO>(User);
+                    await _service.UpdateUser(dtoUser);
+
+                    //update new user info into session
+                    string userJson = JsonDeserializeHelper.SerializeObject(User);
+                    HttpContext.Session.SetString("User", userJson);
+                }
+                catch (Exception)
+                {
+                    ErrorMessage = "Updated Fail";
+                }
+
             }
             else ErrorMessage = "Updated Fail";
             return Page();

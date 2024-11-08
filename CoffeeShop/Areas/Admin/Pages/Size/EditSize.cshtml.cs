@@ -47,7 +47,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Size
         {
             ArgumentNullException.ThrowIfNull(nameof(Size.SizeName));
             Size.SizeName = Size.SizeName.ToUpper().Trim();
-            bool isValidData = Validations.IsString(Size.SizeName);
+            bool isValidData = Helper.Validations.IsString(Size.SizeName);
             try
             {
                 if (isValidData)
