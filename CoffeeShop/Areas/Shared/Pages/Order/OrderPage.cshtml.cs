@@ -28,14 +28,14 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
         public async Task OnGetAsync(int? productId, int? sizeId)
         {
-            var categpry = await _categoryService.GetAllCategory();
-            Category = _mapper.Map<IEnumerable<CategoryVM>>(categpry);
+            var categories = await _categoryService.GetAllCategory();
+            Category = categories != null ? _mapper.Map<IEnumerable<CategoryVM>>(categories) : new List<CategoryVM>();
 
             var products = await _productService.GetAllProduct();
-            Product = _mapper.Map<IEnumerable<ProductVM>>(products);
+            Product = products != null ? _mapper.Map<IEnumerable<ProductVM>>(products) : new List<ProductVM>();
 
             var productSizes = await _productSizesService.GetAllProductSizes();
-            ProductSize = _mapper.Map<IEnumerable<ProductSizeVM>>(productSizes);
+            ProductSize = productSizes != null ? _mapper.Map<IEnumerable<ProductSizeVM>>(productSizes) : new List<ProductSizeVM>();
         }
     }
 }
