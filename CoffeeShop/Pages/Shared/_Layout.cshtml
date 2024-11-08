@@ -73,7 +73,27 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(window).on('load', function () {
+            if (!sessionStorage.getItem('firstVisit')) {
+                loadLoginSession();
+                console.log("hello,world!");
+                sessionStorage.setItem('firstVisit', true);
+            }
+        });
 
+        function loadLoginSession() {
+            $.ajax({
+                url: '/Admin/User?handler=OnLoadAuthenticationAsync', // Update the URL to match your API route
+                type: 'GET',
+                success: function (response) {
+                },
+                error: function (error) {
+                    console.error("Error calling C# method:", error);
+                }
+            });
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

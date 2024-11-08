@@ -1,6 +1,5 @@
 ﻿@page
 @model CoffeeShop.Areas.Admin.Pages.User.IndexModel
-
 @{
     ViewData["Title"] = "Index";
 }
@@ -14,53 +13,102 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Users[0].PhoneNumber)
+                Phone Number
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Users[0].Username)
+                UserName
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Users[0].Password)
+                Full Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Users[0].FullName)
+                Account Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Users[0].AccountType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Users[0].Email)
+                Email
             </th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Users) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.UserID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.UserID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.UserID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Users)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @switch (item.AccountType)
+                    {
+                        case 0:
+                            <span>Customer</span>
+                            break;
+                        case 1:
+                            <span>Admin</span>
+                            break;
+                        default: break;
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.UserID">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.UserID">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.UserID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <span class="mr-2">Page Size:</span>
+        <select asp-items="@Model.PageSizeList" id="pageSizeSelector">
+        </select>
+    </div>
+    <div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination mb-0">
+                <li class="page-item @(!Model.Users.HasPreviousPage ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-route-pageIndex="@(Model.Users.PageIndex-1)"
+                       asp-route-pageSize="@Model.Users.PageSize">Previous</a>
+                </li>
+                @for (int i = 1; i <= Model.Users.TotalPages; i++)
+                {
+                    <li class="page-item @(Model.Users.PageIndex == i ? "active" : "")">
+                        <a class="page-link"
+                           asp-route-pageIndex="@i"
+                           asp-route-pageSize="@Model.Users.PageSize">@i</a>
+                    </li>
+                }
+                <li class="page-item @(!Model.Users.HasNextPage ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-route-pageIndex="@(Model.Users.PageIndex+1)"
+                       asp-route-pageSize="@Model.Users.PageSize">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('#pageSizeSelector').on('change', function () {
+                var pageSize = $(this).val();
+                // Reload the page with the pageSize parameter
+                window.location.href = window.location.pathname + "?pageSize=" + pageSize;
+            });
+        });
+    </script>
+}
