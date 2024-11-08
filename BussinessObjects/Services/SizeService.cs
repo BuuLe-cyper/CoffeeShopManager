@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BussinessObjects.Services
 {
@@ -25,8 +24,11 @@ namespace BussinessObjects.Services
             ArgumentNullException.ThrowIfNull(nameof(sizeDto.sizeName));
             try
             {
+                sizeDto.sizeName = sizeDto.sizeName.Trim().ToUpper();
                 var sizeNameExist = await GetSizeName(sizeDto.sizeName);
-                if (sizeNameExist == null)
+                var deletedSizeName = await _sizeRepository.GetAsync(item => item.SizeName == sizeDto.sizeName
+                                                                          && item.IsDeleted == true && item.IsActive == false);
+                if (sizeNameExist == null && (deletedSizeName != null || deletedSizeName == null))
                 {
                     var entity = _mapper.Map<Size>(sizeDto);
                     await _sizeRepository.CreateAsync(entity);
@@ -34,7 +36,7 @@ namespace BussinessObjects.Services
                 }
                 else
                 {
-                    throw new Exception("The Size Name Existed");
+                    return false;
                 }
             }
             catch (Exception ex)
@@ -43,22 +45,22 @@ namespace BussinessObjects.Services
             }
         }
 
-        public async Task<IEnumerable<Size>> GetAllSize()
+        public async Task<IEnumerable<SizeViewDto>> GetAllSize()
         {
             var sizes = await _sizeRepository.GetAllAsync(s => s.IsDeleted == false && s.IsActive == true);
-            return sizes;
+            return _mapper.Map<IEnumerable<SizeViewDto>>(sizes);
         }
 
-        public async Task<Size> GetSize(int sizeID)
+        public async Task<SizeViewDto> GetSize(int sizeID)
         {
             var size = await _sizeRepository.GetAsync(s => s.IsDeleted == false && s.IsActive == true && s.SizeID == sizeID);
-            return size;
+            return _mapper.Map<SizeViewDto>(size);
         }
 
-        public async Task<Size> GetSizeName(string sizeName)
+        public async Task<SizeViewDto> GetSizeName(string sizeName)
         {
             var size = await _sizeRepository.GetAsync(s => s.IsDeleted == false && s.IsActive == true && s.SizeName == sizeName);
-            return size;
+            return _mapper.Map<SizeViewDto>(size);
         }
 
         public async Task<bool> SoftDeleteSize(int sizeID)
@@ -66,7 +68,7 @@ namespace BussinessObjects.Services
             return await _sizeRepository.SoftDeleteSizeEntity(sizeID);
         }
 
-        public async Task<bool> UpdateSize(Size size)
+        public async Task<bool> UpdateSize(SizeViewDto size)
         {
             ArgumentNullException.ThrowIfNull(size, nameof(size));
 
@@ -74,20 +76,27 @@ namespace BussinessObjects.Services
             {
                 var sizeExists = await _sizeRepository.GetAsync(s => s.SizeID == size.SizeID && s.IsDeleted == false && s.IsActive == true)
                     ?? throw new Exception("Size Not Found");
-                // Ensuring no permission to modify this field
-                size.IsDeleted = false;
-                size.IsActive = true;
-                size.CreateDate = sizeExists.CreateDate;
-                size.ModifyDate = DateTime.Now;
+                var sizeNameExist = await GetSizeName(size.SizeName);
+                if (sizeNameExist == null)
+                {
+                    // Ensuring no permission to modify this field
+                    size.IsDeleted = false;
+                    size.IsActive = true;
+                    size.CreateDate = sizeExists.CreateDate;
+                    size.ModifyDate = DateTime.Now;
 
-                await _sizeRepository.UpdateAsync(size);
-                return true;
+                    await _sizeRepository.UpdateAsync(_mapper.Map<Size>(size));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred", ex);
             }
         }
-
     }
 }

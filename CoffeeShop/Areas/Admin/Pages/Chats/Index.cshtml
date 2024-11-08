@@ -1,0 +1,54 @@
+﻿@page
+@model CoffeeShop.Areas.Admin.Pages.Chats.IndexModel
+@{
+}
+<h2>Chat room table</h2>
+
+<ul class="table-list">
+    @foreach (var table in Model.Tables)
+    {
+        <li>
+            <a href="/Admin/Chats/Chat/@table.TableID">
+                Chat table room: @table.TableID
+            </a>
+        </li>
+    }
+</ul>
+
+<style>
+    .table-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .table-list li {
+        margin: 10px 0;
+    }
+
+    .table-list a {
+        text-decoration: none;
+        color: #007bff;
+        font-size: 18px;
+        padding: 10px 15px;
+        display: block;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .table-list a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .table-list a:active {
+        background-color: #0056b3;
+        color: white;
+    }
+
+    h2 {
+        font-family: 'Arial', sans-serif;
+        font-size: 24px;
+        color: #333;
+    }
+</style>

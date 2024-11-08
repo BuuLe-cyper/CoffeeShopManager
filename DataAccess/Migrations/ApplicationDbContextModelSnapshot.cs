@@ -82,7 +82,7 @@ namespace DataAccess.Migrations
                     b.Property<int>("TableID")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserID")
+                    b.Property<Guid?>("UserID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("MessageID");
@@ -327,12 +327,7 @@ namespace DataAccess.Migrations
                     b.Property<DateTime?>("ModifyDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("QRCodeForMessaging")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("QRCodeForOrderAndPay")
-                        .IsRequired()
+                    b.Property<string>("QRCodeTable")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TableID");
@@ -401,8 +396,7 @@ namespace DataAccess.Migrations
                     b.HasOne("DataAccess.Models.User", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Table");
 

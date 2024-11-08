@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace DataAccess.Models
 {
@@ -25,9 +26,7 @@ namespace DataAccess.Models
 
         [Range(0, 1)]
         public float Discount { get; set; }
-
         public string ImageUrl { get; set; }
-
         public bool IsAvailable { get; set; } = true;
         public bool IsDeleted { get; set; } = false;
         public bool IsActive { get; set; } = true;

@@ -9,6 +9,6 @@ namespace DataAccess.Const
     public enum AccountType
     {
         Customer = 0,
-        Staff = 1
+        Admin = 1
     }
 }

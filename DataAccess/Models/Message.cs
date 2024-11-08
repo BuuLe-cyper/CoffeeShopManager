@@ -18,7 +18,7 @@ namespace DataAccess.Models
         public Table Table { get; set; }
 
         [ForeignKey("User")]
-        public Guid UserID { get; set; }
+        public Guid? UserID { get; set; }
         public User User { get; set; }
 
         public DateTime SentAt { get; set; } = DateTime.Now;
