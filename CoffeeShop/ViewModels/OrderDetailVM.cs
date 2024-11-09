@@ -1,13 +1,8 @@
 ﻿using DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BussinessObjects.DTOs
+namespace CoffeeShop.ViewModels
 {
-    public class OrderDetailDTO
+    public class OrderDetailVM
     {
         public int OrderDetailId { get; set; }
         public int ProductId { get; set; }
@@ -19,5 +14,13 @@ namespace BussinessObjects.DTOs
         public Order Order { get; set; }
         public int ProductSizeID { get; set; }
         public ProductSize ProductSize { get; set; }
+        public int SizeID { get; set; }
+    }
+
+    public class CartData
+    {
+        public List<OrderDetailVM> CartItems { get; set; }
+        public Guid UserId { get; set; }
+        public decimal TotalAmount { get; set; }
     }
 }
