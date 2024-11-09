@@ -111,16 +111,20 @@
         }
 
         document.getElementById('checkout-button').addEventListener('click', function () {
-            if (cart.length > 0) {
-                window.location.href = '/checkout';  
+
+             if (cart.length > 0) {
+               
+                window.location.href = '/Customer/Shopping/Cart';
             } else {
-                alert('Your cart is empty!');
-            }
-        });
+                alert('your cart is empty!');
+             }
+         });
 
         document.getElementById('back-to-menu').addEventListener('click', function () {
             sessionStorage.setItem('cart', JSON.stringify(cart)); 
             window.location.href = '/Shared/Order/OrderPage';  
         });
+
+
     });
 </script>
