@@ -40,22 +40,30 @@ namespace CoffeeShop.Areas.Shared.Pages
                 {
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Name,UserName),
-                         new Claim("userId", userDTO.UserID.ToString())
+                        new Claim(ClaimTypes.Name, UserName),
+                        new Claim("userId", userDTO.UserID.ToString())
                     };
+
+                    string areaName;
+                    string pageName = "/Index";
 
                     if (userDTO.AccountType == 1)
                     {
                         claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                        areaName = "Admin"; // Specify the Admin area
                     }
                     else
                     {
                         claims.Add(new Claim(ClaimTypes.Role, "User"));
+                        areaName = "Customer"; // Specify the Customer area
                     }
+
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                    return RedirectToPage("/Index");
+
+                    // Redirect to the Index page in the specified area
+                    return RedirectToPage(pageName, new { area = areaName });
                 }
                 else
                 {

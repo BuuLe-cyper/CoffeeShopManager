@@ -1,0 +1,32 @@
+﻿@page
+@model CoffeeShop.Areas.Customer.Pages.Shopping.CartModel
+@{
+}
+
+<div class="container pt-4">
+	<h1 class="display-4 font-weight-normal font-otomanopee mb-4">Cart Totals</h1>
+	<form method="post" asp-page-handler="CreatePaymentLink" class="card p-4 shadow-sm">
+		<ul class="list-unstyled mb-4">
+			<li class="mb-3 pb-3 border-bottom">
+				<div class="d-flex justify-content-between align-items-center">
+					<label class="font-weight-medium text-secondary">Title</label>
+					<input type="text" class="form-control-plaintext text-right" readonly value="Payment" name="orderName" />
+				</div>
+			</li>
+			<li class="mb-3 pb-3 border-bottom">
+				<div class="d-flex justify-content-between align-items-center">
+					<label class="font-weight-medium text-secondary">Total</label>
+					<input type="text" class="form-control-plaintext text-right" readonly id="totalSubtotalInput" value="2000" name="totalPrice" />
+				</div>
+			</li>
+			<li class="mb-3 pb-3 border-bottom">
+				<div class="d-flex justify-content-between align-items-center">
+					<label class="font-weight-medium text-secondary">Description</label>
+					<input type="text" class="form-control-plaintext text-right" readonly value="Payment" name="description" />
+				</div>
+			</li>
+		</ul>
+		<button type="submit" class="btn btn-primary btn-lg w-100">Tạo Payment Link</button>
+	</form>
+</div>
+

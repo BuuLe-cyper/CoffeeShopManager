@@ -6,6 +6,8 @@ using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using Net.payOS.Types;
+using Net.payOS;
 using Newtonsoft.Json;
 
 namespace CoffeeShop.Areas.Shared.Pages.Order
@@ -16,25 +18,26 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
         private readonly IOrderDetailService _orderDetailService;
         private readonly IProductSizesService _productSizesService;
         private readonly IMapper _mapper;
+        private readonly PayOS _payOS;
 
-        public CartModel(IOrderService orderService, IMapper mapper, IOrderDetailService orderDetailService, IProductSizesService productSizesService)
+        public CartModel(IOrderService orderService, IMapper mapper, IOrderDetailService orderDetailService, IProductSizesService productSizesService, PayOS payOS)
         {
             _orderService = orderService;
             _orderDetailService = orderDetailService;
             _mapper = mapper;
             _productSizesService = productSizesService;
+            _payOS = payOS;
         }
 
         public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
         public IEnumerable<OrderVM> Orders { get; set; } = default!;
 
-        public async Task<IActionResult> OnPostCheckoutAsync(string cartData, string? paymentMethod)
+        public async Task<IActionResult> OnPostCheckoutAsync(string cartData, string? paymentMethod, CreatePaymentLinkRequest body)
         {
             if (string.IsNullOrEmpty(cartData))
             {
                 return BadRequest("Cart data is empty or invalid.");
             }
-
             try
             {
                 var cart = JsonConvert.DeserializeObject<CartData>(cartData);
@@ -56,8 +59,6 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                 var order = _mapper.Map<OrderDTO>(orderVM);
                 await _orderService.CreateOrder(order);
 
-                if (!string.IsNullOrEmpty(paymentMethod) && paymentMethod.Equals("Cash"))
-                {
                     // Process for cash
                     foreach (var item in cart.CartItems)
                     {
@@ -74,16 +75,29 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                         var orderDetailDTO = _mapper.Map<OrderDetailDTO>(orderDetail);
                         await _orderDetailService.AddOrderDetail(orderDetailDTO);
                     }
-                }
-                else
-                {
-                    // Process for bank trasfer
-                }
-                // Process the cart data here
-                // Save Data
-         
-                // Return success response
-                return new JsonResult(new { success = true });
+
+                    if (!String.IsNullOrEmpty(paymentMethod) && paymentMethod.Equals("BankTransfer"))
+                    {
+                        body.UserInfor = cart.UserId.ToString();
+                        body.TotalPrice = cart.TotalAmount;
+                        try
+                        {
+                            int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
+                            ItemData item = new ItemData(body.UserInfor, 1, (int)Math.Round(cart.TotalAmount));
+                            List<ItemData> items = new List<ItemData> { item };
+                            //PaymentData paymentData = new PaymentData(orderCode, (int)body.TotalPrice, body.Description, items, body.cancelUrl, body.returnUrl);
+                            PaymentData paymentData = new PaymentData(orderCode, 2000, body.Description, items, body.cancelUrl, body.returnUrl);
+
+                            CreatePaymentResult paymentResult = await _payOS.createPaymentLink(paymentData);
+
+                            return Redirect(paymentResult.checkoutUrl);
+                        }
+                        catch (System.Exception exception)
+                        {
+                            return Content("Error Payment Link");
+                        }
+                    }
+                 return new JsonResult(new { success = true });
             }
             catch (JsonException ex)
             {
