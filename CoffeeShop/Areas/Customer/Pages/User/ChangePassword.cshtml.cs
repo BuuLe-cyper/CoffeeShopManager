@@ -11,7 +11,6 @@ using System.ComponentModel.DataAnnotations;
 namespace CoffeeShop.Areas.Customer.Pages.User
 {
     [Authorize(Roles = "User")]
-    [BindProperties]
     public class ChangePasswordModel : PageModel
     {
         private readonly IUserService _service;
@@ -23,11 +22,12 @@ namespace CoffeeShop.Areas.Customer.Pages.User
         }
         public string? ErrorMessage { get; set; }
 
-        [Length(6, 15)]
+        [BindProperty]
         [Display(Name = "Old password")]
         [Required]
         public string OldPassword { get; set; } = string.Empty;
 
+        [BindProperty]
         [Length(6, 15)]
         [Display(Name = "New password")]
         [Required]
@@ -35,6 +35,7 @@ namespace CoffeeShop.Areas.Customer.Pages.User
         public string NewPass { get; set; } = string.Empty;
 
         [Length(6, 15)]
+        [BindProperty]  
         [Required]
         [Display(Name = "Confirm password")]
 
@@ -49,7 +50,7 @@ namespace CoffeeShop.Areas.Customer.Pages.User
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToPage();
+                return Page();
             }
             string? userJson = HttpContext.Session.GetString("User");
             if (userJson == null)
@@ -58,12 +59,12 @@ namespace CoffeeShop.Areas.Customer.Pages.User
             if (userObject == null)
             {
                 ErrorMessage = "Some error has occour. We cant confirm your old password, please try again";
-                return RedirectToPage();
+                return Page();
             }
             if (userObject.Password != OldPassword)
             {
                 ErrorMessage = "Old password incorrect! Please try again carefully!";
-                return RedirectToPage();
+                return Page();
             }
             userObject.Password = NewPass;
             try

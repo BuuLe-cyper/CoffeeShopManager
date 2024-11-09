@@ -63,9 +63,12 @@ namespace BussinessObjects.Services
             return _mapper.Map<UsersDTO>(user);
         }
 
+        public async Task<UsersDTO> GetUserByEmail(string email)
+            => _mapper.Map<UsersDTO>(await _rep.GetAsync(u => u.Email == email));
+
         public async Task<IEnumerable<UsersDTO>> GetUsers(string? includeProperty = null)
         {
-            var users = await _rep.GetAllAsync(u=>u.IsDeleted==false,includeProperty);
+            var users = await _rep.GetAllAsync(u => u.IsDeleted == false, includeProperty);
             var usersList = new List<UsersDTO>();
             foreach (var user in users)
             {
@@ -83,6 +86,7 @@ namespace BussinessObjects.Services
 
         public async Task Register(string username, string password, string email)
         {
+            var existedUser = await _rep.GetAsync(u => u.Email == email);
             var dtoUser = new UsersDTO
             {
                 UserName = username,

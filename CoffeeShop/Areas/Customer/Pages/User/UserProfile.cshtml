@@ -54,7 +54,12 @@
                         <input class="form-control d-none" asp-for="@Model.User.Email" />
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col-4 fw-bold">Password: </div>
+                    <div class="col-8">
+                        <a class="text-end" asp-page="./ChangePassword">Change Password</a>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-6 mx-auto mt-2 d-flex justify-content-between">
                         <button id="editBtn" class="btn btn-outline-primary w-100" type="button">Edit</button>
@@ -62,6 +67,8 @@
                         <button id="saveBtn" class="btn btn-outline-success collapse w-40" type="submit">SaveChange</button>
                     </div>
                 </div>
+                
+
             </form>
         </div>
     }

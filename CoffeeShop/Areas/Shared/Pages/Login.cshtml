@@ -25,6 +25,7 @@
                 <input asp-for="@Model.RememberMe" class="form-check-input" />
                 <label asp-for="@Model.RememberMe" class="form-check-label">Remember Me</label>
             </div>
+            <a asp-page="./ForgotPassword" class="text-danger text-decoration-none">ForgotPassword?</a>
             <div class="d-flex flex-column text-center">
                 <button class="btn btn-primary mb-2">Login</button>
                 <a class="btn btn-success" asp-page="./Register">Register</a>

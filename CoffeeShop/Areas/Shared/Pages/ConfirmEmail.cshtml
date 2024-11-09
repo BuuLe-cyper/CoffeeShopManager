@@ -10,7 +10,7 @@
             <div class="card mt-5">
                 <div class="card-header text-center">
                     <h4>Enter OTP to Confirm Email</h4>
-                    <p class="text-danger" id="countdown">03:00</p>
+                    <p class="text-danger">The OTP will going to expired within 3 min</p>
                 </div>
                 <div class="card-body">
                     <form method="post" id="otpForm">
@@ -33,10 +33,6 @@
                             @Model.ErrorMessage
                         </div>
                     }
-
-                    <div class="text-center mt-3">
-                        <p>If you didn’t receive the OTP, <a class="text-danger text-decoration-none">resend it</a>.</p>
-                    </div>
                 </div>
             </div>
         </div>

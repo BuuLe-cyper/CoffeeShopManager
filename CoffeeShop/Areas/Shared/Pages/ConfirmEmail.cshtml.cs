@@ -1,5 +1,7 @@
 using BusinessObjects.Services;
+using BussinessObjects.DTOs;
 using BussinessObjects.Services;
+using CoffeeShop.Helper;
 using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,41 +26,81 @@ namespace CoffeeShop.Areas.Shared.Pages
         public string? OTP { get; set; }
         public DateTime ExpiredTime { get; set; }
 
-        public async Task<IActionResult> OnGet(string userEmail)
+        public async Task<IActionResult> OnGetAsync(string email, string action)
         {
             // Check if OTP and expiration time are already set in session
             OTP = HttpContext.Session.GetString("OTP");
             var expiredTime = HttpContext.Session.GetString("ExpiredTime");
             ExpiredTime = string.IsNullOrEmpty(expiredTime) ? DateTime.MinValue : DateTime.Parse(expiredTime);
+            TempData["action"] = action;
 
+
+            if (string.IsNullOrEmpty(OTP))
+            {
+                OTP = GenerateOTP();
+                ExpiredTime = DateTime.UtcNow.AddMinutes(3);
+
+                HttpContext.Session.SetString("OTP", OTP);
+                HttpContext.Session.SetString("ExpiredTime", ExpiredTime.ToString("o")); // Store as ISO 8601 format
+
+                await SendMailAsync(email, OTP, action);
+            }
             // Check if the OTP has expired
             if (ExpiredTime <= DateTime.UtcNow && string.IsNullOrEmpty(expiredTime))
             {
                 ErrorMessage = "OTP has expired. Please request a new one.";
                 return Page(); // Return early if the OTP is expired
             }
-
-            if (string.IsNullOrEmpty(OTP))
-            {
-                // Generate new OTP and expiration time if not already set
-                OTP = GenerateOTP();
-                ExpiredTime = DateTime.UtcNow.AddMinutes(3);
-
-                // Store them in session
-                HttpContext.Session.SetString("OTP", OTP);
-                HttpContext.Session.SetString("ExpiredTime", ExpiredTime.ToString("o")); // Store as ISO 8601 format
-
-                // Send the OTP via email to the user
-                await _mailService.SendEmailAsync(userEmail, "Your OTP", $"Your OTP is: {OTP}");
-            }
-
             return Page();
         }
-
-        private string GenerateOTP()
+        public async Task<IActionResult> OnPostAsync()
+        {
+            string? action = TempData["action"] as string;
+            if (action == null)
+                return Page();
+            if (action.Equals("register"))
+            {
+                var ruJson = TempData["RegisterUser"] as string;
+                var registerUser = JsonDeserializeHelper.DeserializeObject<UserVM>(ruJson);
+                if (registerUser == null)
+                    return BadRequest();
+                await _userService.Register(registerUser.Username, registerUser.Password, registerUser.Email);
+                return RedirectToPage("./Login");
+            }
+            if (action.Equals("forgotPassword"))
+            {
+                var fuJson = TempData["forgotPasswordUser"] as string;
+                var forgotPassUser = JsonDeserializeHelper.DeserializeObject<UsersDTO>(fuJson);
+                if (forgotPassUser == null) return BadRequest();
+                await _userService.UpdateUser(forgotPassUser);
+                return RedirectToPage("./Login");
+            }
+            return Page();
+        }
+        private static string GenerateOTP()
         {
             int otp = new Random().Next(100000, 999999);
             return otp.ToString();
         }
+
+        private async Task SendMailAsync(string email, string OTP, string action)
+        {
+            string subject = "";
+            string content = "";
+
+            if (action == "register")
+            {
+                subject = "Welcome! Confirm Your Registration";
+                content = $"Thank you for registering! Your OTP is: {OTP}. Please use this OTP to complete your registration.";
+            }
+            else if (action == "forgotPassword")
+            {
+                subject = "Password Reset Request";
+                content = $"We received a request to reset your password. Your OTP is: {OTP}. Use this OTP to reset your password.";
+            }
+
+            await _mailService.SendEmailAsync(email, subject, content);
+        }
+
     }
 }
