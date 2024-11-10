@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Areas.Shared.Pages.Order
+namespace CoffeeShop.Areas.Customer.Pages.DemoPaymentReturn
 {
-    public class IndexModel : PageModel
+    public class SuccessModel : PageModel
     {
         public void OnGet()
         {
         }
+
     }
 }

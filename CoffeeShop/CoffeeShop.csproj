@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Shared\Pages\NewFolder\" />
+    <Folder Include="Areas\Shared\Pages\Order\" />
   </ItemGroup>
 
 </Project>

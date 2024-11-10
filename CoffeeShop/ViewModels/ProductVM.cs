@@ -31,6 +31,8 @@ namespace CoffeeShop.ViewModels
         [Display(Name = "Modify Date")]
         public DateTime? ModifyDate { get; set; }
         public ICollection<ProductSize> ProductSizes { get; set; }
+
+        public string FormattedPrice { get; set; }
     }
 
 }

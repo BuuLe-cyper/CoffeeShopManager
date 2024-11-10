@@ -32,6 +32,11 @@ namespace BussinessObjects.Services
                 throw;
             }
         }
+        public async Task<IEnumerable<OrderDTO>> GetOrderByOrderId(Guid orderId)
+        {
+            var orders = await _orderRepository.GetOrdersByOrderId(orderId);
+            return _mapper.Map<IEnumerable<OrderDTO>>(orders); 
+        }
 
         public async Task<decimal> CalculateTotalAmount(Guid orderId)
         {

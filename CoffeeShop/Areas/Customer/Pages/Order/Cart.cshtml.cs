@@ -9,8 +9,9 @@ using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Net.payOS.Types;
 using Net.payOS;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
-namespace CoffeeShop.Areas.Shared.Pages.Order
+namespace CoffeeShop.Areas.Customer.Pages.Order
 {
     public class CartModel : PageModel
     {
@@ -31,6 +32,13 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
         public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
         public IEnumerable<OrderVM> Orders { get; set; } = default!;
+        public string TableId { get; set; }
+
+        public async Task OnGetAsync(string tableId)
+        {
+         
+            TableId = tableId;
+        }
 
         public async Task<IActionResult> OnPostCheckoutAsync(string cartData, string? paymentMethod, CreatePaymentLinkRequest body)
         {
@@ -46,7 +54,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                 {
                     return BadRequest("Unable to deserialize the cart data.");
                 }
-                // Create Order
+
                 var orderVM = new OrderVM
                 {
                     OrderId = Guid.NewGuid(),
@@ -54,13 +62,17 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                     OrderDate = DateTime.Now,
                     PaymentMethod = paymentMethod,
                     TotalAmount = cart.TotalAmount,
-                    TableID = 1,
+                    TableID = (int)cart.TableId,
                 };
                 var order = _mapper.Map<OrderDTO>(orderVM);
                 await _orderService.CreateOrder(order);
 
-                    // Process for cash
-                    foreach (var item in cart.CartItems)
+                Guid orderId = order.OrderId;
+                Guid userId = cart.UserId;
+                HttpContext.Session.SetString("CurrentOrderId", orderId.ToString());
+                HttpContext.Session.SetString("UserId", userId.ToString());
+
+                foreach (var item in cart.CartItems)
                     {
                         var productSizeViewDto = await _productSizesService.GetProductName(item.ProductName);
                         var orderDetail = new OrderDetailVM
@@ -80,13 +92,12 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                     {
                         body.UserInfor = cart.UserId.ToString();
                         body.TotalPrice = cart.TotalAmount;
-                        try
-                        {
+                    try
+                    {
                             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
                             ItemData item = new ItemData(body.UserInfor, 1, (int)Math.Round(cart.TotalAmount));
                             List<ItemData> items = new List<ItemData> { item };
-                            //PaymentData paymentData = new PaymentData(orderCode, (int)body.TotalPrice, body.Description, items, body.cancelUrl, body.returnUrl);
-                            PaymentData paymentData = new PaymentData(orderCode, 2000, body.Description, items, body.cancelUrl, body.returnUrl);
+                            PaymentData paymentData = new PaymentData(orderCode, (int)body.TotalPrice, body.Description, items, body.cancelUrl, body.returnUrl);
 
                             CreatePaymentResult paymentResult = await _payOS.createPaymentLink(paymentData);
 
@@ -101,7 +112,6 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
             }
             catch (JsonException ex)
             {
-                // Handle the error if JSON deserialization fails
                 return BadRequest($"Failed to deserialize cart data: {ex.Message}");
             }
 

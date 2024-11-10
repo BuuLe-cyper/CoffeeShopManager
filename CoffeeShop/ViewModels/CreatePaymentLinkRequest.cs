@@ -7,7 +7,7 @@
         public string Description { get; set; } = "BY PAYOS";
         public decimal TotalPrice { get; set; }
         
-        public string returnUrl { get; set; } = "https://localhost:7197/DemoPaymentReturn/Success";
-        public string cancelUrl { get; set; } = "https://localhost:7197/DemoPaymentReturn/Fail";
+        public string returnUrl { get; set; } = "https://localhost:7197/Customer/DemoPaymentReturn/Success";
+        public string cancelUrl { get; set; } = "https://localhost:7197/Customer/DemoPaymentReturn/Fail";
     }
 }

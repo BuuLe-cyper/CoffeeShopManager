@@ -22,5 +22,7 @@ namespace CoffeeShop.ViewModels
         public List<OrderDetailVM> CartItems { get; set; }
         public Guid UserId { get; set; }
         public decimal TotalAmount { get; set; }
+        public int TableId { get; set; }
+
     }
 }

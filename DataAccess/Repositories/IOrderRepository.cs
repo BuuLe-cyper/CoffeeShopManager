@@ -10,5 +10,6 @@ namespace DataAccess.Repositories
     public interface IOrderRepository : IRepository<Order>
     {
         public Task<decimal> CalculateTotalAmount(Guid orderId);
+        public Task<IEnumerable<Order>> GetOrdersByOrderId(Guid orderId);
     }
 }
