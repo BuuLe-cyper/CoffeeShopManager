@@ -1,0 +1,98 @@
+﻿@page
+@model CoffeeShop.Areas.Admin.Pages.Menu.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+<h2>Menu Items</h2>
+
+<p2>Menu Items</p2>
+
+<p>
+    <a asp-area="Admin" asp-page="/Menu/CreateItem">Create New Item</a>
+</p>
+<!-- Global Search Input -->
+<form method="get">
+    <div class="form-inline mb-3">
+        <input type="text" name="searchQuery" class="form-control" placeholder="Global Search" value="@Model.SearchQuery" />
+        <button type="submit" class="btn btn-primary ml-2">Search</button>
+    </div>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Sizes and Prices</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var productGroup in Model.ProductSize.GroupBy(p => new { p.Product.ProductName, p.Product.ImageUrl }))
+        {
+            <tr>
+                <td>
+                    <strong>@productGroup.Key.ProductName</strong>
+                    <div>
+                        <img src="@productGroup.Key.ImageUrl" alt="Product Image" class="product-image" />
+                    </div>
+                </td>
+                <td>
+                    @foreach (var item in productGroup)
+                    {
+                        <p>@item.Size.SizeName - @item.Price.ToString("C")</p>
+                    }
+                </td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @foreach (var item in productGroup)
+                        {
+                            <div>
+                                <a asp-area="Admin" asp-page="/Menu/EditItem" asp-route-id="@item.ProductSizeID">Edit</a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var item in productGroup)
+                        {
+                            <div>
+                                <form asp-page="./AddToCart" method="post">
+                                    <input type="hidden" name="ProductSizeID" value="@item.ProductSizeID" />
+                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                </form>
+                            </div>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@{
+    var prevDisabled = !Model.ProductSize.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.ProductSize.HasNextPage ? "disabled" : "";
+    int totalPages = Model.ProductSize.TotalPages;
+    int currentPage = Model.ProductSize.PageIndex;
+    int totalPagesNumber = (int)Math.Ceiling((double)Model.ProductSize.TotalItems / 4);
+   
+}
+<div class="pagination">
+    <button onclick="navigateToPage(@(currentPage - 1))" class="btn btn-primary @prevDisabled">Previous</button>
+
+    @for (int i = 1; i <= totalPagesNumber; i++)
+    {
+        <button onclick="navigateToPage(@i)" class="btn btn-primary @(currentPage == i ? "active" : "")">@i</button>
+    }
+
+    <button onclick="navigateToPage(@(currentPage + 1))" class="btn btn-primary @nextDisabled">Next</button>
+</div>
+
+<script>
+    function navigateToPage(pageIndex) {
+        const searchQuery = '@Model.SearchQuery';
+        const baseUrl = '/Admin/Menu/Index';
+        const url = `${baseUrl}?searchQuery=${encodeURIComponent(searchQuery)}&pageIndex=${pageIndex}`;
+        window.location.href = url;
+    }
+</script>
+

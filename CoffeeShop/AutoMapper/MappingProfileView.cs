@@ -30,6 +30,7 @@ namespace CoffeeShop.AutoMapper
             CreateMap<OrderDetailDTO, OrderDetailVM>().ReverseMap();
             CreateMap<MenuItemVMDto, ProductSizesViewDto>().ReverseMap();
             CreateMap<MenuItemVMDto, ProductSizeVM>().ReverseMap();
+            CreateMap<ProductSizesViewDto, ProductSizeDto>().ReverseMap();
         }
     }
 }
