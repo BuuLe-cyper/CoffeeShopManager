@@ -2,12 +2,14 @@
 using BussinessObjects.Services;
 using CoffeeShop.ViewModels;
 using DataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Globalization;
 
 namespace CoffeeShop.Areas.Customer.Pages.Order
 {
+    [AllowAnonymous]
     public class OrderPageModel : PageModel
     {
         private readonly IProductService _productService;
