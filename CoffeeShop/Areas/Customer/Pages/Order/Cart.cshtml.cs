@@ -34,7 +34,7 @@ namespace CoffeeShop.Areas.Customer.Pages.Order
         public IEnumerable<OrderVM> Orders { get; set; } = default!;
         public string TableId { get; set; }
 
-        public async Task OnGetAsync(string tableId)
+        public async Task OnGetAsync(string? tableId)
         {
          
             TableId = tableId;

@@ -74,8 +74,9 @@
     const savedCart = sessionStorage.getItem('cart');
     
     const urlParams = new URLSearchParams(window.location.search);
-    const tableId = urlParams.get('tableId'); 
-    
+    //const tableId = urlParams.get('tableId');
+    const tableId = urlParams.get('tableId') === "OrderPage" ? 2 : urlParams.get('tableId'); // asume tableId 2 for staff , remember create this table before test
+
     let cart = [];
     let totalPrice = 0;
 
