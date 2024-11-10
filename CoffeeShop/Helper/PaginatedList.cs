@@ -7,11 +7,13 @@ namespace CoffeeShop.Helper
         public int PageIndex { get; private set; }
         public int PageSize { get; private set; }
         public int TotalPages { get; private set; }
+        public int TotalItems { get; private set; }
         public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+            TotalItems = items.Count;
             this.AddRange(items);
         }
         public bool HasPreviousPage
