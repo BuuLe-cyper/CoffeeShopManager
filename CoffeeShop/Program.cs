@@ -30,6 +30,8 @@ namespace CoffeeShop
                 options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust session timeout
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.MaxAge = TimeSpan.FromDays(7);
             });
 
             builder.Services.AddHttpContextAccessor();
