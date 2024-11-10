@@ -81,15 +81,13 @@
             .withUrl("/chatHub")
             .build();
 
-        // Lấy role từ claims
         const userRole = "@ViewData["Role"]";
 
-        connection.on("ReceiveMessage", function (user, role, messageContent, sentAt, displayName) {
-            // Xác định alignment dựa trên role và userRole
-            let alignment = 'left'; // Mặc định bên trái
+        connection.on("ReceiveMessage", function (user, role, messageContent, sentAt, displayName) {           
+            let alignment = 'left';
 
             if ((role === "Admin" && userRole === "Admin") || (role === "User" && userRole === "User")) {
-                alignment = 'right'; // Admin hoặc User gửi tin nhắn -> bên phải
+                alignment = 'right';
             }
 
             const msgClass = role === "Admin" ? "admin-message" : "user-message";

@@ -31,7 +31,6 @@ namespace CoffeeShop.CoffeeShopHub
                                     .OrderBy(m => m.SentAt)
                                     .ToList();
 
-            // Lấy vai trò của người dùng
             var userRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value ?? "User";
 
             foreach (var message in messages)
@@ -43,10 +42,7 @@ namespace CoffeeShop.CoffeeShopHub
                 {
                     displayName = "Admin";
                 }
-                //// Xác định alignment dựa trên vai trò của người dùng
-                //var alignment = userRole.Equals("Admin")
-                //    ? (isAdminMessage ? "right" : "left")
-                //    : (isAdminMessage ? "left" : "right");
+
 
                 await Clients.Caller.SendAsync("ReceiveMessage", message.UserID.ToString(), role, message.Content, message.SentAt, displayName);
             }
@@ -69,17 +65,12 @@ namespace CoffeeShop.CoffeeShopHub
             var displayName = Context.User?.FindFirst(ClaimTypes.Name)?.Value ?? "User";
             var isAdminMessage = Context.User?.FindFirst(ClaimTypes.Role)?.Value.Equals("Admin") ?? false;
 
-            // Xác định vai trò người dùng
             var role = isAdminMessage ? "Admin" : "User";
             if (isAdminMessage)
             {
                 displayName = "Admin";
             }
-            //
-            //// Xác định alignment dựa trên vai trò của người dùng
-            //var alignment = (isAdminMessage || Context.User?.FindFirst(ClaimTypes.Role)?.Value.Equals("Admin") == true)
-            //    ? "right"
-            //    : "left";
+
 
             await Clients.Group(tableId).SendAsync("ReceiveMessage", userId, role, messageContent, sentAt, displayName);
         }
