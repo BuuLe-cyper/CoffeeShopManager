@@ -10,5 +10,6 @@ namespace DataAccess.Repositories
     public interface IUserRepository:IRepository<User>
     {
         public Task<User?> Login(string username, string password);
+        public Task UpdateUserAsync(User user);
     }
 }

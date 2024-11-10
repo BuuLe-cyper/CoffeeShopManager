@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using BussinessObjects.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using CoffeeShop.Helper;
+using System.Drawing.Printing;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CoffeeShop.Areas.Admin.Pages.Tables
 {
@@ -26,13 +29,25 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
             _tableService = tableService;
             _mapper = mapper;
         }
-
-        public IList<TableVM> Table { get;set; } = default!;
-
-        public async Task OnGetAsync()
+        public string CurrentFilter { get; set; }
+        public PaginatedList<TableVM> Table { get;set; } = default!;
+        public async Task OnGetAsync(string currentFilter, string searchString, int? pageIndex)
         {
-            Table = _mapper.Map<IList<TableVM>>(await _tableService.GetAllAsync());
+            var tableVMs = _mapper.Map<IEnumerable<TableVM>>(await _tableService.GetAllAsync());
+            var tableIQ = tableVMs.AsQueryable();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                tableVMs = tableVMs.Where(s => s.Description.Contains(searchString)).AsQueryable();
+            }
+            var pageSize = 5;
+            var count = tableVMs.Count();
+            var paginatedList = tableVMs.Skip((pageIndex ?? 1 - 1) * pageSize)
+                                        .Take(pageSize)
+                                        .ToList();
+            Table = new PaginatedList<TableVM>(paginatedList, count, pageIndex ?? 1, pageSize);
         }
+
+
         public async Task<IActionResult> OnGetDownloadQRCode(int id)
         {
             var table = _mapper.Map<TableVM>(await _tableService.GetAsync(id));

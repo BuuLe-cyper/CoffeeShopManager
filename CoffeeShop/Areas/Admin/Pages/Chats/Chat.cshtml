@@ -73,6 +73,7 @@
     </div>
 </div>
 
+
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
     <script>
@@ -80,17 +81,23 @@
             .withUrl("/chatHub")
             .build();
 
-        connection.on("ReceiveMessage", function (user, role, messageContent, sentAt, alignment) {
+        const userRole = "@ViewData["Role"]";
+
+        connection.on("ReceiveMessage", function (user, role, messageContent, sentAt, displayName) {           
+            let alignment = 'left';
+
+            if ((role === "Admin" && userRole === "Admin") || (role === "User" && userRole === "User")) {
+                alignment = 'right';
+            }
+
             const msgClass = role === "Admin" ? "admin-message" : "user-message";
             const li = document.createElement("div");
             li.className = `message ${msgClass}`;
-
             li.style.alignSelf = alignment === "right" ? "flex-end" : "flex-start";
 
-            li.innerHTML = `<strong>${role}:</strong> ${messageContent} <br><small>${new Date(sentAt).toLocaleTimeString()}</small>`;
+            li.innerHTML = `<strong>${displayName}:</strong> ${messageContent} <br><small>${new Date(sentAt).toLocaleTimeString()}</small>`;
 
             document.getElementById("messagesList").appendChild(li);
-
             document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
         });
 
@@ -125,4 +132,3 @@
             });
     </script>
 }
-

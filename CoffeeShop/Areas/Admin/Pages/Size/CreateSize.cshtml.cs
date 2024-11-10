@@ -32,7 +32,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Size
         {
             ArgumentNullException.ThrowIfNull(nameof(Size.SizeName));
             Size.SizeName = Size.SizeName.Trim();
-            bool isValidData = Validations.IsString(Size.SizeName);
+            bool isValidData = Helper.Validations.IsString(Size.SizeName);
             if (isValidData)
             {
                 SizeDto sizeDto = _mapper.Map<SizeDto>(Size);

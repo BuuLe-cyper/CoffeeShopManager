@@ -13,6 +13,7 @@ namespace BussinessObjects.Services
         public Task UpdateUser(UsersDTO user);
         public Task DeleteUser(Guid userID);
         public Task<UsersDTO> GetUser(string username);
+        public Task<UsersDTO> GetUserByEmail(string email);
         public Task<UsersDTO> GetUser(Guid id);
         public Task<UsersDTO> Login(string username, string password);
         public Task<IEnumerable<UsersDTO>> GetUsers(string? includeProperty = null);
