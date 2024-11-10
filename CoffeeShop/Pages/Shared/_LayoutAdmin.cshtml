@@ -10,72 +10,78 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="Admin" asp-page="/Index">CoffeeShop</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Chats/Index">Chat Room</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Tables/Index">Table Management</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/User/Index">User Management</a>
-                        </li>
-                    </ul>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <a class="navbar-brand me-auto ms-3" asp-area="Admin" asp-page="/Index">CoffeeShop</a>
                     <ul class="navbar-nav">
                         @if (string.IsNullOrEmpty(Context.Session.GetString("IsLogin")))
+
                         {
                             <li class="nav-item">
                                 <a class="btn btn-outline-dark me-2" asp-area="Shared" asp-page="/Login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-outline-secondary" asp-area="Shared" asp-page="/Register">Register</a>
+                                <a class="btn btn-outline-secondary me-2" asp-area="Shared" asp-page="/Register">Register</a>
                             </li>
                         }
+
                         else
                         {
-                            <form method="post">
-                                <li>
-                                    <button 
-                                        class="btn btn-outline-danger" 
-                                        asp-area="Shared" 
-                                        asp-page="/Login" 
-                                        asp-page-handler="Logout"
-                                    >Logout</button></li>
+                            <form method="post" class="m-0">
+                                <li class="nav-item">
+                                    <button class="btn btn-outline-danger"
+                                            asp-area="Shared"
+                                            asp-page="/Login"
+                                            asp-page-handler="Logout">
+                                        Logout
+                                    </button>
+                                </li>
                             </form>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Size/Index">Size Management</a>
-                        </li>                                       
-                        <li class="nav-item">                       
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Category/Index">Category Management</a>
-                        </li>                                       
-                        <li class="nav-item">                       
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Product/Index">Product Management</a>
-                        </li>                                      
-                        <li class="nav-item">                       
-                            <a class="nav-link text-dark" asp-area="Admin" asp-page="/Menu/Index">Menu Management</a>
-                        </li>
- 
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="d-flex m-2 h-100">
+        <!-- Sidebar menu -->
+        <div class="navbar-left border-end p-2 h-auto position-relative">
+            <ul class="nav d-flex flex-column justify-content-between h-auto">
+                <li class="nav-item ">
+                    <a class="nav-link" asp-area="Admin" asp-page="/Index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-page="/Chats/Index">Chat Room</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-page="/Tables/Index">Table Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-page="/User/Index">User Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-page="/Size/Index">Size Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-page="/Category/Index">Category Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-page="/Product/Index">Product Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Admin" asp-page="/Menu/Index">Menu Management</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
     <footer class="border-top footer text-muted">
