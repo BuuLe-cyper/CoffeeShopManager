@@ -84,17 +84,25 @@
             .withUrl("/chatHub")
             .build();
 
-        connection.on("ReceiveMessage", function (user, role, messageContent, sentAt, alignment) {
+        // Lấy role từ claims
+        const userRole = "@ViewData["Role"]";
+
+        connection.on("ReceiveMessage", function (user, role, messageContent, sentAt, displayName) {
+            // Xác định alignment dựa trên role và userRole
+            let alignment = 'left'; // Mặc định bên trái
+
+            if ((role === "Admin" && userRole === "Admin") || (role === "User" && userRole === "User")) {
+                alignment = 'right'; // Admin hoặc User gửi tin nhắn -> bên phải
+            }
+
             const msgClass = role === "Admin" ? "admin-message" : "user-message";
             const li = document.createElement("div");
             li.className = `message ${msgClass}`;
-
             li.style.alignSelf = alignment === "right" ? "flex-end" : "flex-start";
 
-            li.innerHTML = `<strong>${role}:</strong> ${messageContent} <br><small>${new Date(sentAt).toLocaleTimeString()}</small>`;
+            li.innerHTML = `<strong>${displayName}:</strong> ${messageContent} <br><small>${new Date(sentAt).toLocaleTimeString()}</small>`;
 
             document.getElementById("messagesList").appendChild(li);
-
             document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
         });
 
