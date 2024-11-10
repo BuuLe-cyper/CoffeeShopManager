@@ -36,8 +36,11 @@ namespace CoffeeShop.Areas.Shared.Pages
         [BindProperty]
         public bool RememberMe { get; set; } = false;
         public string ErrorMessage { get; set; } = string.Empty;
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(string ReturnUrl = null)
         {
+
+            TempData["returnURL"] = ReturnUrl;
+
             var rmUserId = Request.Cookies["RmLoginUserId"];
             if (!string.IsNullOrEmpty(rmUserId))
             {
@@ -92,6 +95,7 @@ namespace CoffeeShop.Areas.Shared.Pages
         {
             if (ModelState.IsValid)
             {
+
                 ErrorMessage = "";
                 var userDTO = await _service.Login(UserName, Password);
                 if (userDTO != null)
@@ -131,6 +135,12 @@ namespace CoffeeShop.Areas.Shared.Pages
                     }
 
                     LoginSessionConfigure(userDTO);
+                    if (TempData["returnURL"] != null)
+                    {
+                        string pageUrl = TempData["returnURL"] as string;
+                        return Redirect(pageUrl);
+
+                    }
 
                     return RedirectToPage(pageName, new { area = areaName });
                 }
