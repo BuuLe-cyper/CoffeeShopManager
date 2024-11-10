@@ -20,5 +20,11 @@ namespace DataAccess.Repositories
                                  .Where(od => od.OrderID == orderId)
                                  .SumAsync(od => od.UnitPrice * od.Quantity);
         }
+        public async Task<IEnumerable<Order>> GetOrdersByOrderId(Guid orderId)
+        {
+            return await _context.Orders
+                                    .Where(order => order.OrderID == orderId)
+                                    .ToListAsync();
+        }
     }
 }

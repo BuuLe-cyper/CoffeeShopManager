@@ -4,8 +4,9 @@ using CoffeeShop.ViewModels;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Globalization;
 
-namespace CoffeeShop.Areas.Shared.Pages.Order
+namespace CoffeeShop.Areas.Customer.Pages.Order
 {
     public class OrderPageModel : PageModel
     {
@@ -22,20 +23,37 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
             _mapper = mapper;
         }
 
+        public string TableId { get; set; }
         public IEnumerable<CategoryVM> Category { get; set; } = default!;
         public IEnumerable<ProductVM> Product { get; set; } = default!;
         public IEnumerable<ProductSizeVM> ProductSize { get; set; } = default!;
 
-        public async Task OnGetAsync(int? productId, int? sizeId)
+        public async Task OnGetAsync(int? productId, int? sizeId, string tableId, int? categoryId)
         {
-            var categpry = await _categoryService.GetAllCategory();
-            Category = _mapper.Map<IEnumerable<CategoryVM>>(categpry);
+            var categories = await _categoryService.GetAllCategory();
+            Category = categories != null ? _mapper.Map<IEnumerable<CategoryVM>>(categories) : new List<CategoryVM>();
 
             var products = await _productService.GetAllProduct();
-            Product = _mapper.Map<IEnumerable<ProductVM>>(products);
+            Product = products != null ? _mapper.Map<IEnumerable<ProductVM>>(products) : new List<ProductVM>();
+
+            if (categoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryID == categoryId.Value).ToList();
+            }
 
             var productSizes = await _productSizesService.GetAllProductSizes();
-            ProductSize = _mapper.Map<IEnumerable<ProductSizeVM>>(productSizes);
+            ProductSize = productSizes != null ? _mapper.Map<IEnumerable<ProductSizeVM>>(productSizes) : new List<ProductSizeVM>();
+
+            foreach (var product in Product)
+            {
+                var productSize = ProductSize.FirstOrDefault(ps => ps.ProductID == product.ProductID);
+                if (productSize != null)
+                {
+                    product.FormattedPrice = productSize.Price.ToString("N0", CultureInfo.InvariantCulture);
+                }
+            }
+
+            TableId = tableId;
         }
     }
 }

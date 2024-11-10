@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Threading.RateLimiting;
 using DataAccess.Qr;
+using Net.payOS;
 
 namespace CoffeeShop
 {
@@ -22,6 +23,15 @@ namespace CoffeeShop
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            PayOS payOS = new PayOS(configuration["Environment:PAYOS_CLIENT_ID"] ?? throw new Exception("Cannot find environment"),
+                configuration["Environment:PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
+                configuration["Environment:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
+
+            // Add services to the container.
+            builder.Services.AddSingleton(payOS);
 
             builder.Services.AddDistributedMemoryCache();
 
@@ -93,6 +103,8 @@ namespace CoffeeShop
             builder.Services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
             builder.Services.AddScoped(typeof(IProductService), typeof(ProductService));
             builder.Services.AddScoped(typeof(IProductSizesService), typeof(ProductSizesService));
+            builder.Services.AddScoped(typeof(IOrderService), typeof(OrderService));
+            builder.Services.AddScoped(typeof(IOrderDetailService), typeof(OrderDetailService));
             //Add Repositories
             builder.Services.AddScoped<ITableRepository, TableRepository>();
             builder.Services.AddScoped<IMessRepository, MessRepository>();
@@ -100,7 +112,8 @@ namespace CoffeeShop
             builder.Services.AddScoped(typeof(ICategoryRepository), typeof(CategoryRepository));
             builder.Services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
             builder.Services.AddScoped(typeof(IProductSizesRepository), typeof(ProductSizesRepository));
-
+            builder.Services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
+            builder.Services.AddScoped(typeof(IOrderDetailRepository), typeof(OrderDetailRepository));
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);

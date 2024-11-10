@@ -20,7 +20,6 @@ namespace DataAccess.Models
         [ForeignKey("ProductSize")]
         public int ProductSizeID { get; set; }
         public ProductSize ProductSize { get; set; }
-
         public decimal UnitPrice { get; set; }
 
         [Required]

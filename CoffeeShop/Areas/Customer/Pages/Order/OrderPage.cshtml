@@ -1,0 +1,303 @@
+﻿@page "{id?}"
+@model CoffeeShop.Areas.Customer.Pages.Order.OrderPageModel
+@{
+    ViewData["Title"] = "Order Coffee";
+    Layout = "/Areas/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+<link rel="stylesheet" href="~/css/OrderPageScriptStyle.css" asp-append-version="true" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-2 col-md-3 col-sm-12 sidebar_container">
+            <div class="sidebar_menu">
+                <ul>
+                    <li><a href="#" id="all-products" data-category-id="0">All</a></li>
+                    @foreach (var category in Model.Category)
+                    {
+                        <li><a href="#" class="category-filter" data-category-id="@category.CategoryID">@category.CategoryName</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-7 col-md-9 col-sm-12">
+            <div class="product_container">
+                @foreach (var product in Model.Product)
+                {
+                    var productSize = Model.ProductSize?
+                    .Where(ps => ps.ProductID == product.ProductID)
+                    .OrderBy(ps => ps.SizeID)
+                    .FirstOrDefault();
+
+                    <div class="product_card" data-category-id="@product.CategoryID">
+                        <div class="menu_item">
+                            <div class="menu_item_image">
+                                <a><img src="@product.ImageUrl" alt="@product.ProductName" /></a>
+                            </div>
+                            <div class="menu_item_info">
+                                <p class="product-name">@product.ProductName</p>
+                                <div class="price_product_item">
+                                    @if (productSize != null)
+                                    {
+                                        <p><span class="formatted-price">@product.FormattedPrice</span></p>
+                                        <button class="choose-item" data-product-id="@product.ProductID"
+                                                data-product-name="@product.ProductName"
+                                                data-product-price="@productSize.Price"
+                                                data-product-sizes='@Html.Raw(Json.Serialize(Model.ProductSize
+                                                 .Where(p => p.ProductID == product.ProductID)
+                                                 .Select(p => new { SizeID = p.SizeID, Price = p.Price })
+                                                 .ToList()))'>
+                                            Choose Item
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <p>No Price Available</p>
+                                        <button class="choose-item" disabled>Choose Item</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12">
+            <div class="orderCart">
+                <p class="order-title">Your Order</p>
+                <div class="cart-empty" id="cart-empty">
+                    <i class="bi bi-cart"></i>
+                    <p>Cart is empty</p>
+                </div>
+                <div id="cart-items"></div>
+                <div id="cart-total">
+                    <p><strong>Total Price: </strong><span id="total-price">$0</span></p>
+                </div>
+                <button class="checkout-button" id="checkout-button" disabled>Go to Checkout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="size-modal" tabindex="-1" aria-labelledby="sizeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sizeModalLabel">Select Size</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="size-options"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="confirm-add-to-cart" class="btn btn-primary">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function formatPrice(price) {
+            return price.toLocaleString('vi-VN'); 
+        }
+
+        const categoryLinks = document.querySelectorAll('.category-filter, #all-products');
+
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const categoryId = this.getAttribute('data-category-id');
+                filterProductsByCategory(categoryId);
+
+                categoryLinks.forEach(link => link.classList.remove('active-category'));
+                this.classList.add('active-category');
+            });
+        });
+
+        function filterProductsByCategory(categoryId) {
+            document.querySelectorAll('.product_card').forEach(productCard => {
+                if (categoryId === '0' || productCard.getAttribute('data-category-id') === categoryId) {
+                    productCard.style.display = 'block';
+                } else {
+                    productCard.style.display = 'none';
+                }
+            });
+        }
+
+        const urlParts = window.location.pathname.split('/');
+        const tableId = urlParts[urlParts.length - 1];
+
+        if (isNaN(tableId) || tableId <= 0) {
+            console.log('No table ID found in URL');
+            document.getElementById('cart-empty').style.display = 'none';
+            document.getElementById('cart-items').style.display = 'none';
+            document.getElementById('cart-total').style.display = 'none';
+            document.getElementById('checkout-button').disabled = true;
+            document.getElementById('checkout-button').classList.add('button-disabled');
+
+            document.querySelectorAll('.choose-item').forEach(button => {
+                button.disabled = true;
+                button.classList.add('button-disabled');
+            });
+            return;
+        }
+
+        const savedCartTime = localStorage.getItem(`cart-time-${tableId}`);
+        const currentTime = new Date().getTime();
+
+        const cartExpirationTime = 5 * 60 * 1000;
+        if (savedCartTime && (currentTime - savedCartTime > cartExpirationTime)) {
+            localStorage.removeItem(`cart-${tableId}`);
+            localStorage.removeItem(`cart-time-${tableId}`);
+            console.log('Cart data for table ' + tableId + ' expired and removed from localStorage');
+        }
+
+        const savedCart = localStorage.getItem(`cart-${tableId}`);
+        let cart = savedCart ? JSON.parse(savedCart) : [];
+
+        localStorage.setItem(`cart-time-${tableId}`, currentTime);
+
+        cart = cart.filter(item => item.productId && item.productName && item.productPrice && item.quantity && item.size);
+        updateCartUI(cart);
+
+        let selectedProduct = null;
+
+        document.querySelectorAll('.choose-item').forEach(button => {
+            button.addEventListener('click', function () {
+                selectedProduct = {
+                    productId: this.dataset.productId,
+                    productName: this.dataset.productName,
+                    productPrice: parseFloat(this.dataset.productPrice),
+                    productSizes: JSON.parse(this.dataset.productSizes)
+                };
+
+                const sizeOptionsDiv = document.getElementById('size-options');
+                sizeOptionsDiv.innerHTML = '';
+
+                const sizeLabels = { 1: 'S', 2: 'M', 3: 'L' };
+
+                selectedProduct.productSizes.forEach(size => {
+                    const sizeLabel = sizeLabels[size.sizeID] || `Size ${size.sizeID}`;
+                    const sizeOption = document.createElement('div');
+                    sizeOption.innerHTML = `
+                        <input type="radio" name="size" value="${size.sizeID}" data-price="${size.price}" id="size-${size.sizeID}">
+                        <label for="size-${size.sizeID}">${sizeLabel}: ${size.price.toLocaleString('vi-VN')}</label>
+                    `;
+                    sizeOptionsDiv.appendChild(sizeOption);
+                });
+
+                const sizeModal = new bootstrap.Modal(document.getElementById('size-modal'));
+                sizeModal.show();
+            });
+        });
+
+        document.getElementById('confirm-add-to-cart').addEventListener('click', function () {
+            const selectedSize = document.querySelector('input[name="size"]:checked');
+            if (selectedSize) {
+                const sizeValue = selectedSize.value;
+                const sizePrice = parseFloat(selectedSize.getAttribute('data-price'));
+                const selectedProductSizeId = selectedProduct.productSizes.find(size => size.sizeID == sizeValue)?.productSizeId;
+
+                const existingProduct = cart.find(item => item.productId === selectedProduct.productId && item.size === sizeValue);
+                if (existingProduct) {
+                    existingProduct.quantity += 1;
+                } else {
+                    cart.push({
+                        productId: selectedProduct.productId,
+                        productName: selectedProduct.productName,
+                        productPrice: sizePrice,
+                        quantity: 1,
+                        size: sizeValue,
+                        productSizeId: selectedProductSizeId
+                    });
+                }
+                console.log(cart);
+                updateCartUI(cart);
+                $('#size-modal').modal('hide');
+            } else {
+                alert('Please select a size');
+            }
+        });
+
+        function updateCartUI(cart) {
+    const cartItemsDiv = document.getElementById('cart-items');
+    const cartEmptyDiv = document.getElementById('cart-empty');
+    const cartTotalDiv = document.getElementById('cart-total');
+    const checkoutButton = document.getElementById('checkout-button');
+    let totalPrice = 0;
+
+    cartItemsDiv.innerHTML = '';
+    if (cart.length === 0) {
+        cartEmptyDiv.style.display = 'block';
+        cartItemsDiv.style.display = 'none';
+        cartTotalDiv.style.display = 'none';
+        checkoutButton.disabled = true;
+        checkoutButton.classList.add('button-disabled');
+    } else {
+        cartEmptyDiv.style.display = 'none';
+        cartItemsDiv.style.display = 'block';
+        cartTotalDiv.style.display = 'block';
+        checkoutButton.disabled = false;
+        checkoutButton.classList.remove('button-disabled');
+
+        cart.forEach(item => {
+            const productElement = document.createElement('div');
+            productElement.classList.add('cart-item-row');
+            productElement.innerHTML = `
+                <div class="cart-item-left">
+                    <p>${item.quantity} x ${item.productName} (Size ${item.size === '1' ? 'S' : item.size === '2' ? 'M' : 'L'})</p>
+                    <p class="remove-from-cart" onclick="removeFromCart('${item.productId}', '${item.size}')">Remove</p>
+                </div>
+                <div class="cart-item-right">
+                    <p>${(item.productPrice * item.quantity).toLocaleString('vi-VN')}</p>
+                    <div class="quantity-controls">
+                        <button onclick="updateQuantity('${item.productId}', '${item.size}', 'decrease')">-</button>
+                        <button onclick="updateQuantity('${item.productId}', '${item.size}', 'increase')">+</button>
+                    </div>
+                </div>
+            `;
+            cartItemsDiv.appendChild(productElement);
+            totalPrice += item.productPrice * item.quantity;
+        });
+
+        document.getElementById('total-price').innerText = totalPrice.toLocaleString('vi-VN');
+        }
+
+        localStorage.setItem(`cart-${tableId}`, JSON.stringify(cart));
+        }
+
+
+        window.removeFromCart = function (productId, size) {
+            const productIndex = cart.findIndex(item => item.productId === productId && item.size === size);
+            if (productIndex !== -1) {
+                cart.splice(productIndex, 1);
+                updateCartUI(cart);
+            } else {
+                console.error('Product not found in cart');
+            }
+        }
+
+        window.updateQuantity = function (productId, size, action) {
+            const item = cart.find(item => item.productId === productId && item.size === size);
+            if (item) {
+                if (action === 'increase') {
+                    item.quantity += 1;
+                } else if (action === 'decrease' && item.quantity > 1) {
+                    item.quantity -= 1;
+                }
+                updateCartUI(cart);
+            }
+        }
+
+        document.getElementById('checkout-button').addEventListener('click', function () {
+            if (cart.length > 0) {
+                window.location.href = `/Customer/Order/Cart?tableId=${tableId}`;
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+            } else {
+                alert('Your cart is empty!');
+            }
+        });
+    });
+</script>
