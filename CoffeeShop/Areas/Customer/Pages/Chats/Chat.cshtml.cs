@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NuGet.Protocol.Plugins;
+using System.Security.Claims;
 
 namespace CoffeeShop.Areas.Customer.Pages.Chats
 {
@@ -17,8 +18,12 @@ namespace CoffeeShop.Areas.Customer.Pages.Chats
         public void OnGet(int tableId)
         {
             TableId = tableId.ToString();
+
             var userId = User.FindFirst("userId")?.Value;
             ViewData["UserId"] = userId;
+
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
+            ViewData["Role"] = userRole == "Admin" ? "Admin" : "User";
         }
     }
 }

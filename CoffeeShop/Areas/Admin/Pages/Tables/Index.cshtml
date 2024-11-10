@@ -10,6 +10,16 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+<form asp-page="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by Table Number:
+            <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" />
+            <a asp-page="./Index">Back to full list</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -44,3 +54,13 @@
 }
     </tbody>
 </table>
+@{
+    var prevDisable = !Model.Table.HasPreviousPage ? "disabled" : "";
+    var nextDisable = !Model.Table.HasNextPage ? "disabled" : "";
+}
+<a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex -1)" asp-route-currentFilter="@(Model.CurrentFilter)" class="btn btn-primary @prevDisable">
+    Previous
+</a>
+<a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex +1)" asp-route-currentFilter="@(Model.CurrentFilter)" class="btn btn-primary @nextDisable">
+    Next
+</a>
