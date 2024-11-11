@@ -3,11 +3,13 @@ using BussinessObjects.Services;
 using CoffeeShop.ViewModels;
 using DataAccess.Models;
 using DataAccess.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CoffeeShop.Areas.Shared.Pages.Order
 {
+    [AllowAnonymous]
     public class BillModel : PageModel
     {
         private readonly IOrderDetailService _orderDetailService;
@@ -30,7 +32,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
             var currentOrderId = _httpContextAccessor.HttpContext.Session.GetString("CurrentOrderId");
             orderId = new Guid(currentOrderId);
 
-            //Guid orderID = new Guid("8c3adbad-2410-4ca6-8211-cd7c8190c5c0");
+            //Guid orderID = new Guid("8c02f718-0774-4d04-ab20-fbb07c101751");
 
             var orderDetail = await _orderDetailService.GetOrderDetailsByOrderId(orderId);
             var order = await _orderService.GetOrderByOrderId(orderId);
