@@ -104,9 +104,10 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                         ItemData item = new ItemData(body.UserInfor, 1, (int)Math.Round(cart.TotalAmount));
                         List<ItemData> items = new List<ItemData> { item };
 
-                        string returnUrlWithTableId = $"{body.returnUrl}?tableId={TableId}";
+                        string returnSuccessUrlWithTableId = $"{body.returnUrl}?tableId={cart.TableId}";
+                        string returnFailUrlWithTableId = $"{body.cancelUrl}?tableId={cart.TableId}";
 
-                        PaymentData paymentData = new PaymentData(orderCode, (int)body.TotalPrice, body.Description, items, body.cancelUrl, returnUrlWithTableId);
+                        PaymentData paymentData = new PaymentData(orderCode, (int)body.TotalPrice, body.Description, items, returnFailUrlWithTableId, returnSuccessUrlWithTableId);
 
                         CreatePaymentResult paymentResult = await _payOS.createPaymentLink(paymentData);
 
