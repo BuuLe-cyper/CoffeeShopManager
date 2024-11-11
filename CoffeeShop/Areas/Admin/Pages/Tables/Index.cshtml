@@ -64,11 +64,16 @@
 <div class="pagination-container d-flex justify-content-between">
     <div class="d-flex">
         <!-- Previous Button -->
-        <a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex - 1)" asp-route-currentFilter="@(Model.CurrentFilter)" class="btn btn-secondary btn-sm @prevDisable me-2">
+        <a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex - 1)"
+           asp-route-currentFilter="@(Model.CurrentFilter)"
+           class="btn btn-secondary btn-sm @(Model.Table.PageIndex == 1 ? "disabled" : "") me-2">
             Previous
         </a>
+
         <!-- Next Button -->
-        <a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex + 1)" asp-route-currentFilter="@(Model.CurrentFilter)" class="btn btn-secondary btn-sm @nextDisable">
+        <a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex + 1)"
+           asp-route-currentFilter="@(Model.CurrentFilter)"
+           class="btn btn-secondary btn-sm @(Model.Table.PageIndex >= Model.Table.TotalPages ? "disabled" : "")">
             Next
         </a>
     </div>
