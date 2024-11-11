@@ -10,24 +10,28 @@ using Net.payOS.Types;
 using Net.payOS;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoffeeShop.Areas.Customer.Pages.Order
 {
+    [AllowAnonymous]
     public class CartModel : PageModel
     {
         private readonly IOrderService _orderService;
         private readonly IOrderDetailService _orderDetailService;
         private readonly IProductSizesService _productSizesService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly PayOS _payOS;
 
-        public CartModel(IOrderService orderService, IMapper mapper, IOrderDetailService orderDetailService, IProductSizesService productSizesService, PayOS payOS)
+        public CartModel(IOrderService orderService, IMapper mapper, IOrderDetailService orderDetailService, IProductSizesService productSizesService, PayOS payOS, IUserService userService)
         {
             _orderService = orderService;
             _orderDetailService = orderDetailService;
             _mapper = mapper;
             _productSizesService = productSizesService;
             _payOS = payOS;
+            _userService = userService;
         }
 
         public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
@@ -55,10 +59,13 @@ namespace CoffeeShop.Areas.Customer.Pages.Order
                     return BadRequest("Unable to deserialize the cart data.");
                 }
 
+                Guid userId = cart.UserId != Guid.Empty ? cart.UserId : await _userService.GetGuestUserIdAsync();
+
                 var orderVM = new OrderVM
                 {
                     OrderId = Guid.NewGuid(),
-                    UserID = cart.UserId,
+                    //UserID = cart.UserId,
+                    UserID = userId,
                     OrderDate = DateTime.Now,
                     PaymentMethod = paymentMethod,
                     TotalAmount = cart.TotalAmount,
@@ -68,7 +75,7 @@ namespace CoffeeShop.Areas.Customer.Pages.Order
                 await _orderService.CreateOrder(order);
 
                 Guid orderId = order.OrderId;
-                Guid userId = cart.UserId;
+                //Guid userId = cart.UserId;
                 HttpContext.Session.SetString("CurrentOrderId", orderId.ToString());
                 HttpContext.Session.SetString("UserId", userId.ToString());
 

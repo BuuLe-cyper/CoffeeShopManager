@@ -11,5 +11,6 @@ namespace DataAccess.Repositories
     {
         public Task<User?> Login(string username, string password);
         public Task UpdateUserAsync(User user);
+        Task<Guid> GetGuestUserIdAsync();
     }
 }

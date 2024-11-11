@@ -18,5 +18,6 @@ namespace BussinessObjects.Services
         public Task<UsersDTO> Login(string username, string password);
         public Task<IEnumerable<UsersDTO>> GetUsers(string? includeProperty = null);
         public Task Register(string username, string password,string email);
+        Task<Guid> GetGuestUserIdAsync();
     }
 }
