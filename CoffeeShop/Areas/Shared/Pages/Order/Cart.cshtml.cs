@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 
-namespace CoffeeShop.Areas.Customer.Pages.Order
+namespace CoffeeShop.Areas.Shared.Pages.Order
 {
     [AllowAnonymous]
     public class CartModel : PageModel
@@ -59,7 +59,7 @@ namespace CoffeeShop.Areas.Customer.Pages.Order
                     return BadRequest("Unable to deserialize the cart data.");
                 }
 
-                Guid userId = cart.UserId != Guid.Empty ? cart.UserId : await _userService.GetGuestUserIdAsync();
+                Guid userId = (Guid)(cart.UserId != Guid.Empty ? cart.UserId : await _userService.GetGuestUserIdAsync());
 
                 var orderVM = new OrderVM
                 {

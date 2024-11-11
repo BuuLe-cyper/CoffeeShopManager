@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Globalization;
 
-namespace CoffeeShop.Areas.Customer.Pages.Order
+namespace CoffeeShop.Areas.Shared.Pages.Order
 {
     [AllowAnonymous]
     public class OrderPageModel : PageModel
