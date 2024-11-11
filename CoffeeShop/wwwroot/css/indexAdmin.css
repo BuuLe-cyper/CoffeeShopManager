@@ -1,0 +1,89 @@
+﻿
+body {
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #222;
+    color: #fff;
+    padding: 40px 0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .header h1 {
+        font-size: 2.5rem;
+    }
+
+.container-fluid {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 30px;
+}
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+.card-body {
+    text-align: center;
+}
+
+    .card-body i {
+        font-size: 50px;
+        color: #f39c12;
+    }
+
+    .card-body h5 {
+        margin-top: 20px;
+        font-size: 1.5rem;
+    }
+
+.btn-custom {
+    background-color: #f39c12;
+    color: #fff;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+    .btn-custom:hover {
+        background-color: #e67e22;
+    }
+
+/* Correct usage of media queries */
+/* NO @ symbol used here */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .card-body h5 {
+        font-size: 1.2rem;
+    }
+
+    .card-body i {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-body h5 {
+        font-size: 1rem;
+    }
+
+    .card-body i {
+        font-size: 30px;
+    }
+}
+

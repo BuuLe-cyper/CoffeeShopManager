@@ -1,0 +1,101 @@
+﻿@page
+@model CoffeeShop.Areas.Customer.Pages.User.UserProfileModel
+@{
+    // ViewData["Title"] = "UserProfile";
+}
+<div class="card" style="width: 100%; max-width: 600px; margin: 20px auto;">
+    <div class="card-header">
+        <h2 class="text-center">Profile</h2>
+        <p class="text-center text-danger">@Model.ErrorMessage</p>
+    </div>
+    @if (Model.User != null)
+    {
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" asp-for="@Model.User.Password" />
+                <input type="hidden" asp-for="@Model.User.UserID" />
+                <input type="hidden" asp-for="@Model.User.AccountType" />
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Username:</strong>
+                    </div>
+                    <div class="col-8">
+                        <span>@(!string.IsNullOrWhiteSpace(Model.User.Username) ? Model.User.Username : "Not configured")</span>
+                        <input class="form-control d-none" asp-for="@Model.User.Username" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Full Name:</strong>
+                    </div>
+                    <div class="col-8">
+                        <span>@(!string.IsNullOrWhiteSpace(Model.User.FullName) ? Model.User.FullName : "Not configured")</span>
+                        <input class="form-control d-none" asp-for="@Model.User.FullName" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Phone Number:</strong>
+                    </div>
+                    <div class="col-8">
+                        <span>@(!string.IsNullOrWhiteSpace(Model.User.PhoneNumber) ? Model.User.PhoneNumber : "Not configured")</span>
+                        <input class="form-control d-none" asp-for="@Model.User.PhoneNumber" />
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-8">
+                        <span>@(!string.IsNullOrWhiteSpace(Model.User.Email) ? Model.User.Email : "Not configured")</span>
+                        <input class="form-control d-none" asp-for="@Model.User.Email" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 fw-bold">Password: </div>
+                    <div class="col-8">
+                        <a class="text-end" asp-page="./ChangePassword">Change Password</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 mx-auto mt-2 d-flex justify-content-between">
+                        <button id="editBtn" class="btn btn-outline-primary w-100" type="button">Edit</button>
+                        <button id="cancelBtn" class="btn btn-outline-secondary collapse w-40" type="button">Cancel</button>
+                        <button id="saveBtn" class="btn btn-outline-success collapse w-40" type="submit">SaveChange</button>
+                    </div>
+                </div>
+                
+
+            </form>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#editBtn').on('click', function () {
+                $('input').removeClass('d-none');
+                $('span').addClass('d-none');
+
+                $('#cancelBtn').removeClass('collapse');
+                $('#saveBtn').removeClass('collapse');
+                $('#editBtn').addClass('collapse');
+            });
+
+            $('#cancelBtn').on('click', function () {
+                $('input').addClass('d-none');
+                $('span').removeClass('d-none');
+
+                $('#cancelBtn').addClass('collapse');
+                $('#saveBtn').addClass('collapse');
+                $('#editBtn').removeClass('collapse');
+            });
+        });
+
+    </script>
+}

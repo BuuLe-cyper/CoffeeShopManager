@@ -1,6 +1,76 @@
 ﻿@page
 @model CoffeeShop.Areas.Customer.Pages.IndexModel
 @{
+    var featuredProducts = new List<dynamic>
+    {
+        new { Id = 1, Name = "Espresso", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 50.00 },
+        new { Id = 2, Name = "Cappuccino", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 60.00 },
+        new { Id = 3, Name = "Latte", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 65.00 },
+        new { Id = 4, Name = "Mocha", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 70.00 }
+    };
 }
+<!-- Welcome Section -->
+<div class="text-center my-5">
+    <h1 class="display-4">Welcome Customer Name!</h1>
+    <p>Explore our premium selection of coffees and discover your favorite brew.</p>
+</div>
 
-<p> Customer </p>
+<!-- Carousel Section -->
+<div id="coffeeCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s" class="d-block w-100 carousel-img" alt="Coffee Image 1">
+        </div>
+        <div class="carousel-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s" class="d-block w-100 carousel-img" alt="Coffee Image 2">
+        </div>
+        <div class="carousel-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s" class="d-block w-100 carousel-img" alt="Coffee Image 3">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#coffeeCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#coffeeCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!-- Featured Products Section -->
+<section class="product_section py-5">
+    <div class="container">
+        <div class="section_title text-center mb-4">
+            <h2>Our Bestsellers</h2>
+            <p>Check out our most popular coffee drinks</p>
+        </div>
+        <div class="row g-4">
+            @foreach (var product in featuredProducts)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="single_product card h-100 shadow-sm">
+                        <div class="product_thumb">
+                            <a href="/product/@product.Id">
+                                <img src="@product.ImageUrl" alt="@product.Name" class="card-img-top rounded">
+                            </a>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><a href="/product/@product.Id" class="text-dark">@product.Name</a></h5>
+                            <p class="current_price text-success fw-bold">@product.Price.ToString("C")</p>
+                            <a href="" class="btn btn-outline-primary btn-sm">Buy Now</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Custom Styles -->
+<style>
+    .carousel-img {
+        height: 300px;
+        object-fit: cover;
+    }
+</style>

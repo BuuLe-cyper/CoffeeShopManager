@@ -1,0 +1,61 @@
+﻿@page
+@model CoffeeShop.Areas.Shared.Pages.Size.ListSizesModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-area="Admin" asp-page="/Size/CreateSize">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Size Id")
+            </th>
+            <th>
+                @Html.DisplayName("Is Deleted")
+            </th>
+            <th>
+                @Html.DisplayName("Is Active")
+            </th>
+            <th>
+                @Html.DisplayName("Create Date")
+            </th>
+            <th>
+                @Html.DisplayName("Modify Date")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Size)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SizeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDeleted)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModifyDate)
+                </td>
+                <td>
+                    <a asp-area="Admin" asp-page="/Size/EditSize" asp-route-id="@item.SizeID">Edit</a> |
+                    <a asp-area="Shared" asp-page="/Size/DetailSize" asp-route-id="@item.SizeID">Details</a> |
+                    <a asp-area="Admin" asp-page="/Size/DeleteSize" asp-route-id="@item.SizeID">Soft Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
