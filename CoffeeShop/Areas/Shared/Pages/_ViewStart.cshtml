@@ -9,12 +9,10 @@
     {
         if (User.IsInRole("Admin"))
         {
-            // Nếu là Admin, sử dụng layout của Admin
             Layout = "~/Pages/Shared/_LayoutAdmin.cshtml";
         }
         else
         {
-            // Nếu là User (không phải Admin), sử dụng layout của khách hàng
             Layout = "~/Pages/Shared/_Layout.cshtml";
         }
     }

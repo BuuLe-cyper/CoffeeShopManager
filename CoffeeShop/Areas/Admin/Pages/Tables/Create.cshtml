@@ -2,33 +2,32 @@
 @model CoffeeShop.Areas.Admin.Pages.Tables.CreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Table";
 }
 
-<h1>Create</h1>
+<h1 class="mb-4">Create New Table</h1>
 
-<h4>Table</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="card-title">Table Information</h4>
+        <hr />
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="@Model.Description" class="control-label"></label>
-                <input asp-for="@Model.Description" class="form-control" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="@Model.Description" class="form-label"></label>
+                <input asp-for="@Model.Description" class="form-control" placeholder="Enter table description" />
                 <span asp-validation-for="@Model.Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+
+            <button type="submit" class="btn btn-success me-2">Create</button>
+            <a asp-page="Index" class="btn btn-secondary">Back to List</a>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
