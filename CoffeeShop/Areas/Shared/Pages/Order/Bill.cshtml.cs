@@ -6,7 +6,7 @@ using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Areas.Customer.Pages.Order
+namespace CoffeeShop.Areas.Shared.Pages.Order
 {
     public class BillModel : PageModel
     {

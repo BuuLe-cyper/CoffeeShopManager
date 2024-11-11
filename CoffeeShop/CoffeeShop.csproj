@@ -38,8 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Shared\Pages\NewFolder\" />
-    <Folder Include="Areas\Shared\Pages\Order\" />
+    <Folder Include="Areas\Customer\Pages\DemoPaymentReturn\" />
+    <Folder Include="Areas\Customer\Pages\Order\" />
   </ItemGroup>
 
 </Project>

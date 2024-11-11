@@ -1,5 +1,5 @@
 ﻿@page
-@model CoffeeShop.Areas.Customer.Pages.Order.CartModel
+@model CoffeeShop.Areas.Shared.Pages.Order.CartModel
 @{
     ViewData["Title"] = "Cart";
     Layout = "/Areas/Shared/_Layout.cshtml";
@@ -59,7 +59,7 @@
 
             <div class="d-flex justify-content-start gap-2">
                 <button class="btn btn-danger" type="button">
-                     <a style="text-decoration: none; color: white" asp-area="Customer" asp-page="/Order/OrderPage" asp-route-id="@Model.TableId">Back Menu</a>
+                     <a style="text-decoration: none; color: white" asp-area="Shared" asp-page="/Order/OrderPage" asp-route-id="@Model.TableId">Back Menu</a>
                 </button>
                 <button type="submit" id="checkout-button" class="btn btn-primary" disabled>Checkout</button>
             </div>
@@ -181,7 +181,7 @@
                     Discount: item.discount || 0
                 }));
 
-                const userId = '@User.FindFirst("userId")?.Value';
+                const userId = '@User.FindFirst("userId")?.Value' || "00000000-0000-0000-0000-000000000000";
                 const totalPrice = cart.reduce((total, item) => total + (item.productPrice * item.quantity), 0);
                 const paymentMethod = paymentMethodSelected.value;
 

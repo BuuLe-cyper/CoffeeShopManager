@@ -1,7 +1,5 @@
 ﻿@page
-@model CoffeeShop.Areas.Customer.Pages.DemoPaymentReturn.FailModel
-@{
-}
+@model SuccessModel
 
 <style>
     .wrapper {
@@ -22,7 +20,7 @@
     }
 
     h1 {
-        color: #dc3545;
+        color: #28a745;
         font-size: 24px;
         margin-bottom: 15px;
     }
@@ -41,7 +39,7 @@
 
     .icon {
         font-size: 50px;
-        color: #dc3545;
+        color: #28a745;
         margin-bottom: 20px;
     }
 </style>
@@ -49,15 +47,15 @@
 <div class="wrapper">
     <div class="container-message">
         <div class="icon">
-            &#10060;
+            &#10004; 
         </div>
-        <h1>Payment Failed</h1>
-        <p class="message">An error occurred during the payment process. You will be redirected back to the order page in <span id="countdown" class="timer">5</span> seconds.</p>
+        <h1>Payment Successful</h1>
+        <p class="message">Thank you for your payment. You will be redirected back to the order page in <span id="countdown" class="timer">1</span> seconds.</p>
     </div>
 </div>
 
 <script>
-    let countdown = 5;
+    let countdown = 1;
     const countdownElement = document.getElementById("countdown");
 
     const interval = setInterval(function() {
@@ -66,7 +64,7 @@
 
         if (countdown <= 0) {
             clearInterval(interval);
-            window.location.href = "/Customer/Order/OrderPage";
+            window.location.href = "/Customer/Order/Bill";
         }
     }, 1000);
 </script>
