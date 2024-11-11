@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CoffeeShop.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layoutAdmin.css" asp-append-version="true" />
+
 </head>
 <body>
     <header>
@@ -45,33 +47,41 @@
         </nav>
     </header>
 
-    <div class="d-flex m-2 h-100">
+    <div class="d-flex m-2 h-100 position-relative">
         <!-- Sidebar menu -->
-        <div class="navbar-left border-end p-2 h-auto position-relative bg-secondary ">
-            <ul class="nav d-flex flex-column justify-content-between h-auto ">
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/Index">Home</a>
+        <div class="navbar-left custom-sidebar border-end p-3 h-auto bg-dark sticky-top">
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/Index">🏠 Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/Chats/Index">Chat Room</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Chats/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/Chats/Index">💬 Chat Room</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/Tables/Index">Table Management</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Tables/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/Tables/Index">📋 Table</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/User/Index">User Management</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/User/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/User/Index">👤 User</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/Size/Index">Size Management</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Size/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/Size/Index">📏 Size</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/Category/Index">Category Management</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Category/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/Category/Index">📂 Category</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/Product/Index">Product Management</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Product/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/Product/Index">🛒 Product</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" asp-area="Admin" asp-page="/Menu/Index">Menu Management</a>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Menu/Index" ? "active" : "")"
+                       asp-area="Admin" asp-page="/Menu/Index">🍽️ Menu</a>
                 </li>
             </ul>
         </div>
