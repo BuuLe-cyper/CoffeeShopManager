@@ -1,3 +1,20 @@
 ﻿@{
-    Layout = "_Layout";
+   
+    if (string.IsNullOrEmpty(Context.Session.GetString("IsLogin")))
+
+    {
+        Layout = "~/Pages/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        if (User.IsInRole("Admin"))
+        {
+            Layout = "~/Pages/Shared/_LayoutAdmin.cshtml";
+        }
+        else
+        {
+            Layout = "~/Pages/Shared/_Layout.cshtml";
+        }
+    }
+
 }
