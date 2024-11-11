@@ -97,7 +97,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
                     if (!String.IsNullOrEmpty(paymentMethod) && paymentMethod.Equals("BankTransfer"))
                     {
-                        body.UserInfor = cart.UserId.ToString();
+                        body.UserInfor = userId.ToString();
                         body.TotalPrice = cart.TotalAmount;
                     try
                     {
