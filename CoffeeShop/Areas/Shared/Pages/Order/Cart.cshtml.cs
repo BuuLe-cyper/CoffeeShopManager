@@ -40,11 +40,10 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
         public async Task OnGetAsync(string? tableId)
         {
-         
             TableId = tableId;
         }
 
-        public async Task<IActionResult> OnPostCheckoutAsync(string cartData, string? paymentMethod, CreatePaymentLinkRequest body)
+        public async Task<IActionResult> OnPostCheckoutAsync(string cartData, CreatePaymentLinkRequest body)
         {
             if (string.IsNullOrEmpty(cartData))
             {
@@ -67,7 +66,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                     //UserID = cart.UserId,
                     UserID = userId,
                     OrderDate = DateTime.Now,
-                    PaymentMethod = paymentMethod,
+                    PaymentMethod = cart.paymentMethod,
                     TotalAmount = cart.TotalAmount,
                     TableID = (int)cart.TableId,
                 };
@@ -80,45 +79,46 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                 HttpContext.Session.SetString("UserId", userId.ToString());
 
                 foreach (var item in cart.CartItems)
+                {
+                    var productSizeViewDto = await _productSizesService.GetProductName(item.ProductName);
+                    var orderDetail = new OrderDetailVM
                     {
-                        var productSizeViewDto = await _productSizesService.GetProductName(item.ProductName);
-                        var orderDetail = new OrderDetailVM
-                        {
-                            OrderID = order.OrderId,
-                            ProductSizeID = (int)(productSizeViewDto.FirstOrDefault(it => it.SizeID == item.SizeID)?.ProductSizeID),
-                            Quantity = item.Quantity,
-                            UnitPrice = item.UnitPrice,
-                            Discount = item.Discount,
-                            ProductName = item.ProductName
-                        };
-                        var orderDetailDTO = _mapper.Map<OrderDetailDTO>(orderDetail);
-                        await _orderDetailService.AddOrderDetail(orderDetailDTO);
+                        OrderID = order.OrderId,
+                        ProductSizeID = (int)(productSizeViewDto.FirstOrDefault(it => it.SizeID == item.SizeID)?.ProductSizeID),
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        Discount = item.Discount,
+                        ProductName = item.ProductName
+                    };
+                    var orderDetailDTO = _mapper.Map<OrderDetailDTO>(orderDetail);
+                    await _orderDetailService.AddOrderDetail(orderDetailDTO);
+                }
+
+                if (!String.IsNullOrEmpty(cart.paymentMethod) && cart.paymentMethod.Equals("BankTransfer"))
+                {
+                    body.UserInfor = userId.ToString();
+                    body.TotalPrice = cart.TotalAmount;
+                try
+                {
+                        int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
+                        ItemData item = new ItemData(body.UserInfor, 1, (int)Math.Round(cart.TotalAmount));
+                        List<ItemData> items = new List<ItemData> { item };
+
+                        string returnUrlWithTableId = $"{body.returnUrl}?tableId={TableId}";
+
+                        PaymentData paymentData = new PaymentData(orderCode, (int)body.TotalPrice, body.Description, items, body.cancelUrl, returnUrlWithTableId);
+
+                        CreatePaymentResult paymentResult = await _payOS.createPaymentLink(paymentData);
+
+                        return Redirect(paymentResult.checkoutUrl);
                     }
-
-                    if (!String.IsNullOrEmpty(paymentMethod) && paymentMethod.Equals("BankTransfer"))
+                    catch (System.Exception exception)
                     {
-                        body.UserInfor = userId.ToString();
-                        body.TotalPrice = cart.TotalAmount;
-                    try
-                    {
-                            int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
-                            ItemData item = new ItemData(body.UserInfor, 1, (int)Math.Round(cart.TotalAmount));
-                            List<ItemData> items = new List<ItemData> { item };
-
-                            string returnUrlWithTableId = $"{body.returnUrl}?tableId={TableId}";
-
-                            PaymentData paymentData = new PaymentData(orderCode, (int)body.TotalPrice, body.Description, items, body.cancelUrl, returnUrlWithTableId);
-
-                            CreatePaymentResult paymentResult = await _payOS.createPaymentLink(paymentData);
-
-                            return Redirect(paymentResult.checkoutUrl);
-                        }
-                        catch (System.Exception exception)
-                        {
-                            return Content("Error Payment Link");
-                        }
+                        return Content("Error Payment Link");
                     }
-                 return new JsonResult(new { success = true });
+                }
+
+                return Redirect($"/Shared/Order/Bill/{1}");
             }
             catch (JsonException ex)
             {

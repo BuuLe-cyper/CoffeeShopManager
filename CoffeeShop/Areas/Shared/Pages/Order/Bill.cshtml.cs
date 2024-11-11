@@ -26,14 +26,14 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
         public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
         public IEnumerable<OrderVM> Orders { get; set; } = default!;
+        public int TableId { get; set; }
 
-        public async Task OnGetAsync(Guid orderId)
+        public async Task OnGetAsync(Guid orderId, int tableId)
         {
+            TableId = tableId;
+
             var currentOrderId = _httpContextAccessor.HttpContext.Session.GetString("CurrentOrderId");
             orderId = new Guid(currentOrderId);
-
-            //Guid orderID = new Guid("8c02f718-0774-4d04-ab20-fbb07c101751");
-
             var orderDetail = await _orderDetailService.GetOrderDetailsByOrderId(orderId);
             var order = await _orderService.GetOrderByOrderId(orderId);
 

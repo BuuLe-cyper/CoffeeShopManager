@@ -61,6 +61,14 @@
     const urlParams = new URLSearchParams(window.location.search);
     const tableId = urlParams.get("tableId");
 
+    if (tableId) {
+        localStorage.removeItem(`cart-${tableId}`);
+        localStorage.removeItem(`cart-time-${tableId}`);
+        console.log(`Cart for table ${tableId} has been removed from localStorage.`);
+    } else {
+        console.log("No valid tableId found in the URL.");
+    }
+
     const interval = setInterval(function () {
         countdown--;
         countdownElement.textContent = countdown;

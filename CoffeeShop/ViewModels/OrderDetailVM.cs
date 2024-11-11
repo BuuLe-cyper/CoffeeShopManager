@@ -23,6 +23,7 @@ namespace CoffeeShop.ViewModels
         public Guid? UserId { get; set; }
         public decimal TotalAmount { get; set; }
         public int TableId { get; set; }
+        public string paymentMethod { get; set; }
 
     }
 }
