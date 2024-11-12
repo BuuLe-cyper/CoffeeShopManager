@@ -71,10 +71,12 @@
 <div class="chat-container">
     <div id="messagesList" class="messages-list"></div>
 
-    <div class="input-container">
-        <input type="text" id="messageInput" placeholder="Type your message..." />
-        <button id="sendMessage">Send</button>
+    <div class="input-container" style="display: flex; align-items: center;">
+        <input type="text" id="messageInput" placeholder="Type your message..." class="form-control" />
+        <button id="sendMessage" class="btn btn-primary me-2">Send</button>
+        <a class="nav-link text-white btn btn-info ms-2" asp-area="Shared" asp-page="/Order/OrderPage" asp-route-Id="@Model.TableId">Back Order Menu</a>
     </div>
+
 </div>
 
 @section Scripts {
