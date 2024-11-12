@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Shared\Pages\NewFolder\**" />
+    <Compile Remove="Areas\Shared\Pages\Order\**" />
+    <Content Remove="Areas\Shared\Pages\NewFolder\**" />
+    <Content Remove="Areas\Shared\Pages\Order\**" />
+    <EmbeddedResource Remove="Areas\Shared\Pages\NewFolder\**" />
+    <EmbeddedResource Remove="Areas\Shared\Pages\Order\**" />
+    <None Remove="Areas\Shared\Pages\NewFolder\**" />
+    <None Remove="Areas\Shared\Pages\Order\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -35,11 +46,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Shared\Pages\NewFolder\" />
-    <Folder Include="Areas\Shared\Pages\Order\" />
   </ItemGroup>
 
 </Project>
