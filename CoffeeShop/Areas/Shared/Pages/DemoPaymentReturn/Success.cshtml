@@ -76,7 +76,7 @@
         if (countdown <= 0) {
             clearInterval(interval);
 
-            window.location.href = `/Shared/Order/Bill/?tableId=${tableId}`;
+            window.location.href = `/Shared/Order/Bill/${tableId}`;
         }
     }, 1000);
 </script>
