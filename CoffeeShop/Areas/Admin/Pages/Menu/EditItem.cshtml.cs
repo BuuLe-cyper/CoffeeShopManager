@@ -59,8 +59,8 @@ namespace CoffeeShop.Areas.Admin.Pages.Menu
                 ModelState.AddModelError(string.Empty, "There was an issue updating the product size.");
                 return Page();
             }
-            TempData["SuccessMessage"] = "Product size updated successfully!";
-            return Page();
+            return RedirectToPage("/Menu/Index", new { area = "Admin" });
+
         }
     }
 }
