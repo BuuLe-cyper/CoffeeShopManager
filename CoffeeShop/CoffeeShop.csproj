@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
-    <Compile Remove="Areas\Customer\Pages\Order\**" />
-    <Content Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
-    <Content Remove="Areas\Customer\Pages\Order\**" />
-    <EmbeddedResource Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
-    <EmbeddedResource Remove="Areas\Customer\Pages\Order\**" />
-    <None Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
-    <None Remove="Areas\Customer\Pages\Order\**" />
+    <Compile Remove="Areas\Shared\Pages\NewFolder\**" />
+    <Compile Remove="Areas\Shared\Pages\Order\**" />
+    <Content Remove="Areas\Shared\Pages\NewFolder\**" />
+    <Content Remove="Areas\Shared\Pages\Order\**" />
+    <EmbeddedResource Remove="Areas\Shared\Pages\NewFolder\**" />
+    <EmbeddedResource Remove="Areas\Shared\Pages\Order\**" />
+    <None Remove="Areas\Shared\Pages\NewFolder\**" />
+    <None Remove="Areas\Shared\Pages\Order\**" />
   </ItemGroup>
 
   <ItemGroup>
