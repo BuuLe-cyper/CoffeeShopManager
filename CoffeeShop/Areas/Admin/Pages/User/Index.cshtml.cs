@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BussinessObjects.DTOs;
 using BussinessObjects.Services;
 using CoffeeShop.Helper;
 using CoffeeShop.ViewModels;
@@ -21,17 +22,37 @@ namespace CoffeeShop.Areas.Admin.Pages.User
             _mapper = mapper;
         }
         public PaginatedList<UserVM> Users { get; set; } = default!;
-        public async Task<IActionResult> OnGetAsync(int pageIndex = 1,int pageSize = 5)
+        public async Task<IActionResult> OnGetAsync(string? filter,int pageIndex = 1,int pageSize = 5)
         {
-            var dtoUsers = await _service.GetUsers();
-            List<UserVM> users = [];
-            foreach (var user in dtoUsers)
+            IEnumerable<UsersDTO> users = [];
+            if(filter!=null)
+            {   
+                string[] filters = filter.Split('-');
+                users = await _service.GetUsersWithFilter(filters[0], bool.Parse(filters[1]), filters[2]);
+            }
+            else users = await _service.GetUsers();
+            List<UserVM> dislayUsers = [];
+            foreach (var user in users)
             {
                 var vmUser = _mapper.Map<UserVM>(user);
-                users.Add(vmUser);
+                dislayUsers.Add(vmUser);
             }
-            Users = PaginatedList<UserVM>.Create(users, pageIndex, pageSize);
+            Users = PaginatedList<UserVM>.Create(dislayUsers, pageIndex, pageSize);
             PageSizeList = new(new[] {5,10,15,20}, selectedValue: pageSize);
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostSearchAsync(string searchBy, string search)
+        {
+            IEnumerable<UsersDTO> users = await _service.SearchUsers(searchBy,search);
+            List<UserVM> displayUsers = [];
+            foreach (var user in users)
+            {
+                var _user = _mapper.Map<UserVM>(user);
+                displayUsers.Add(_user);
+            }
+            Users = PaginatedList<UserVM>.Create(displayUsers, 1, displayUsers.Count);
+            PageSizeList = new(new[] { 0 });
             return Page();
         }
     }
