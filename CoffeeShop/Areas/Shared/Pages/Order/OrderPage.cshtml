@@ -73,12 +73,16 @@
                     <p><strong>Total Price: </strong><span id="total-price">$0</span></p>
                 </div>
                 <button class="checkout-button" id="checkout-button" disabled style="margin-bottom: 10px">Go to Checkout</button>
-                <a asp-area="@(User.IsInRole("Admin") ? "Admin" : "Customer")"
-                    asp-page="/Chats/Chat"
-                    asp-route-tableId="@Model.TableId"
-                    class="btn btn-outline-primary rounded-pill shadow-sm px-4 chat-btn">
-                    💬 Chat
-                </a>
+                @if (Model.TableId != null)
+                {
+                    <a asp-area="@(User.IsInRole("Admin") ? "Admin" : "Customer")"
+                       asp-page="/Chats/Chat"
+                       asp-route-tableId="@Model.TableId"
+                       class="btn btn-outline-primary rounded-pill shadow-sm px-4 chat-btn">
+                        💬 Chat
+                    </a>
+                }
+
             </div>
         </div>
     </div>

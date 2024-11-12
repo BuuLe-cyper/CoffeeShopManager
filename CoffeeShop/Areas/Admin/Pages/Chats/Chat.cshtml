@@ -67,10 +67,12 @@
 <div class="chat-container">
     <div id="messagesList" class="messages-list"></div>
 
-    <div class="input-container">
-        <input type="text" id="messageInput" placeholder="Type your message..." />
-        <button id="sendMessage">Send</button>
+    <div class="input-container" style="display: flex; align-items: center; gap: 10px;">
+        <input type="text" id="messageInput" placeholder="Type your message..." class="form-control" />
+        <button id="sendMessage" class="btn btn-primary">Send</button>
+        <a class="nav-link text-white btn btn-warning ms-2" asp-page="./Index">Back</a>
     </div>
+
 </div>
 
 
