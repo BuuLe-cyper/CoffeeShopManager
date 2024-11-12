@@ -27,6 +27,8 @@ namespace CoffeeShop.CoffeeShopHub
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, tableId);
 
+            await _messService.DeleteMessAsyncByHour();
+
             var messages = _mapper.Map<IEnumerable<MessageVM>>(await _messService.GetMessageByTableId(int.Parse(tableId)))
                                     .OrderBy(m => m.SentAt)
                                     .ToList();

@@ -11,5 +11,8 @@ namespace BussinessObjects.Services
     {
         Task<IEnumerable<MessageDTO>> GetMessageByTableId(int tableId);
         Task CreateMessage(MessageDTO messageDTO);
+        Task UpdateMessagesByTableIdAsync(int tableId);
+        Task DeleteMessAsyncByHour();
+
     }
 }

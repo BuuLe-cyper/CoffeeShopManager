@@ -83,6 +83,10 @@
                     <a class="nav-link sidebar-link @(Context.Request.Path == "/Admin/Menu/Index" ? "active" : "")"
                        asp-area="Admin" asp-page="/Menu/Index">🍽️ Menu</a>
                 </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link sidebar-link @(Context.Request.Path == "/Shared/Order/OrderPage" ? "active" : "")"
+                       asp-area="Shared" asp-page="/Order/OrderPage" asp-route-Id="1">📝 Order</a>
+                </li>
             </ul>
         </div>
 

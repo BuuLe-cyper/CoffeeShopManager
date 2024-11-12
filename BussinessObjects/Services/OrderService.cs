@@ -60,5 +60,10 @@ namespace BussinessObjects.Services
 
             return order.IsActive; 
         }
+        public async Task<IEnumerable<OrderDTO>> GetAllOrder()
+        {
+            var products = await _orderRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<OrderDTO>>(products);
+        }
     }
 }

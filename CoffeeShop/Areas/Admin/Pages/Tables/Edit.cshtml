@@ -5,62 +5,74 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1 class="mb-4"><i class="bi bi-pencil-square"></i> Edit Table</h1>
 
-<h4>Table</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="card-title mb-3"><i class="bi bi-info-circle"></i> Table Details</h4>
+        <hr />
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Table.TableID" />
 
-            <div class="form-group">
-                <label asp-for="Table.Description" class="control-label"></label>
-                <input asp-for="Table.Description" class="form-control" />
+            <div class="mb-3">
+                <label asp-for="Table.Description" class="form-label">
+                    <i class="bi bi-text-paragraph"></i> Description
+                </label>
+                <input asp-for="Table.Description" class="form-control" placeholder="Enter table description" />
                 <span asp-validation-for="Table.Description" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Table.QRCodeTable" class="control-label"></label>
-                <img src="@Model.Table.QRCodeTable" alt="QR Code" style="width: 100px; height: 100px;" />
+            <div class="mb-3">
+                <label asp-for="Table.QRCodeTable" class="form-label">
+                    <i class="bi bi-qr-code-scan"></i> QR Code
+                </label>
+                <div>
+                    <img src="@Model.Table.QRCodeTable" alt="QR Code" class="img-thumbnail mb-2" style="max-width: 150px;" />
+                </div>
                 <input type="hidden" asp-for="Table.QRCodeTable" />
             </div>
 
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Table.IsDeleted" /> @Html.DisplayNameFor(model => model.Table.IsDeleted)
+            <div class="mb-3 form-check">
+                <input class="form-check-input" asp-for="Table.IsDeleted" id="IsDeletedCheckbox" />
+                <label class="form-check-label" for="IsDeletedCheckbox">
+                    <i class="bi bi-trash"></i> @Html.DisplayNameFor(model => model.Table.IsDeleted)
                 </label>
             </div>
 
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Table.IsActive" /> @Html.DisplayNameFor(model => model.Table.IsActive)
+            <div class="mb-3 form-check">
+                <input class="form-check-input" asp-for="Table.IsActive" id="IsActiveCheckbox" />
+                <label class="form-check-label" for="IsActiveCheckbox">
+                    <i class="bi bi-toggle-on"></i> @Html.DisplayNameFor(model => model.Table.IsActive)
                 </label>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Table.CreateDate" class="control-label"></label>
+            <div class="mb-3">
+                <label asp-for="Table.CreateDate" class="form-label">
+                    <i class="bi bi-calendar-check"></i> Created Date
+                </label>
                 <input asp-for="Table.CreateDate" class="form-control" readonly />
                 <span asp-validation-for="Table.CreateDate" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Table.ModifyDate" class="control-label"></label>
+            <div class="mb-3">
+                <label asp-for="Table.ModifyDate" class="form-label">
+                    <i class="bi bi-calendar-edit"></i> Modified Date
+                </label>
                 <input asp-for="Table.ModifyDate" class="form-control" readonly />
                 <span asp-validation-for="Table.ModifyDate" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+                <a asp-page="./Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Back to List
+                </a>
             </div>
         </form>
     </div>
-</div>
-
-
-<div>
-    <a asp-page="./Index">Back to List</a>
 </div>
 
 @section Scripts {

@@ -5,51 +5,67 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="mb-4">Table Details</h1>
 
-<div>
-    <h4>Table</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Table.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Table.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Table.QRCodeTable)
-        </dt>
-        <dd class="col-sm-10">
-            <img src="@Model.Table.QRCodeTable" alt="QR Code" style="width: 100px; height: 100px;" />
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Table.IsDeleted)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Table.IsDeleted)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Table.IsActive)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Table.IsActive)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Table.CreateDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Table.CreateDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Table.ModifyDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Table.ModifyDate)
-        </dd>
-    </dl>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="card-title mb-3">Table Information</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3 fw-bold">
+                @Html.DisplayNameFor(model => model.Table.Description)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Table.Description)
+            </dd>
+
+            <dt class="col-sm-3 fw-bold">
+                @Html.DisplayNameFor(model => model.Table.QRCodeTable)
+            </dt>
+            <dd class="col-sm-9">
+                <img src="@Model.Table.QRCodeTable" alt="QR Code" class="img-thumbnail" style="max-width: 150px;" />
+            </dd>
+
+            <dt class="col-sm-3 fw-bold">
+                @Html.DisplayNameFor(model => model.Table.IsDeleted)
+            </dt>
+            <dd class="col-sm-9">
+                <span class="badge @(Model.Table.IsDeleted ? "bg-danger" : "bg-success")">
+                    @(Model.Table.IsDeleted ? "Deleted" : "Active")
+                </span>
+            </dd>
+
+            <dt class="col-sm-3 fw-bold">
+                @Html.DisplayNameFor(model => model.Table.IsActive)
+            </dt>
+            <dd class="col-sm-9">
+                <span class="badge @(Model.Table.IsActive ? "bg-success" : "bg-secondary")">
+                    @(Model.Table.IsActive ? "Active" : "Inactive")
+                </span>
+            </dd>
+
+            <dt class="col-sm-3 fw-bold">
+                @Html.DisplayNameFor(model => model.Table.CreateDate)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Table.CreateDate)
+            </dd>
+
+            <dt class="col-sm-3 fw-bold">
+                @Html.DisplayNameFor(model => model.Table.ModifyDate)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Table.ModifyDate)
+            </dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Table.TableID">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+
+<div class="d-flex justify-content-between">
+    <a asp-page="./Edit" asp-route-id="@Model.Table.TableID" class="btn btn-primary">
+        <i class="bi bi-pencil-square"></i> Edit
+    </a>
+    <a asp-page="./Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Back to List
+    </a>
 </div>

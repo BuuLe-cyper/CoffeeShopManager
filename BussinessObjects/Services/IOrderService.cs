@@ -15,5 +15,6 @@ namespace BussinessObjects.Services
         public Task<IEnumerable<OrderDTO>> GetOrderByOrderId(Guid orderId);
         public Task<bool?> GetOrderStatus(Guid orderId);
         public Task<decimal> CalculateTotalAmount(Guid orderId);
+        public Task<IEnumerable<OrderDTO>> GetAllOrder();
     }
 }

@@ -1,15 +1,14 @@
 ﻿@page "{id?}"
-@model CoffeeShop.Areas.Customer.Pages.Order.OrderPageModel
+@model CoffeeShop.Areas.Shared.Pages.Order.OrderPageModel
 @{
     ViewData["Title"] = "Order Coffee";
-    Layout = "/Areas/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 <link rel="stylesheet" href="~/css/OrderPageScriptStyle.css" asp-append-version="true" />
 
-<div class="container">
+<div class="container" style="min-height: 417px; margin-bottom: 40px">
     <div class="row">
-        <div class="col-lg-2 col-md-3 col-sm-12 sidebar_container">
+        <div class="sidebar_container_full">
             <div class="sidebar_menu">
                 <ul>
                     <li><a href="#" id="all-products" data-category-id="0">All</a></li>
@@ -20,7 +19,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col-lg-7 col-md-9 col-sm-12">
+        <div class="col-lg-8 col-md-9 col-sm-12">
             <div class="product_container">
                 @foreach (var product in Model.Product)
                 {
@@ -62,7 +61,7 @@
                 }
             </div>
         </div>
-        <div class="col-lg-3 col-md-12 col-sm-12">
+        <div class="col-lg-4 col-md-12 col-sm-12">
             <div class="orderCart">
                 <p class="order-title">Your Order</p>
                 <div class="cart-empty" id="cart-empty">
@@ -73,7 +72,13 @@
                 <div id="cart-total">
                     <p><strong>Total Price: </strong><span id="total-price">$0</span></p>
                 </div>
-                <button class="checkout-button" id="checkout-button" disabled>Go to Checkout</button>
+                <button class="checkout-button" id="checkout-button" disabled style="margin-bottom: 10px">Go to Checkout</button>
+                <a asp-area="@(User.IsInRole("Admin") ? "Admin" : "Customer")"
+                    asp-page="/Chats/Chat"
+                    asp-route-tableId="@Model.TableId"
+                    class="btn btn-outline-primary rounded-pill shadow-sm px-4 chat-btn">
+                    💬 Chat
+                </a>
             </div>
         </div>
     </div>
@@ -129,20 +134,28 @@
         const urlParts = window.location.pathname.split('/');
         const tableId = urlParts[urlParts.length - 1];
 
-        // if (isNaN(tableId) || tableId <= 0) {
-        //     console.log('No table ID found in URL');
-        //     document.getElementById('cart-empty').style.display = 'none';
-        //     document.getElementById('cart-items').style.display = 'none';
-        //     document.getElementById('cart-total').style.display = 'none';
-        //     document.getElementById('checkout-button').disabled = true;
-        //     document.getElementById('checkout-button').classList.add('button-disabled');
+        if (isNaN(tableId) || tableId <= 0) {
+            console.log('No table ID found in URL');
+            document.getElementById('cart-empty').style.display = 'none';
+            document.getElementById('cart-items').style.display = 'none';
+            document.getElementById('cart-total').style.display = 'none';
+            document.getElementById('checkout-button').disabled = true;
+            document.getElementById('checkout-button').classList.add('button-disabled');
 
-        //     document.querySelectorAll('.choose-item').forEach(button => {
-        //         button.disabled = true;
-        //         button.classList.add('button-disabled');
-        //     });
-        //     return;
-        // }
+            document.querySelectorAll('.choose-item').forEach(button => {
+                button.disabled = true;
+                button.classList.add('button-disabled');
+            });
+            return;
+        }
+
+        if (tableId == '1') {
+            const chatBtn = document.querySelector('.chat-btn');
+            if (chatBtn) {
+                chatBtn.style.display = 'none';
+            }
+        }
+
 
         const savedCartTime = localStorage.getItem(`cart-time-${tableId}`);
         const currentTime = new Date().getTime();
@@ -293,7 +306,7 @@
 
         document.getElementById('checkout-button').addEventListener('click', function () {
             if (cart.length > 0) {
-                window.location.href = `/Customer/Order/Cart?tableId=${tableId}`;
+                window.location.href = `/Shared/Order/Cart?tableId=${tableId}`;
                 sessionStorage.setItem('cart', JSON.stringify(cart));
             } else {
                 alert('Your cart is empty!');

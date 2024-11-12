@@ -1,0 +1,62 @@
+﻿@page "{id?}"
+@model CoffeeShop.Areas.Admin.Pages.Statistics.ViewOrderDetailModel
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div style="margin: 15px 25px">
+    <div class=" d-md-flex justify-content-between align-items-center border-bottom border-dark my-3 py-3">
+        <h4 class="display-7 fw-bold m-0">@ViewData["Title"]</h4>
+        @foreach (var order in Model.Orders)
+        {
+            <div>
+                <p class="m-0"> <span class="fw-bold">Table: </span>@order.TableID</p>
+                <p class="m-0"> <span class="fw-bold">PayMethod: </span>@order.PaymentMethod</p>
+                <p class="m-0"> <span class="fw-bold">Invoice Date: </span>@order.OrderDate.ToString("MMM d, yyyy h:mm tt")</p>
+            </div>
+        }
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col" style="width: 10%">#</th>
+                <th scope="col" style="width: 25%">Item</th>
+                <th scope="col" style="width: 15%">Size</th>
+                <th scope="col" style="width: 15%">Price</th>
+                <th scope="col" style="width: 15%">Quantity</th>
+                <th scope="col" style="width: 20%">SubTotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int index = 1;
+            }
+            @foreach (var orderDetail in Model.OrderDetails)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@orderDetail.ProductSize.Product.ProductName</td>
+                    <td>@orderDetail.ProductSize.Size.SizeName</td>
+                    <td>@orderDetail.UnitPrice.ToString("N0")</td>
+                    <td>@orderDetail.Quantity</td>
+                    <td>@((orderDetail.UnitPrice * orderDetail.Quantity).ToString("N0"))</td>
+                </tr>
+                index++;
+            }
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td colspan="5"><strong>Total</strong></td>
+                    <td>@order.TotalAmount.ToString("N0")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div>
+        <a href="/Admin/Statistics/ListOrder" class="btn btn-secondary">Back to Orders</a>
+    </div>
+</div>
+
+
