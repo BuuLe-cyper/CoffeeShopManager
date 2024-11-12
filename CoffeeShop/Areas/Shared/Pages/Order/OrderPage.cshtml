@@ -74,9 +74,9 @@
                 </div>
                 <button class="checkout-button" id="checkout-button" disabled style="margin-bottom: 10px">Go to Checkout</button>
                 <a asp-area="@(User.IsInRole("Admin") ? "Admin" : "Customer")"
-                   asp-page="/Chats/Chat"
-                   asp-route-tableId="@Model.TableId"
-                   class="btn btn-outline-primary rounded-pill shadow-sm px-4">
+                    asp-page="/Chats/Chat"
+                    asp-route-tableId="@Model.TableId"
+                    class="btn btn-outline-primary rounded-pill shadow-sm px-4 chat-btn">
                     💬 Chat
                 </a>
             </div>
@@ -147,6 +147,13 @@
                 button.classList.add('button-disabled');
             });
             return;
+        }
+
+        if (tableId == '1') {
+            const chatBtn = document.querySelector('.chat-btn');
+            if (chatBtn) {
+                chatBtn.style.display = 'none';
+            }
         }
 
 
