@@ -73,6 +73,13 @@
                     <p><strong>Total Price: </strong><span id="total-price">$0</span></p>
                 </div>
                 <button class="checkout-button" id="checkout-button" disabled>Go to Checkout</button>
+                <a asp-area="@(User.IsInRole("Admin") ? "Admin" : "Customer")"
+                   asp-page="/Chats/Chat"
+                   asp-route-tableId="@Model.TableId"
+                   class="btn btn-outline-primary rounded-pill shadow-sm px-4">
+                    💬 Chat
+                </a>
+
             </div>
         </div>
     </div>
