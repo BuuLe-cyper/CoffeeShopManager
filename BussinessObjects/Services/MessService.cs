@@ -2,11 +2,6 @@
 using BussinessObjects.DTOs.Message;
 using DataAccess.Models;
 using DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BussinessObjects.Services
 {
@@ -23,10 +18,18 @@ namespace BussinessObjects.Services
         {
             await _messRepository.CreateAsync( _mapper.Map<Message>(messageDTO));
         }
+        public async Task DeleteMessAsyncByHour()
+        {
+            await _messRepository.DeleteMessAsyncByHour();
 
+        }
         public async Task<IEnumerable<MessageDTO>> GetMessageByTableId(int tableId)
         {
             return _mapper.Map<IEnumerable<MessageDTO>>(await _messRepository.GetAllAsync(m => m.TableID.Equals(tableId) && m.IsActive == true && m.IsDeleted == false, includeProperties: "User"));
+        }
+        public async Task UpdateMessagesByTableIdAsync(int tableId)
+        {
+           await _messRepository.UpdateMessagesByTableIdAsync(tableId);
         }
     }
 }

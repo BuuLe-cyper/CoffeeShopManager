@@ -3,10 +3,10 @@
 @{
     var featuredProducts = new List<dynamic>
     {
-        new { Id = 1, Name = "Espresso", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 50.00 },
-        new { Id = 2, Name = "Cappuccino", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 60.00 },
-        new { Id = 3, Name = "Latte", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 65.00 },
-        new { Id = 4, Name = "Mocha", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40PeM6jg49QFBtzOujZ0AtzHFJ-Bw-_o7Fw&s", Price = 70.00 }
+        new { Id = 1, Name = "Espresso", ImageUrl = "https://cubes-asia.com/storage/blogs/2023/cafe-espresso.jpg", Price = 50.00 },
+        new { Id = 2, Name = "Cappuccino", ImageUrl = "https://vinbarista.com/uploads/news/cappuccino-la-gi-cach-lam-1-ly-cafe-cappuccino-chuan-vi-y-202212231043.png", Price = 60.00 },
+        new { Id = 3, Name = "Latte", ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSNw7oOeCCCIv_D1ok78I61XqgUl1ZU_S2DA&s", Price = 65.00 },
+        new { Id = 4, Name = "Mocha", ImageUrl = "https://caphenguyenchat.vn/wp-content/uploads/2023/03/Mocha-1fc71f7.png", Price = 70.00 }
     };
 }
 
@@ -59,7 +59,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title"><a href="/product/@product.Id" class="text-dark">@product.Name</a></h5>
                             <p class="current_price text-success fw-bold">@product.Price.ToString("C")</p>
-                            <a href="" class="btn btn-outline-primary btn-sm">Buy Now</a>
+                            <a asp-area="Shared" asp-page="/Order/OrderPage" class="btn btn-outline-primary btn-sm">Buy Now</a>
                         </div>
                     </div>
                 </div>
