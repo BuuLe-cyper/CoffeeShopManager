@@ -2,6 +2,7 @@
 using BussinessObjects.DTOs;
 using DataAccess.Models;
 using DataAccess.Repositories;
+using System.Reflection;
 
 namespace BussinessObjects.Services
 {
@@ -78,6 +79,34 @@ namespace BussinessObjects.Services
             return usersList;
         }
 
+        public async Task<IEnumerable<UsersDTO>> GetUsersWithFilter(string sortBy, bool direction, string accountType)
+        {
+            
+            var users = (await _rep.GetAllAsync(u=>u.IsDeleted == false));
+            if (accountType != "all")
+            {
+                int accountTypeValue = accountType.Equals("admin", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
+                users = users.Where(u => u.AccountType == accountTypeValue);
+            }
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                var propertyInfo = typeof(User).GetProperty(sortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                if (propertyInfo != null)
+                {
+                    users = direction
+                        ? users.OrderBy(u => propertyInfo.GetValue(u, null))
+                        : users.OrderByDescending(u => propertyInfo.GetValue(u, null));
+                }
+            }
+            var usersList = new List<UsersDTO>();
+            foreach (var user in users)
+            {
+                var userDTO = _mapper.Map<UsersDTO>(user) as UsersDTO;
+                usersList.Add(userDTO);
+            }
+            return usersList;
+        }
+
         public async Task<UsersDTO> Login(string username, string password)
         {
             var user = await _rep.Login(username, password);
@@ -99,6 +128,28 @@ namespace BussinessObjects.Services
             var registerUser = _mapper.Map<User>(dtoUser);
             await _rep.CreateAsync(registerUser);
         }
+
+        public async Task<IEnumerable<UsersDTO>> SearchUsers(string searchBy, string search)
+        {
+            var users = await _rep.GetAllAsync(u => u.IsDeleted == false);
+
+            // If searchBy is provided, filter based on the property
+            if (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(search))
+            {
+                var propertyInfo = typeof(User).GetProperty(searchBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                if (propertyInfo != null && propertyInfo.PropertyType == typeof(string))
+                {
+                    users = users.Where(u =>
+                        propertyInfo.GetValue(u, null)?.ToString().Contains(search, StringComparison.OrdinalIgnoreCase) == true
+                    );
+                }
+            }
+
+            // Map results to UsersDTO
+            return  users.Select(user => _mapper.Map<UsersDTO>(user));
+
+        }
+
 
         public async Task UpdateUser(UsersDTO user)
         {

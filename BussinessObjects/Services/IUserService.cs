@@ -1,9 +1,4 @@
 ﻿using BussinessObjects.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BussinessObjects.Services
 {
@@ -18,5 +13,7 @@ namespace BussinessObjects.Services
         public Task<UsersDTO> Login(string username, string password);
         public Task<IEnumerable<UsersDTO>> GetUsers(string? includeProperty = null);
         public Task Register(string username, string password,string email);
+        public Task<IEnumerable<UsersDTO>> GetUsersWithFilter(string sortBy, bool direction, string accountType);
+        public Task<IEnumerable<UsersDTO>> SearchUsers(string searchBy, string search);
     }
 }
