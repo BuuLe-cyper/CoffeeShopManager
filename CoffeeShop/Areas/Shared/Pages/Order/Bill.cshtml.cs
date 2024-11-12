@@ -16,22 +16,23 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
         private readonly IOrderService _orderService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public BillModel(IOrderDetailService orderDetailService, IMapper mapper, IOrderService orderService, IHttpContextAccessor httpContextAccessor)
+        private readonly IMessService _messService;
+        public BillModel(IOrderDetailService orderDetailService, IMapper mapper, IOrderService orderService, IHttpContextAccessor httpContextAccessor, IMessService messService)
         {
             _orderDetailService = orderDetailService;
             _orderService = orderService;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _messService = messService;
         }
 
         public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
         public IEnumerable<OrderVM> Orders { get; set; } = default!;
-        public int TableId { get; set; }
+        //public int TableId { get; set; }
 
         public async Task OnGetAsync(Guid orderId, int tableId)
         {
-            TableId = tableId;
-
+            await _messService.UpdateMessagesByTableIdAsync(tableId);
             var currentOrderId = _httpContextAccessor.HttpContext.Session.GetString("CurrentOrderId");
             orderId = new Guid(currentOrderId);
             var orderDetail = await _orderDetailService.GetOrderDetailsByOrderId(orderId);

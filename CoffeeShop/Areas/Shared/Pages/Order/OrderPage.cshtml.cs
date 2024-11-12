@@ -30,7 +30,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
         public IEnumerable<ProductVM> Product { get; set; } = default!;
         public IEnumerable<ProductSizeVM> ProductSize { get; set; } = default!;
 
-        public async Task OnGetAsync(int? productId, int? sizeId, string tableId, int? categoryId)
+        public async Task OnGetAsync(int? productId, int? sizeId, string Id, int? categoryId)
         {
             var categories = await _categoryService.GetAllCategory();
             Category = categories != null ? _mapper.Map<IEnumerable<CategoryVM>>(categories) : new List<CategoryVM>();
@@ -55,7 +55,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
                 }
             }
 
-            TableId = tableId;
+            TableId = Id;
         }
     }
 }
