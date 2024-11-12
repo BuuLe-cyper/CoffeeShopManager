@@ -1,0 +1,250 @@
+﻿@page
+@model CoffeeShop.Areas.Shared.Pages.Order.CartModel
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "/Areas/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container mt-4" style="width: 75%">
+    <h2 style="text-align: center; margin-bottom: 1rem">Your Order</h2>
+
+    <div id="cart-empty" style="display: none;">
+        <p>Your cart is empty.</p>
+    </div>
+
+    <div id="cart-items" style="display: none;">
+        <table id="mycart" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">#</th>
+                    <th style="width: 36%;">Item</th>
+                    <th style="width: 10%;">Size</th>
+                    <th style="width: 18%;">Price</th>
+                    <th style="width: 10%;">Quantity</th>
+                    <th style="width: 18%;">SubTotal</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items-body">
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4"><strong>Total</strong></td>
+                    <td id="total-quantity" style="text-align: center">0</td>
+                    <td id="total-price" style="text-align: center">$0.00</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <form method="post" asp-page-handler="Checkout">
+        <div id="cart-total" style="display: none;">
+            <div class="payment-method mt-4">
+                <h5>Choose Payment Method:</h5>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="paymentMethod" id="paymentCash" value="Cash">
+                    <label class="form-check-label" for="paymentCash">
+                        Pay On-site
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="paymentMethod" id="paymentBankTransfer" value="BankTransfer">
+                    <label class="form-check-label" for="paymentBankTransfer">
+                        Bank Transfer
+                    </label>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-start gap-2" style="margin-top: 20px">
+                <button class="btn btn-danger" type="button">
+                    <a style="text-decoration: none; color: white" asp-area="Shared" asp-page="/Order/OrderPage" asp-route-id="@Model.TableId">Back Menu</a>
+                </button>
+                <button type="submit" id="checkout-button" class="btn btn-primary" disabled>Checkout</button>
+            </div>
+        </div>
+
+        <input type="hidden" id="cart-data" name="cartData" />
+    </form>
+
+    <div id="confirmModal" style="display: none;">
+        <div class="modal-content">
+            <p>Are you sure you want to pay on-site?</p>
+            <button id="confirmBtn">Confirm</button>
+            <button id="cancelBtn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedCart = sessionStorage.getItem('cart');
+        const urlParams = new URLSearchParams(window.location.search);
+        const tableId = urlParams.get('tableId');
+
+        let cart = [];
+        let totalPrice = 0;
+
+        if (savedCart) {
+            try {
+                cart = JSON.parse(savedCart);
+                updateCartUI(cart);
+            } catch (e) {
+                console.error('Error parsing cart data from sessionStorage:', e);
+                sessionStorage.removeItem('cart');
+            }
+        }
+
+        if (tableId !== '1') {
+            const paymentMethodDiv = document.querySelector('.payment-method');
+            if (paymentMethodDiv) {
+                paymentMethodDiv.style.display = 'none';
+            }
+            const checkoutButton = document.getElementById('checkout-button');
+            if (checkoutButton) {
+                checkoutButton.disabled = false;
+            }
+        }
+
+        document.getElementById('confirmModal').style.display = 'none';
+
+        function formatCurrency(amount) {
+            return amount.toLocaleString('vi-VN', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        function updateCartUI(cart) {
+            const cartItemsDiv = document.getElementById('cart-items');
+            const cartEmptyDiv = document.getElementById('cart-empty');
+            const cartTotalDiv = document.getElementById('cart-total');
+            const checkoutButton = document.getElementById('checkout-button');
+            const cartItemsBody = document.getElementById('cart-items-body');
+            totalPrice = 0;
+            let totalQuantity = 0;
+
+            cartItemsBody.innerHTML = '';
+            if (cart.length === 0) {
+                cartEmptyDiv.style.display = 'block';
+                cartItemsDiv.style.display = 'none';
+                cartTotalDiv.style.display = 'none';
+                checkoutButton.disabled = true;
+            } else {
+                cartEmptyDiv.style.display = 'none';
+                cartItemsDiv.style.display = 'block';
+                cartTotalDiv.style.display = 'block';
+                checkoutButton.disabled = false;
+
+                cart.forEach((item, index) => {
+                    let sizeDisplay = '';
+                    if (item.size == 1) {
+                        sizeDisplay = 'S';
+                    } else if (item.size == 2) {
+                        sizeDisplay = 'M';
+                    } else if (item.size == 3) {
+                        sizeDisplay = 'L';
+                    } else {
+                        sizeDisplay = 'Unknown';
+                    }
+
+                    const productElement = document.createElement('tr');
+                    productElement.innerHTML = `
+                                <td style="text-align: center; border: 2px solid black">${index + 1}</td>
+                                <td style="border: 2px solid black">${item.productName}</td>
+                                <td style="text-align: center; border: 2px solid black">${sizeDisplay}</td>
+                                <td style="text-align: center; border: 2px solid black">${formatCurrency(item.productPrice)}</td>
+                                <td style="text-align: center; border: 2px solid black">${item.quantity}</td>
+                                <td style="text-align: center; border: 2px solid black">${formatCurrency(item.productPrice * item.quantity)}</td>
+                                <input type="hidden" name="itemid" value="${item.productId}">
+                                <input type="hidden" name="subprice" value="${item.productPrice}">
+                            `;
+                    cartItemsBody.appendChild(productElement);
+                    totalPrice += item.productPrice * item.quantity;
+                    totalQuantity += item.quantity;
+                });
+
+                document.getElementById('total-price').innerText = formatCurrency(totalPrice);
+                document.getElementById('total-quantity').innerText = totalQuantity;
+            }
+        }
+
+        document.getElementById('checkout-button').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            let paymentMethodSelected;
+
+            if (tableId !== '1') {
+                paymentMethodSelected = { value: 'BankTransfer' };
+            } else {
+                paymentMethodSelected = document.querySelector('input[name="paymentMethod"]:checked');
+                if (!paymentMethodSelected) {
+                    alert("Please select a payment method before proceeding.");
+                    return;
+                }
+
+                if (paymentMethodSelected.value === 'Cash') {
+                    document.getElementById('confirmModal').style.display = 'flex'; 
+                    return;
+                }
+            }
+
+            const savedCart = sessionStorage.getItem('cart');
+            if (savedCart) {
+                const cart = JSON.parse(savedCart);
+                if (cart.length > 0) {
+                    const cartItems = cart.map(item => ({
+                        ProductName: item.productName,
+                        SizeId: item.size,
+                        UnitPrice: item.productPrice,
+                        Quantity: item.quantity,
+                        Discount: item.discount || 0
+                    }));
+
+                    const userId = '@User.FindFirst("userId")?.Value' || "00000000-0000-0000-0000-000000000000";
+                    const totalPrice = cart.reduce((total, item) => total + (item.productPrice * item.quantity), 0);
+
+                    const cartData = {
+                        cartItems: cartItems,
+                        userId: userId,
+                        totalAmount: totalPrice,
+                        tableId: tableId,
+                        paymentMethod: paymentMethodSelected.value
+                    };
+
+                    document.getElementById('cart-data').value = JSON.stringify(cartData);
+
+                    document.querySelector('form').submit();
+                }
+            }
+        });
+
+        document.getElementById('confirmBtn').addEventListener('click', function () {
+            const cartData = {
+                cartItems: cart.map(item => ({
+                    ProductName: item.productName,
+                    SizeId: item.size,
+                    UnitPrice: item.productPrice,
+                    Quantity: item.quantity,
+                    Discount: item.discount || 0
+                })),
+                userId: '@User.FindFirst("userId")?.Value' || "00000000-0000-0000-0000-000000000000",
+                totalAmount: totalPrice,
+                tableId: tableId,
+                paymentMethod: 'Cash'  
+            };
+
+            document.getElementById('cart-data').value = JSON.stringify(cartData); 
+            document.getElementById('confirmModal').style.display = 'none';
+
+            document.querySelector('form').submit();
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', function () {
+            document.getElementById('confirmModal').style.display = 'none';
+        });
+    });
+
+</script>

@@ -10,6 +10,7 @@ namespace DataAccess.Repositories
 {
     public interface IMessRepository : IRepository<Message>
     {
-
+        Task UpdateMessagesByTableIdAsync(int tableId);
+        Task DeleteMessAsyncByHour();
     }
 }

@@ -15,5 +15,6 @@ namespace BussinessObjects.Services
         public Task Register(string username, string password,string email);
         public Task<IEnumerable<UsersDTO>> GetUsersWithFilter(string sortBy, bool direction, string accountType);
         public Task<IEnumerable<UsersDTO>> SearchUsers(string searchBy, string search);
+        Task<Guid> GetGuestUserIdAsync();
     }
 }

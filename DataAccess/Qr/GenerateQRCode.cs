@@ -21,7 +21,7 @@ namespace DataAccess.Qr
 
             var request = _httpContextAccessor.HttpContext.Request;
             string baseUrl = $"{request.Scheme}://{request.Host}";
-            string chatUrl = $"{baseUrl}/Customer/Shopping/Index/{tableId}";
+            string chatUrl = $"{baseUrl}/Shared/Order/OrderPage/{tableId}";
 
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {

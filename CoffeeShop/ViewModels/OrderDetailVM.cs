@@ -20,9 +20,10 @@ namespace CoffeeShop.ViewModels
     public class CartData
     {
         public List<OrderDetailVM> CartItems { get; set; }
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         public decimal TotalAmount { get; set; }
         public int TableId { get; set; }
+        public string paymentMethod { get; set; }
 
     }
 }

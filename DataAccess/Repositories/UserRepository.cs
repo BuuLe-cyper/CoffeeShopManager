@@ -27,5 +27,14 @@ namespace DataAccess.Repositories
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
+        public async Task<Guid> GetGuestUserIdAsync()
+        {
+            var guestUser = await _context.Users
+                .Where(u => u.AccountType == 0)
+                .Select(u => u.UserID)
+                .FirstOrDefaultAsync();
+
+            return guestUser != Guid.Empty ? guestUser : throw new Exception("Guest user not found.");
+        }
     }
 }

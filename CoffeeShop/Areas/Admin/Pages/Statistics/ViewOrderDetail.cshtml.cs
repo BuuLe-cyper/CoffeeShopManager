@@ -2,42 +2,43 @@ using AutoMapper;
 using BussinessObjects.Services;
 using CoffeeShop.ViewModels;
 using DataAccess.Models;
-using DataAccess.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoffeeShop.Areas.Customer.Pages.Order
+namespace CoffeeShop.Areas.Admin.Pages.Statistics
 {
-    public class BillModel : PageModel
+    [Authorize(Policy = "AdminOnly")]
+    public class ViewOrderDetailModel : PageModel
     {
         private readonly IOrderDetailService _orderDetailService;
         private readonly IOrderService _orderService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public BillModel(IOrderDetailService orderDetailService, IMapper mapper, IOrderService orderService, IHttpContextAccessor httpContextAccessor)
+        public ViewOrderDetailModel(IOrderDetailService orderDetailService, IMapper mapper, IOrderService orderService)
         {
             _orderDetailService = orderDetailService;
             _orderService = orderService;
-            _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
-
         public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
         public IEnumerable<OrderVM> Orders { get; set; } = default!;
 
-        public async Task OnGetAsync(Guid orderId)
+        public async Task<IActionResult> OnGetAsync(Guid id)
         {
-            var currentOrderId = _httpContextAccessor.HttpContext.Session.GetString("CurrentOrderId");
-            orderId = new Guid(currentOrderId);
+            var order = await _orderService.GetOrderByOrderId(id);
+            var orderDetail = await _orderDetailService.GetOrderDetailsByOrderId(id);
 
-            //Guid orderID = new Guid("8c3adbad-2410-4ca6-8211-cd7c8190c5c0");
-
-            var orderDetail = await _orderDetailService.GetOrderDetailsByOrderId(orderId);
-            var order = await _orderService.GetOrderByOrderId(orderId);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
 
             OrderDetails = orderDetail != null ? _mapper.Map<IEnumerable<OrderDetailVM>>(orderDetail) : new List<OrderDetailVM>();
             Orders = order != null ? _mapper.Map<IEnumerable<OrderVM>>(order) : new List<OrderVM>();
 
+            return Page();
+
         }
+
     }
 }

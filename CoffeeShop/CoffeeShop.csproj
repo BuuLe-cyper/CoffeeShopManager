@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
+    <Compile Remove="Areas\Customer\Pages\Order\**" />
+    <Content Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
+    <Content Remove="Areas\Customer\Pages\Order\**" />
+    <EmbeddedResource Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
+    <EmbeddedResource Remove="Areas\Customer\Pages\Order\**" />
+    <None Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
+    <None Remove="Areas\Customer\Pages\Order\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -35,11 +46,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Shared\Pages\NewFolder\" />
-    <Folder Include="Areas\Shared\Pages\Order\" />
   </ItemGroup>
 
 </Project>

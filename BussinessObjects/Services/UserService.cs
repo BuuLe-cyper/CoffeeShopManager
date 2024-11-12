@@ -168,5 +168,9 @@ namespace BussinessObjects.Services
                 throw;
             }
         }
+        public async Task<Guid> GetGuestUserIdAsync()
+        {
+            return await _rep.GetGuestUserIdAsync();
+        }
     }
 }

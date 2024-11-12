@@ -1,5 +1,5 @@
 ﻿@page
-@model CoffeeShop.Areas.Customer.Pages.DemoPaymentReturn.FailModel
+@model FailModel
 @{
 }
 
@@ -52,21 +52,25 @@
             &#10060;
         </div>
         <h1>Payment Failed</h1>
-        <p class="message">An error occurred during the payment process. You will be redirected back to the order page in <span id="countdown" class="timer">5</span> seconds.</p>
+        <p class="message">An error occurred during the payment process. You will be redirected back to the order page in <span id="countdown" class="timer">3</span> seconds.</p>
     </div>
 </div>
 
 <script>
-    let countdown = 5;
+    let countdown = 3;
     const countdownElement = document.getElementById("countdown");
 
-    const interval = setInterval(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableId = urlParams.get("tableId");
+
+    const interval = setInterval(function () {
         countdown--;
         countdownElement.textContent = countdown;
 
         if (countdown <= 0) {
             clearInterval(interval);
-            window.location.href = "/Customer/Order/OrderPage";
+
+            window.location.href = `/Shared/Order/OrderPage/${tableId}`;
         }
     }, 1000);
 </script>

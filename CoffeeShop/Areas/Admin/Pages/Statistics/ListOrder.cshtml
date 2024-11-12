@@ -1,0 +1,212 @@
+﻿@page "{page?}"
+@model CoffeeShop.Areas.Admin.Pages.Statistics.ListOrderModel
+@{
+    ViewData["Title"] = "Order Management";
+}
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 20px;
+    }
+
+    .pagination .page-item {
+        list-style-type: none;
+    }
+
+    .pagination .page-link {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #007bff;
+        background-color: white;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #f0f0f0;
+        color: white;
+        border-color: #ddd;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .pagination .page-item:not(.disabled) .page-link:hover {
+        background-color: #e9ecef;
+    }
+
+    .pagination .page-item {
+        display: inline-block;
+    }
+
+    .pagination .page-item.hidden {
+        display: none;
+    }
+
+    #timeFilter {
+        width: 200px;
+        font-size: 14px;
+    }
+</style>
+
+<div style="margin: 15px 20px">
+    <h2 style="text-align: center; margin-bottom: 20px; font-weight: bold">@ViewData["Title"]</h2>
+
+    <div style="margin-bottom: 15px;">
+        <div>
+            <select class="form-select" id="timeFilter" onchange="filterOrders()">
+                <option value="">Select Time Frame</option>
+                <option value="day">Today</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="all">All</option>
+            </select>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Order ID</th>
+                <th>Table</th>
+                <th>Order Date</th>
+                <th>Pay</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Orders.Any())
+            {
+                int index = 1;
+                foreach (var order in Model.Orders)
+                {
+                    <tr>
+                        <td style="width: 6%">@index</td>
+                        <td style="width: 30%">@order.OrderId</td>
+                        <td style="width: 8%">@order.TableID</td>
+                        <td style="width: 25%">@order.OrderDate.ToString("MMM d, yyyy h:mm tt")</td>
+                        <td style="width: 10%">
+                            @if (order.PaymentMethod == "BankTransfer")
+                            {
+                                <text>Bank</text>
+                            }
+                            else
+                            {
+                                <text>@order.PaymentMethod</text>
+                            }
+                        </td>
+                        <td style="width: 15%">@order.TotalAmount.ToString("N0")</td>
+                        <td style="width: 6%">
+                            <a class="btn btn-primary btn-sm" asp-page="/Statistics/ViewOrderDetail" asp-route-id="@order.OrderId">View</a>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">No orders found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <div>
+            <span class="mr-2">Rows per page: 10</span>
+        </div>
+        <div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    <li class="page-item @(Model.Orders.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?pageIndex=@(Model.Orders.PageIndex - 1)&pageSize=@Model.Orders.PageSize">Previous</a>
+                    </li>
+
+                    @for (int i = 1; i <= Model.Orders.TotalPages; i++)
+                    {
+                        <li class="page-item @(Model.Orders.PageIndex == i ? "active" : "")">
+                            <a class="page-link" href="?pageIndex=@i&pageSize=@Model.Orders.PageSize">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.Orders.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?pageIndex=@(Model.Orders.PageIndex + 1)&pageSize=@Model.Orders.PageSize">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterOrders() {
+        var filter = document.getElementById('timeFilter').value;
+
+        console.log("Selected filter value: ", filter);
+
+        if (filter !== undefined && filter !== "") {
+            window.location.href = "?pageIndex=1&pageSize=10&filter=" + filter;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const totalPages = @Model.Orders.TotalPages;
+        const currentPage = @Model.Orders.PageIndex;
+        const visiblePages = 5;
+
+        const pageItems = document.querySelectorAll('.pagination .page-item');
+        const pageLinks = Array.from(pageItems).map(item => item.querySelector('.page-link'));
+
+        pageLinks.forEach(link => link.closest('.page-item').classList.remove('hidden'));
+
+        const showEllipsisBefore = currentPage > Math.floor(visiblePages / 2);
+        const showEllipsisAfter = currentPage < totalPages - Math.floor(visiblePages / 2);
+
+        pageLinks.forEach((link, index) => {
+            const pageNumber = parseInt(link.textContent);
+
+            if (pageNumber < currentPage - Math.floor(visiblePages / 2) ||
+                pageNumber > currentPage + Math.floor(visiblePages / 2)) {
+                link.closest('.page-item').classList.add('hidden');
+            }
+        });
+
+        if (showEllipsisBefore) {
+            const ellipsisBefore = document.createElement('li');
+            ellipsisBefore.classList.add('page-item', 'hidden');
+            ellipsisBefore.innerHTML = `<span class="page-link">...</span>`;
+            const firstPage = document.querySelector('.pagination .page-item:first-child');
+            if (!firstPage.classList.contains('hidden')) {
+                firstPage.parentNode.insertBefore(ellipsisBefore, firstPage.nextSibling);
+            }
+        }
+
+        if (showEllipsisAfter) {
+            const ellipsisAfter = document.createElement('li');
+            ellipsisAfter.classList.add('page-item', 'hidden');
+            ellipsisAfter.innerHTML = `<span class="page-link">...</span>`;
+            const lastPage = document.querySelector('.pagination .page-item:last-child');
+            if (!lastPage.classList.contains('hidden')) {
+                lastPage.parentNode.appendChild(ellipsisAfter);
+            }
+        }
+    });
+</script>

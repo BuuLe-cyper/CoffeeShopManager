@@ -35,17 +35,24 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
         {
             var tableVMs = _mapper.Map<IEnumerable<TableVM>>(await _tableService.GetAllAsync());
             var tableIQ = tableVMs.AsQueryable();
+
             if (!String.IsNullOrEmpty(searchString))
             {
-                tableVMs = tableVMs.Where(s => s.Description.Contains(searchString)).AsQueryable();
+                tableIQ = tableIQ.Where(s => s.Description.Contains(searchString));
             }
+
+            tableIQ = tableIQ.OrderBy(t => t.TableID);
+
             var pageSize = 5;
-            var count = tableVMs.Count();
-            var paginatedList = tableVMs.Skip((pageIndex ?? 1 - 1) * pageSize)
-                                        .Take(pageSize)
-                                        .ToList();
+            var count = tableIQ.Count();
+            var paginatedList = tableIQ.Skip(((pageIndex ?? 1) - 1) * pageSize)
+                           .Take(pageSize)
+                           .ToList();
+
+
             Table = new PaginatedList<TableVM>(paginatedList, count, pageIndex ?? 1, pageSize);
         }
+
 
 
         public async Task<IActionResult> OnGetDownloadQRCode(int id)
