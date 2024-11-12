@@ -28,7 +28,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
         public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
         public IEnumerable<OrderVM> Orders { get; set; } = default!;
-        //public int TableId { get; set; }
+        public int TableId { get; set; }
 
         public async Task OnGetAsync(Guid orderId, int tableId)
         {
@@ -41,6 +41,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
             OrderDetails = orderDetail != null ? _mapper.Map<IEnumerable<OrderDetailVM>>(orderDetail) : new List<OrderDetailVM>();
             Orders = order != null ? _mapper.Map<IEnumerable<OrderVM>>(order) : new List<OrderVM>();
 
+            TableId = tableId;
         }
     }
 }
