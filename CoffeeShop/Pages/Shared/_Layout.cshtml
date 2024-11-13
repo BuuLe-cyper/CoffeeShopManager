@@ -75,30 +75,22 @@
         $(window).on('load', function () {
             if (!sessionStorage.getItem('firstVisit')) {
                 loadLoginSession();
+                console.log("hello,world!");
                 sessionStorage.setItem('firstVisit', true);
             }
         });
 
         function loadLoginSession() {
             $.ajax({
-                url: '/Shared/Login?handler=LoadAuthentication',
+                url: '/Admin/User?handler=OnLoadAuthenticationAsync',
                 type: 'GET',
-                success: (response) => {
-                    // console.log(response);
-                    if (response.success == true) {
-                        window.location.href = window.location.origin + response.url;
-                    } else {
-                        // console.log(response);
-                        console.error(response.message);
-                    }
+                success: function (response) {
                 },
-                error: (error) => {
+                error: function (error) {
                     console.error("Error calling C# method:", error);
                 }
             });
         }
-
-
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

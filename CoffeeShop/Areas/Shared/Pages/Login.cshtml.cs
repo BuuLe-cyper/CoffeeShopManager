@@ -73,38 +73,24 @@ namespace CoffeeShop.Areas.Shared.Pages
             return Page();
         }
 
-        public async Task<JsonResult> OnGetLoadAuthenticationAsync()
+        public async Task OnLoadAuthenticationAsync()
         {
             var rmUserID = Request.Cookies["RmLoginUserId"];
             if (string.IsNullOrEmpty(rmUserID))
-            {
-                rmUserID = User.FindFirst("userId")?.Value;
-                if(string.IsNullOrEmpty(rmUserID))
-                    return new JsonResult(new { success = false, message = "User ID is missing", url = "" });
-            }
-
+                return;
             var userDTO = await _service.GetUser(Guid.Parse(rmUserID));
-            if (userDTO == null)
-            {
-                return new JsonResult(new { success = false, message = "User not found",url="" });
-            }
+            if (userDTO == null) return;
 
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, UserName),
                 new(ClaimTypes.Role, userDTO.AccountType == 1 ? "Admin" : "User")
             };
-           
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
-            var url = userDTO.AccountType == 1?"/Admin":"";
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
             LoginSessionConfigure(userDTO);
-
-            return new JsonResult(new { success = true, message = "Authentication successful", url= url });
         }
-
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
@@ -116,8 +102,8 @@ namespace CoffeeShop.Areas.Shared.Pages
                 {
                     var claims = new List<Claim>
                     {
-                        new(ClaimTypes.Name, UserName),
-                        new("userId", userDTO.UserID.ToString())
+                        new Claim(ClaimTypes.Name, UserName),
+                        new Claim("userId", userDTO.UserID.ToString())
                     };
 
                     string areaName = "";
