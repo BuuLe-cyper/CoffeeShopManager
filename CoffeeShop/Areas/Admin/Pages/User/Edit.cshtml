@@ -16,7 +16,7 @@
             <div class="card-body">
                 <form method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="User.UserID" />
+
                     <div class="form-group">
                         <label asp-for="User.PhoneNumber" class="control-label"></label>
                         <input asp-for="User.PhoneNumber" class="form-control" />
@@ -56,6 +56,7 @@
                     <div class="form-group mt-3 text-center">
                         <input type="submit" value="Update" class="btn btn-outline-success me-5" />
                         <a class="btn btn-pill btn-outline-secondary" asp-page="Index">Cancel</a>
+
                     </div>
                 </form>
             </div>
@@ -64,5 +65,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
