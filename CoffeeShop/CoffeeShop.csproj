@@ -15,6 +15,9 @@
 		<EmbeddedResource Remove="Areas\Customer\Pages\Order\**" />
 		<None Remove="Areas\Customer\Pages\DemoPaymentReturn\**" />
 		<None Remove="Areas\Customer\Pages\Order\**" />
+	<SonarQubeSetting Include="sonar.exclusions">
+  <Value>**/LibraryNameHere/**</Value>
+ </SonarQubeSetting>
 	</ItemGroup>
 
 	<ItemGroup>
