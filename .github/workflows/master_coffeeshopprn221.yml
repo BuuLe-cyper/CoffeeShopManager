@@ -6,7 +6,10 @@ name: Build and deploy ASP.Net Core app to Azure Web App - CoffeeShopPRN221
 on:
   push:
     branches:
-      - master
+      - '**' # Chạy cho mọi nhánh push
+  pull_request:
+    branches:
+      - '**'
   workflow_dispatch:
 
 jobs:
@@ -33,21 +36,53 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  deploy:
+  analyze:
     runs-on: ubuntu-latest
     needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Run SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin /k:"buule-cyper:BuuLe-cyper_CoffeeShopManager" /o:"buule-cyper" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet build --configuration Release
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+      # Check SonarQube Quality Gate status
+      - name: Wait for SonarCloud Quality Gate
+        uses: SonarSource/sonarcloud-github-action@v1
+        with:
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: false
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build, analyze]
+    if: github.ref == 'refs/heads/master' && success() # Deploy chỉ khi push lên nhánh master và build + analyze thành công
+
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # Required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -62,4 +97,3 @@ jobs:
           app-name: 'CoffeeShopPRN221'
           slot-name: 'Production'
           package: .
-          
