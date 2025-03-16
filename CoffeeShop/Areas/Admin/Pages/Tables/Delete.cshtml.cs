@@ -12,19 +12,18 @@ using BussinessObjects.Services;
 using AutoMapper;
 using CoffeeShop.ViewModels.Tables;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace CoffeeShop.Areas.Admin.Pages.Tables
 {
     [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
-        private readonly ITableService _tableService;
-        private readonly IMapper _mapper;
+        private readonly HttpClient _httpClient;
 
-        public DeleteModel(ITableService tableService, IMapper mapper)
+        public DeleteModel(HttpClient httpClient)
         {
-            _tableService = tableService;
-            _mapper = mapper;
+            _httpClient = httpClient;
         }
 
         [BindProperty]
@@ -32,32 +31,58 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
+            if (id <= 0)
             {
                 return NotFound();
             }
-            var table = _mapper.Map<TableVM>(await _tableService.GetAsync(id));
 
-            if (table == null)
+            try
             {
-                return NotFound();
+                var response = await _httpClient.GetAsync($"https://your-api-url/api/Tables/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return NotFound();
+                }
+
+                Table = JsonSerializer.Deserialize<TableVM>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                return Page();
             }
-            else
+            catch (Exception ex)
             {
-                Table = table;
+                ModelState.AddModelError(string.Empty, $"Error fetching table data: {ex.Message}");
+                return Page();
             }
-            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (id == null)
+            if (id <= 0)
             {
                 return NotFound();
             }
-            await _tableService.SoftDeleteTable(id);
 
-            return RedirectToPage("./Index");
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"https://your-api-url/api/Tables/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ModelState.AddModelError(string.Empty, "Error deleting table.");
+                    return Page();
+                }
+
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                return Page();
+            }
         }
     }
 }

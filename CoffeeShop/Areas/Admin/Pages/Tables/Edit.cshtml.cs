@@ -14,17 +14,20 @@ using AutoMapper;
 using CoffeeShop.ViewModels.Tables;
 using BussinessObjects.DTOs.Tables;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
+using System.Text;
 
 namespace CoffeeShop.Areas.Admin.Pages.Tables
 {
     [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
-        private readonly ITableService _tableService;
+        private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
-        public EditModel(ITableService tableService, IMapper mapper)
+
+        public EditModel(HttpClient httpClient, IMapper mapper)
         {
-            _tableService = tableService;
+            _httpClient = httpClient;
             _mapper = mapper;
         }
 
@@ -33,30 +36,64 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
+            if (id <= 0)
             {
                 return NotFound();
             }
 
-            var table = _mapper.Map<TableVM>(await _tableService.GetAsync(id));
-
-            if (table == null)
+            try
             {
-                return NotFound();
+                var response = await _httpClient.GetAsync($"https://your-api-url/api/Tables/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return NotFound();
+                }
+
+                Table = JsonSerializer.Deserialize<TableVM>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                return Page();
             }
-            Table = table;
-            return Page();
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error fetching table details: {ex.Message}");
+                return Page();
+            }
         }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
-            Table.ModifyDate = DateTime.Now;
-            await _tableService.UpdateTableAsync(_mapper.Map<TableDTO>(Table));
 
-            return RedirectToPage("./Index");
+            try
+            {
+                Table.ModifyDate = DateTime.Now;
+
+                var tableDto = _mapper.Map<TableDTO>(Table);
+
+
+                var content = new StringContent(JsonSerializer.Serialize(tableDto), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"https://your-api-url/api/Tables", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ModelState.AddModelError(string.Empty, "Error updating table.");
+                    return Page();
+                }
+
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                return Page();
+            }
         }
     }
 }
