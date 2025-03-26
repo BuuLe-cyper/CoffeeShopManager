@@ -23,7 +23,7 @@ namespace CoffeeShopAPI.Controllers
 
         [HttpGet]
         [EnableQuery]
-        public async Task<ActionResult<IEnumerable<TableVM>>> GetTables()
+        public async Task<IActionResult> GetTables()
         {
             var tables = await _tableService.GetAllAsync();
             var tableVMs = _mapper.Map<IEnumerable<TableVM>>(tables);

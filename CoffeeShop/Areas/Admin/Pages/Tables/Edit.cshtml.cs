@@ -43,7 +43,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
             try
             {
-                var response = await _httpClient.GetAsync($"https://your-api-url/api/Tables/{id}");
+                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -79,7 +79,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
 
                 var content = new StringContent(JsonSerializer.Serialize(tableDto), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PutAsync($"https://your-api-url/api/Tables", content);
+                var response = await _httpClient.PutAsync($"https://localhost:7158/api/Tables", content);
 
                 if (!response.IsSuccessStatusCode)
                 {

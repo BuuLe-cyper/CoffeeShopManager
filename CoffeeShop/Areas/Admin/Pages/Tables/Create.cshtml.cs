@@ -48,7 +48,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                 }
 
                 var content = new StringContent(JsonSerializer.Serialize(Description), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync("https://your-api-url/api/Tables", content);
+                var response = await _httpClient.PostAsync("https://localhost:7158/api/Tables", content);
 
                 if (!response.IsSuccessStatusCode)
                 {

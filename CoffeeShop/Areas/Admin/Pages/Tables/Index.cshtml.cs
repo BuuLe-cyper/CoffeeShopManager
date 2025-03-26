@@ -32,25 +32,26 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
             {
                 if (!string.IsNullOrEmpty(searchString))
                 {
-                    pageIndex = 1; // Nếu tìm kiếm mới, quay về trang đầu
+                    pageIndex = 1;
                 }
                 else
                 {
-                    searchString = currentFilter; // Giữ bộ lọc trước đó nếu không nhập mới
+                    searchString = currentFilter;
                 }
 
                 CurrentFilter = searchString;
 
-                var pageSize = 5;
-                var skip = ((pageIndex ?? 1) - 1) * pageSize;
-                var odataQuery = $"?$orderby=TableID&$skip={skip}&$top={pageSize}&$count=true";
-
+                var apiBaseUrl = "https://localhost:7158";
+                var query = "?$orderby=CreateDate desc";
                 if (!string.IsNullOrEmpty(searchString))
                 {
-                    odataQuery = $"?$filter=contains(Description,'{searchString}')&$orderby=TableID&$skip={skip}&$top={pageSize}&$count=true";
+                    var escapedSearch = Uri.EscapeDataString(searchString);
+                    query += $"&$filter=contains(Description,'{escapedSearch}')";
                 }
+                var fullUrl = $"{apiBaseUrl}/api/Tables{query}";
+                Console.WriteLine(fullUrl);
 
-                var response = await _httpClient.GetAsync($"https://your-api-url/api/Tables{odataQuery}");
+                var response = await _httpClient.GetAsync($"{apiBaseUrl}/api/Tables{query}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -59,11 +60,24 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var odataResponse = JsonSerializer.Deserialize<ODataResponse<TableVM>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                Table = odataResponse.Value;
+                using var doc = JsonDocument.Parse(jsonResponse);
+
+                var valuesElement = doc.RootElement.GetProperty("$values");
+
+                var allTables = JsonSerializer.Deserialize<List<TableVM>>(valuesElement.GetRawText(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
                 PageIndex = pageIndex ?? 1;
-                TotalPages = (int)Math.Ceiling((double)odataResponse.Count / pageSize);
+                int pageSize = 5;
+                TotalPages = (int)Math.Ceiling((double)allTables.Count / pageSize);
+
+                Table = allTables
+                    .Skip((PageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
             }
             catch (Exception ex)
             {
@@ -75,7 +89,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://your-api-url/api/Tables/{id}/QRCode");
+                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}/QRCode");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -91,11 +105,5 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                 return Page();
             }
         }
-    }
-
-    public class ODataResponse<T>
-    {
-        public List<T> Value { get; set; }
-        public int Count { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
             try
             {
-                var response = await _httpClient.GetAsync($"https://your-api-url/api/Tables/{id}");
+                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -68,7 +68,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
             try
             {
-                var response = await _httpClient.DeleteAsync($"https://your-api-url/api/Tables/{id}");
+                var response = await _httpClient.DeleteAsync($"https://localhost:7158/api/Tables/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
