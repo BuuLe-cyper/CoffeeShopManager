@@ -18,14 +18,12 @@ namespace CoffeeShopAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
 
-        public ProductController(IProductService productService, ICategoryService categoryService, IImageService imageService, IMapper mapper)
+        public ProductController(IProductService productService, IImageService imageService, IMapper mapper)
         {
             _productService = productService;
-            _categoryService = categoryService;
             _imageService = imageService;
             _mapper = mapper;
         }
@@ -100,47 +98,6 @@ namespace CoffeeShopAPI.Controllers
 
             return Ok("Product deleted successfully.");
         }
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductVM productVM, [FromForm] IFormFile? file)
-        //{
-        //    if (id != productVM.ProductID)
-        //    {
-        //        return BadRequest("Product ID does not match.");
-        //    }
-
-        //    var existingProduct = await _productService.GetProduct(id);
-        //    if (existingProduct == null)
-        //    {
-        //        return NotFound("Product not found.");
-        //    }
-
-        //    if (file != null)
-        //    {
-        //        bool checkFile = CoffeeShop.Helper.Validations.IsImageFile(file);
-        //        if (!checkFile)
-        //        {
-        //            return BadRequest("Invalid image file. Allowed formats: JPG, PNG, JPEG, GIF.");
-        //        }
-
-        //        string imageUrl = await _imageService.UploadImage(file);
-        //        productVM.ImageUrl = imageUrl;
-        //    }
-        //    else
-        //    {
-        //        productVM.ImageUrl = existingProduct.ImageUrl;
-        //    }
-
-        //    var updatedProductDto = _mapper.Map<ProductDto>(productVM);
-        //    bool isUpdated = await _productService.UpdateProduct(updatedProductDto);
-
-        //    if (!isUpdated)
-        //    {
-        //        return BadRequest("Unable to update product. Name might already exist.");
-        //    }
-
-        //    return Ok("Product updated successfully.");
-        //}
     }
 
 }
