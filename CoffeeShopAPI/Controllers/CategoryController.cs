@@ -93,11 +93,6 @@ namespace CoffeeShopAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDto categoryDto)
         {
-            //if (id != categoryDto.CategoryID)
-            //{
-            //    return BadRequest("Category ID mismatch.");
-            //}
-
             var existingCategory = await _categoryService.GetCategory(id);
             if (existingCategory == null)
             {
