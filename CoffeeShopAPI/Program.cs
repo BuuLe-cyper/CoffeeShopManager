@@ -46,6 +46,7 @@ namespace CoffeeShopAPI
             builder.Services.AddTransient<MailService>();
 
             builder.Services.AddTransient(typeof(IImageService), typeof(ImageService));
+            builder.Services.AddHttpClient();
 
             builder.Services.AddHttpContextAccessor();
 
