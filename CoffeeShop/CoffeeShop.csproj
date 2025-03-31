@@ -42,8 +42,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Update="appsettings.json">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Content>
 		<Content Update="appsettings.Production.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Pages\Shared\_LayoutAdmin.cshtml">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
