@@ -3,10 +3,6 @@
 
 @{
     ViewData["Title"] = "Tables Management";
-
-    // Define prevDisable and nextDisable to control the button states
-    var prevDisable = !Model.Table.HasPreviousPage ? "disabled" : "";
-    var nextDisable = !Model.Table.HasNextPage ? "disabled" : "";
 }
 
 <h1 class="table-title text-center">Tables Management</h1>
@@ -19,7 +15,7 @@
     <div class="form-group">
         <label for="SearchString">Find by Table Number:</label>
         <div class="input-group">
-            <input type="text" id="SearchString" name="SearchString" class="form-control" value="@Model.CurrentFilter" />
+            <input type="text" id="SearchString" name="searchString" class="form-control" value="@Model.CurrentFilter" />
             <div class="input-group-append">
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
@@ -28,33 +24,43 @@
             <a asp-page="./Index" class="text-muted">Back to full list</a>
         </small>
     </div>
+    <input type="hidden" name="currentFilter" value="@Model.CurrentFilter" />
 </form>
 
 <table class="table table-striped table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th>@Html.DisplayNameFor(model => model.Table[0].Description)</th>
-            <th>@Html.DisplayNameFor(model => model.Table[0].QRCodeTable)</th>
+            <th>@Html.DisplayNameFor(model => model.Table.FirstOrDefault().Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Table.FirstOrDefault().QRCodeTable)</th>
             <th>Download</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Table)
+        @if (Model.Table != null && Model.Table.Any())
+        {
+            @foreach (var item in Model.Table)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                    <td>
+                        <img src="@item.QRCodeTable" alt="QR Code" style="width: 100px; height: 100px;" class="img-thumbnail" />
+                    </td>
+                    <td>
+                        <a href="?handler=DownloadQRCode&id=@item.TableID" class="btn btn-info btn-sm">Download QR Code</a>
+                    </td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.TableID" class="btn btn-warning btn-sm">Edit</a> |
+                        <a asp-page="./Details" asp-route-id="@item.TableID" class="btn btn-info btn-sm">Details</a> |
+                        <a asp-page="./Delete" asp-route-id="@item.TableID" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>
-                    <img src="@item.QRCodeTable" alt="QR Code" style="width: 100px; height: 100px;" class="img-thumbnail" />
-                </td>
-                <td>
-                    <a href="?handler=DownloadQRCode&id=@item.TableID" class="btn btn-info btn-sm">Download QR Code</a>
-                </td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.TableID" class="btn btn-warning btn-sm">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.TableID" class="btn btn-info btn-sm">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.TableID" class="btn btn-danger btn-sm">Delete</a>
-                </td>
+                <td colspan="4" class="text-center text-muted">No tables found.</td>
             </tr>
         }
     </tbody>
@@ -63,21 +69,20 @@
 <!-- Pagination Section -->
 <div class="pagination-container d-flex justify-content-between">
     <div class="d-flex">
-        <!-- Previous Button -->
-        <a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex - 1)"
+        <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex - 1)"
            asp-route-currentFilter="@(Model.CurrentFilter)"
-           class="btn btn-secondary btn-sm @(Model.Table.PageIndex == 1 ? "disabled" : "") me-2">
+           class="btn btn-secondary btn-sm @(Model.PageIndex == 1 ? "disabled" : "") me-2">
             Previous
         </a>
 
-        <!-- Next Button -->
-        <a asp-page="./Index" asp-route-pageIndex="@(Model.Table.PageIndex + 1)"
+        <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex + 1)"
            asp-route-currentFilter="@(Model.CurrentFilter)"
-           class="btn btn-secondary btn-sm @(Model.Table.PageIndex >= Model.Table.TotalPages ? "disabled" : "")">
+           class="btn btn-secondary btn-sm @(Model.PageIndex >= Model.TotalPages ? "disabled" : "")">
             Next
         </a>
     </div>
 </div>
+
 
 <style>
     .table-title {

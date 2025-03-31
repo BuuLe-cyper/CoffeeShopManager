@@ -12,41 +12,50 @@ using BussinessObjects.Services;
 using CoffeeShop.ViewModels.Tables;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace CoffeeShop.Areas.Admin.Pages.Tables
 {
     [Authorize(Roles = "Admin")]
     public class DetailsModel : PageModel
     {
-        private readonly ITableService _tableService;
-        private readonly IMapper _mapper;
+        private readonly HttpClient _httpClient;
 
-        public DetailsModel(ITableService tableService, IMapper mapper)
+        public DetailsModel(HttpClient httpClient)
         {
-            _tableService = tableService;
-            _mapper = mapper;
+            _httpClient = httpClient;
         }
 
         public TableVM Table { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
+            if (id <= 0)
             {
                 return NotFound();
             }
 
-            var table = _mapper.Map<TableVM>(await _tableService.GetAsync(id));
+            try
+            {
+                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}");
 
-            if (table == null)
-            {
-                return NotFound();
+                if (!response.IsSuccessStatusCode)
+                {
+                    return NotFound();
+                }
+
+                Table = JsonSerializer.Deserialize<TableVM>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                return Page();
             }
-            else
+            catch (Exception ex)
             {
-                Table = table;
+                ModelState.AddModelError(string.Empty, $"Error fetching table details: {ex.Message}");
+                return Page();
             }
-            return Page();
         }
     }
 }

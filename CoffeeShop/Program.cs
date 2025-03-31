@@ -56,7 +56,7 @@ namespace CoffeeShop
                     });
             });
 
-            // Add SignalR
+
             builder.Services.AddSignalR();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -66,18 +66,18 @@ namespace CoffeeShop
                     builder.Configuration.GetConnectionString("CoffeeShop"),
                     sqlServerOptions => sqlServerOptions.MigrationsAssembly("DataAccess"));
             });
-            //Register User repository and service
+
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            // Register MailSettings by binding to the configuration section "SmtpSettings"
+
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("SmtpSettings"));
-            // Configure FireBase
+
             builder.Services.Configure<FireBaseOptions>(builder.Configuration.GetSection("FireBase"));
-            // Register MailService as a transient service
+
             builder.Services.AddTransient<MailService>();
-            // Add Firebase Uility
+
             builder.Services.AddTransient(typeof(IImageService), typeof(ImageService));
-            //Register and Authorization and Cookie authentication
+
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -121,6 +121,8 @@ namespace CoffeeShop
 
             // Add QR Code
             builder.Services.AddScoped<GenerateQRCode>();
+
+            builder.Services.AddHttpClient();
 
             var app = builder.Build();
 

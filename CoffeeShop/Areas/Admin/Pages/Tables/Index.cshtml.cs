@@ -1,73 +1,109 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using DataAccess.DataContext;
-using DataAccess.Models;
 using CoffeeShop.ViewModels.Tables;
-using Microsoft.EntityFrameworkCore.Metadata;
-using BussinessObjects.Services;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using CoffeeShop.Helper;
-using System.Drawing.Printing;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CoffeeShop.Areas.Admin.Pages.Tables
 {
     [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
-        private readonly ITableService _tableService;
-        private readonly IMapper _mapper;
+        private readonly HttpClient _httpClient;
 
-        public IndexModel(ITableService tableService, IMapper mapper)
+        public IndexModel(HttpClient httpClient)
         {
-            _tableService = tableService;
-            _mapper = mapper;
+            _httpClient = httpClient;
         }
+
         public string CurrentFilter { get; set; }
-        public PaginatedList<TableVM> Table { get;set; } = default!;
+        public int PageIndex { get; set; }
+        public int TotalPages { get; set; }
+        public List<TableVM> Table { get; set; } = new List<TableVM>();
+
         public async Task OnGetAsync(string currentFilter, string searchString, int? pageIndex)
         {
-            var tableVMs = _mapper.Map<IEnumerable<TableVM>>(await _tableService.GetAllAsync());
-            var tableIQ = tableVMs.AsQueryable();
-
-            if (!String.IsNullOrEmpty(searchString))
+            try
             {
-                tableIQ = tableIQ.Where(s => s.Description.Contains(searchString));
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    pageIndex = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                CurrentFilter = searchString;
+
+                var apiBaseUrl = "https://localhost:7158";
+                var query = "?$orderby=CreateDate desc";
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    var escapedSearch = Uri.EscapeDataString(searchString);
+                    query += $"&$filter=contains(Description,'{escapedSearch}')";
+                }
+                var fullUrl = $"{apiBaseUrl}/api/Tables{query}";
+                Console.WriteLine(fullUrl);
+
+                var response = await _httpClient.GetAsync($"{apiBaseUrl}/api/Tables{query}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ModelState.AddModelError(string.Empty, "Error fetching table data.");
+                    return;
+                }
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                using var doc = JsonDocument.Parse(jsonResponse);
+
+                var valuesElement = doc.RootElement.GetProperty("$values");
+
+                var allTables = JsonSerializer.Deserialize<List<TableVM>>(valuesElement.GetRawText(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                PageIndex = pageIndex ?? 1;
+                int pageSize = 5;
+                TotalPages = (int)Math.Ceiling((double)allTables.Count / pageSize);
+
+                Table = allTables
+                    .Skip((PageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
             }
-
-            tableIQ = tableIQ.OrderBy(t => t.TableID);
-
-            var pageSize = 5;
-            var count = tableIQ.Count();
-            var paginatedList = tableIQ.Skip(((pageIndex ?? 1) - 1) * pageSize)
-                           .Take(pageSize)
-                           .ToList();
-
-
-            Table = new PaginatedList<TableVM>(paginatedList, count, pageIndex ?? 1, pageSize);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+            }
         }
-
-
 
         public async Task<IActionResult> OnGetDownloadQRCode(int id)
         {
-            var table = _mapper.Map<TableVM>(await _tableService.GetAsync(id));
-            if (table == null)
+            try
             {
-                return NotFound();
+                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}/QRCode");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return NotFound();
+                }
+
+                var imageBytes = await response.Content.ReadAsByteArrayAsync();
+                return File(imageBytes, "image/png", $"QRCode_{id}.png");
             }
-
-            var base64Data = table.QRCodeTable.Split(',')[1];
-            var imageBytes = Convert.FromBase64String(base64Data);
-
-            return File(imageBytes, "image/png", $"QRCode_{id}.png");
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                return Page();
+            }
         }
-
     }
 }

@@ -1,27 +1,50 @@
-using AutoMapper;
-using BussinessObjects.Services;
-using CoffeeShop.ViewModels.Tables;
+using System.Net.Http;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using CoffeeShop.ViewModels.Tables;
 
 namespace CoffeeShop.Areas.Admin.Pages.Chats
 {
     [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
-        private readonly ITableService _tableService;
-        private readonly IMapper _mapper;
-        public IndexModel(ITableService tableService, IMapper mapper)
+        private readonly HttpClient _httpClient;
+
+        public IndexModel(HttpClient httpClient)
         {
-            _tableService = tableService;
-            _mapper = mapper;
+            _httpClient = httpClient;
         }
-        public List<TableVM> Tables { get; set; }
+
+        public List<TableVM> Tables { get; set; } = new List<TableVM>();
+
         public async Task OnGetAsync()
         {
-            var tableEntities = await _tableService.GetAllAsync();
-            Tables = _mapper.Map<List<TableVM>>(tableEntities);
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7158/api/Tables");
+                if (!response.IsSuccessStatusCode)
+                {
+                    Tables = new List<TableVM>();
+                    return;
+                }
+
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                using var doc = JsonDocument.Parse(jsonResponse);
+
+                var valuesElement = doc.RootElement.GetProperty("$values");
+
+                Tables = JsonSerializer.Deserialize<List<TableVM>>(valuesElement.GetRawText(), new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch
+            {
+                Tables = new List<TableVM>();
+            }
         }
     }
 }
