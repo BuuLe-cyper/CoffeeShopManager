@@ -43,10 +43,10 @@
 
 	<ItemGroup>
 		<Content Update="appsettings.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="appsettings.Production.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Update="Pages\Shared\_LayoutAdmin.cshtml">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>

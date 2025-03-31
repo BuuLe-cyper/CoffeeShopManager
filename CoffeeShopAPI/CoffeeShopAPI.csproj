@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -17,12 +17,6 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
-	<ItemGroup Condition="'$(MSBuildProjectName)' == 'CoffeeShop'">
-		<None Update="appsettings*.json">
-			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
-		</None>
-	</ItemGroup>
-
 	<ItemGroup>
     <ProjectReference Include="..\BussinessObjects\BussinessObjects.csproj" />
     <ProjectReference Include="..\CoffeeShop\CoffeeShop.csproj" />
