@@ -3,8 +3,10 @@ using BussinessObjects.DTOs;
 using BussinessObjects.Services;
 using CoffeeShop.Helper;
 using CoffeeShop.ViewModels;
+using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 
 namespace CoffeeShopAPI.Controllers
 {
@@ -14,11 +16,12 @@ namespace CoffeeShopAPI.Controllers
     {
         private readonly IProductSizesService _productSizesService;
         private readonly IMapper _mapper;
-
-        public MenuController(IProductSizesService productSizesService, IMapper mapper)
+        private readonly IElasticClient _elasticClient;
+        public MenuController(IProductSizesService productSizesService, IMapper mapper, IElasticClient elasticClient)
         {
             _productSizesService = productSizesService;
             _mapper = mapper;
+            _elasticClient = elasticClient;
         }
 
         [HttpGet]
@@ -45,8 +48,13 @@ namespace CoffeeShopAPI.Controllers
             return Ok(new PaginatedList<ProductSizeVM>(items, count, pageIndex, pageSize));
         }
 
+
+
+
+
+
         [HttpPost("CreateItem")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateMenuItem([FromBody] MenuItemVMDto productSizeDto)
         {
             if (productSizeDto == null || productSizeDto.SizePrices == null || !productSizeDto.SizePrices.Any())
