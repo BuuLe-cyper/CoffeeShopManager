@@ -2,6 +2,7 @@
 using BussinessObjects.DTOs;
 using DataAccess.Models;
 using DataAccess.Repositories;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,15 @@ namespace BussinessObjects.Services
         private readonly IProductRepository _productRepository;
         private readonly ISizeRepository _sizeRepository;
         private readonly IMapper _mapper;
-        public ProductSizesService(IProductSizesRepository productSizesRepository, IProductRepository productRepository, ISizeRepository sizeRepository, IMapper mapper)
+        private readonly IElasticClient _elasticClient;
+
+        public ProductSizesService(IProductSizesRepository productSizesRepository, IProductRepository productRepository, ISizeRepository sizeRepository, IMapper mapper,IElasticClient elasticClient)
         {
             _productSizesRepository = productSizesRepository;
             _productRepository = productRepository;
             _sizeRepository = sizeRepository;
             _mapper = mapper;
+            _elasticClient = elasticClient;
         }
         public async Task<bool> AddProductSize(ProductSizeDto productSizeDto)
         {
@@ -118,6 +122,15 @@ namespace BussinessObjects.Services
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        public async Task IndexProductSizesAsync(IEnumerable<ProductSize> productSizes)
+        {
+            var bulkIndexResponse = await _elasticClient.IndexManyAsync(productSizes, "productsizes");
+            if (!bulkIndexResponse.IsValid)
+            {
+                throw new Exception($"Failed to index documents: {bulkIndexResponse.DebugInformation}");
             }
         }
     }

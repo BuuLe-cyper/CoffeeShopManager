@@ -1,6 +1,5 @@
 
 using BusinessObjects.Services;
-using BussinessObjects.AutoMapper;
 using BussinessObjects.ImageService;
 using BussinessObjects.Services;
 using BussinessObjects.Utility;
@@ -10,6 +9,8 @@ using DataAccess.Qr;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
+using Elasticsearch.Net;
+using Nest;
 
 namespace CoffeeShopAPI
 {
@@ -36,6 +37,13 @@ namespace CoffeeShopAPI
                            .AllowAnyHeader();
                 });
             });
+
+            var settings = new ConnectionSettings(new Uri("http://localhost:9200"))
+            .DefaultIndex("productsizes");
+
+            var client = new ElasticClient(settings);
+
+            builder.Services.AddSingleton<IElasticClient>(client);
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 

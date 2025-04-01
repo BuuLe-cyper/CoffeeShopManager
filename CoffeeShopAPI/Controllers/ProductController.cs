@@ -5,6 +5,7 @@ using BussinessObjects.Services;
 using CoffeeShop.Helper;
 using CoffeeShop.ViewModels;
 using CoffeeShopAPI.Dtos;
+using Firebase.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -98,6 +99,56 @@ namespace CoffeeShopAPI.Controllers
 
             return Ok("Product deleted successfully.");
         }
+
+
+
+        //[HttpPost("uploadimage")]
+        //public async Task<IActionResult> UploadImageFirebase([FromForm] IFormFile file)
+        //{
+        //    if (file == null || file.Length == 0)
+        //    {
+        //        return BadRequest("No file uploaded.");
+        //    }
+
+        //    var checkFile = IsImageFile(file);
+        //    if (!checkFile)
+        //    {
+        //        return BadRequest("Invalid image file. Please upload a valid image.");
+        //    }
+
+        //    try
+        //    {
+        //        string imageUrl = await _imageService.UploadImage(file);
+        //        return Ok($"File uploaded successfully! Image URL: {imageUrl}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Error uploading file: {ex.Message}");
+        //    }
+        //}
+
+
+
+        private bool IsString(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+            return input.Any(char.IsLetter);
+        }
+
+        private  bool IsImageFile(IFormFile file)
+        {
+            var validTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/jpeg" };
+
+            if (file == null && file.Length < 0)
+            {
+                return false;
+            }
+            return validTypes.Contains(file.ContentType);
+        }
+
     }
 
 }
