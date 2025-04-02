@@ -34,9 +34,8 @@ namespace CoffeeShop.Areas.Admin.Pages.Chats
 
                 using var doc = JsonDocument.Parse(jsonResponse);
 
-                var valuesElement = doc.RootElement.GetProperty("$values");
 
-                Tables = JsonSerializer.Deserialize<List<TableVM>>(valuesElement.GetRawText(), new JsonSerializerOptions
+                Tables = JsonSerializer.Deserialize<List<TableVM>>(doc.RootElement.GetRawText(), new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });

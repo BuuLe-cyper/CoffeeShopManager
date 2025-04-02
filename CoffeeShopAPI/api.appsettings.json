@@ -6,11 +6,11 @@
     }
   },
   "AllowedHosts": "*",
-   "ConnectionStrings": {
-      //"CoffeeShop": "server =(local); database = CoffeeShop;uid=sa;pwd=123456;Trusted_Connection=True;TrustServerCertificate=True;"
-      //"CoffeeShop": "Server=tcp:learningbuu.database.windows.net,1433;Initial Catalog=coffeeshopmanager;Persist Security Info=False;User ID=fptlearning;Password=@fpt2103;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=120;"
-      "CoffeeShop": "Server=FINN\\SQLEXPRESS;Database=CoffeeShop;User Id=sa;Password=iamfinn7;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
-   },
+  "ConnectionStrings": {
+    "CoffeeShop": "server =(local); database = CoffeeShop;uid=sa;pwd=123456;Trusted_Connection=True;TrustServerCertificate=True;"
+    //"CoffeeShop": "Server=tcp:learningbuu.database.windows.net,1433;Initial Catalog=coffeeshopmanager;Persist Security Info=False;User ID=fptlearning;Password=@fpt2103;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=120;"
+    //"CoffeeShop": "Server=FINN\\SQLEXPRESS;Database=CoffeeShop;User Id=sa;Password=iamfinn7;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  },
   "SmtpSettings": {
     "SmtpServer": "smtp.gmail.com",
     "SmtpPort": 587,
@@ -23,9 +23,10 @@
     "AuthEmail": "coffeeshop_prn221@gmail.com",
     "AuthPassword": "123456"
   },
-   "Environment": {
-      "PAYOS_CLIENT_ID": "3fe3bcd6-a9ed-40c2-9665-8c348b06365b",
-      "PAYOS_API_KEY": "b818393e-f05f-4b77-9e84-94550915b25f",
-      "PAYOS_CHECKSUM_KEY": "1cf6b81a27e9d43b60b6980258be23d3f122e5e36ec697a4c46ec8b50ceea08a"
-   }
+  "Environment": {
+    "PAYOS_CLIENT_ID": "3fe3bcd6-a9ed-40c2-9665-8c348b06365b",
+    "PAYOS_API_KEY": "b818393e-f05f-4b77-9e84-94550915b25f",
+    "PAYOS_CHECKSUM_KEY": "1cf6b81a27e9d43b60b6980258be23d3f122e5e36ec697a4c46ec8b50ceea08a"
+  },
+  "BaseUrlWeb": "https://localhost:7158"
 }

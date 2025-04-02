@@ -1,31 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using CoffeeShop.ViewModels.Tables;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using DataAccess.DataContext;
-using DataAccess.Models;
-using BussinessObjects.Services;
-using CoffeeShop.ViewModels.Tables;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using BussinessObjects.DTOs.Tables;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text;
-
 namespace CoffeeShop.Areas.Admin.Pages.Tables
 {
-    [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrlApi;
 
-        public CreateModel(HttpClient httpClient)
+        public CreateModel(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrlApi = configuration["BaseUrlApi"];
         }
 
         [BindProperty]
@@ -48,7 +36,8 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                 }
 
                 var content = new StringContent(JsonSerializer.Serialize(Description), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync("https://localhost:7158/api/Tables", content);
+                var apiUrl = $"{_baseUrlApi}/api/Tables";
+                var response = await _httpClient.PostAsync(apiUrl, content);
 
                 if (!response.IsSuccessStatusCode)
                 {

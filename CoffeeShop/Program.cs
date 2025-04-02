@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System.Threading.RateLimiting;
 using DataAccess.Qr;
 using Net.payOS;
+using Nest;
 
 namespace CoffeeShop
 {
@@ -114,6 +115,14 @@ namespace CoffeeShop
             builder.Services.AddScoped(typeof(IProductSizesRepository), typeof(ProductSizesRepository));
             builder.Services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
             builder.Services.AddScoped(typeof(IOrderDetailRepository), typeof(OrderDetailRepository));
+
+            builder.Services.AddSingleton<IElasticClient>(sp =>
+            {
+                var settings = new ConnectionSettings(new Uri("http://localhost:9200"))
+                    .DefaultIndex("your_index");
+
+                return new ElasticClient(settings);
+            });
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);

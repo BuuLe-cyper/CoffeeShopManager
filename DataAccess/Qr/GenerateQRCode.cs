@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using QRCoder;
 using System;
 using System.Collections.Generic;
@@ -10,18 +11,14 @@ namespace DataAccess.Qr
 {
     public class GenerateQRCode
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public GenerateQRCode(IHttpContextAccessor httpContextAccessor)
+        private readonly string _baseUrlWeb;
+        public GenerateQRCode(IConfiguration configuration)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _baseUrlWeb = configuration["BaseUrlWeb"];
         }
-
         public string GenerateQRCodeForTable(int tableId)
         {
-
-            var request = _httpContextAccessor.HttpContext.Request;
-            string baseUrl = $"{request.Scheme}://{request.Host}";
-            string chatUrl = $"{baseUrl}/Shared/Order/OrderPage/{tableId}";
+            string chatUrl = $"{_baseUrlWeb}/Shared/Order/OrderPage/{tableId}";
 
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
