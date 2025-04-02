@@ -6,6 +6,7 @@ using CoffeeShop.ViewModels;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Nest;
 
 namespace CoffeeShopAPI.Controllers
@@ -23,6 +24,26 @@ namespace CoffeeShopAPI.Controllers
             _mapper = mapper;
             _elasticClient = elasticClient;
         }
+        [HttpGet("searchodata")]
+        [EnableQuery]
+        public async Task<IActionResult> GetAllMenus()
+        {
+            var result = await _productSizesService.GetAllProductSizes();
+            if (result == null || !result.Any()) return NotFound("No menu items found.");
+
+            var filteredResults = result.Where(x => !x.Size.IsDeleted);
+
+            // Nhóm theo ProductID
+            var groupedResults = filteredResults.GroupBy(x => x.ProductID);
+            int count = groupedResults.Count();
+
+            var items = groupedResults
+                .SelectMany(g => g.Select(x => _mapper.Map<ProductSizeVM>(x)))
+                .ToList();
+
+            return Ok(new PaginatedList<ProductSizeVM>(items, count, 1, count));
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllMenus(
@@ -47,11 +68,6 @@ namespace CoffeeShopAPI.Controllers
 
             return Ok(new PaginatedList<ProductSizeVM>(items, count, pageIndex, pageSize));
         }
-
-
-
-
-
 
         [HttpPost("CreateItem")]
         //[Authorize(Roles = "Admin")]
