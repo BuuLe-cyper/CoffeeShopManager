@@ -118,10 +118,10 @@ namespace BussinessObjects.Services
             var existedUser = await _rep.GetAsync(u => u.Email == email);
             var dtoUser = new UsersDTO
             {
-                UserName = username,
+                Username = username,
                 Password = password,
                 Email = email,
-                FullName = string.Empty,
+                Fullname = string.Empty,
                 PhoneNumber = string.Empty,
                 AccountType = 0,
             };
