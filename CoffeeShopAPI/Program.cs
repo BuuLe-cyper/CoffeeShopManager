@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Elasticsearch.Net;
 using Nest;
+using CoffeeShop.Services;
 
 namespace CoffeeShopAPI
 {

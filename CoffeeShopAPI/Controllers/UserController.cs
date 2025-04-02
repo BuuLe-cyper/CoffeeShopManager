@@ -61,8 +61,18 @@ namespace CoffeeShop.API
                 return BadRequest("Username or Password Incorrect!");
             }
 
-            var token = _tokenService.GenerateToken(userDTO.UserName, userDTO.AccountType == 1 ? "Admin" : "User");
-            return Ok(token);
+            var role = userDTO.AccountType == 1 ? "Admin" : "User";
+            var token = _tokenService.GenerateToken(userDTO.Username, role);
+            // Create response object
+            var response = new
+            {
+                Token = token,
+                Role = role,
+                UserId = userDTO.UserID,
+                Username = userDTO.Username
+            };
+
+            return Ok(response);
         }
 
         [HttpPost("register")]

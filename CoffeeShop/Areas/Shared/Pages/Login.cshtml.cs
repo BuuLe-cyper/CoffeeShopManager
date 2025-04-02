@@ -2,6 +2,7 @@ using AutoMapper;
 using BussinessObjects.DTOs;
 using BussinessObjects.Services;
 using CoffeeShop.Helper;
+using CoffeeShop.Services;
 using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,9 +19,10 @@ namespace CoffeeShop.Areas.Shared.Pages
     [IgnoreAntiforgeryToken]
     public class LoginModel : PageModel
     {
+        private const string ENDPOINT = "User/";
         private readonly IMapper _mapper;
-        private readonly IUserService _service;
-        public LoginModel(IMapper mapper, IUserService service)
+        private readonly ApiClientService _service;
+        public LoginModel(IMapper mapper, ApiClientService service)
         {
             _mapper = mapper;
             _service = service;
@@ -40,36 +42,6 @@ namespace CoffeeShop.Areas.Shared.Pages
         {
 
             TempData["returnURL"] = ReturnUrl;
-
-            var rmUserId = Request.Cookies["RmLoginUserId"];
-            if (!string.IsNullOrEmpty(rmUserId))
-            {
-                var userDTO = await _service.GetUser(Guid.Parse(rmUserId));
-                if (userDTO == null) return Page();
-
-                var claims = new List<Claim>
-                    {
-                        new(ClaimTypes.Name,UserName),
-                    };
-
-                if (userDTO.AccountType == 1)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                }
-                else
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, "User"));
-                }
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                LoginSessionConfigure(userDTO);
-                return RedirectToPage("/Index");
-            }
-            else
-                Response.Cookies.Delete("RmLoginUserId");
-
             return Page();
         }
 
@@ -78,7 +50,10 @@ namespace CoffeeShop.Areas.Shared.Pages
             var rmUserID = Request.Cookies["RmLoginUserId"];
             if (string.IsNullOrEmpty(rmUserID))
                 return;
-            var userDTO = await _service.GetUser(Guid.Parse(rmUserID));
+            var result = await _service.GetAsync<UsersDTO>(ENDPOINT + rmUserID);
+            if (!result.IsSuccess)
+                return;
+            var userDTO = result.Data;
             if (userDTO == null) return;
 
             var claims = new List<Claim>
@@ -97,33 +72,32 @@ namespace CoffeeShop.Areas.Shared.Pages
             {
 
                 ErrorMessage = "";
-                var userDTO = await _service.Login(UserName, Password);
-                if (userDTO != null)
+                var res = await _service.PostAsync<LoginRes>(ENDPOINT+"login",new LoginVM(UserName, Password));
+                if (!res.IsSuccess)
+                {
+                    ErrorMessage = res.ErrorMessage ?? "Login failed!";
+                    return Page();
+                }                   
+                var data = res.Data;
+                if (data != null)
                 {
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Name, UserName),
-                        new Claim("userId", userDTO.UserID.ToString())
+                        new Claim(ClaimTypes.Name, data.Username),
+                        new Claim("userId", data.UserId.ToString())
                     };
 
                     string areaName = "";
                     string pageName = "/Index";
 
-                    if (userDTO.AccountType == 1)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                        areaName = "Admin"; // Specify the Admin area
-                    }
-                    else
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, "User"));
-                        areaName = "Customer"; // Specify the Customer area
-                    }
+                    claims.Add(new Claim(ClaimTypes.Role, data.Role));
+                    areaName = data.Role; // Specify the Admin area
 
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+                    var userDTO = await _service.GetAsync<UsersDTO>(ENDPOINT);
                     if (RememberMe)
                     {
                         CookieOptions options = new()
@@ -131,13 +105,14 @@ namespace CoffeeShop.Areas.Shared.Pages
                             Expires = DateTimeOffset.UtcNow.AddDays(7), // Set expiration for 1 week
                             HttpOnly = true
                         };
-                        Response.Cookies.Append("RmLoginUserId", userDTO.UserID.ToString(), options);
+                        Response.Cookies.Append("RmLoginUserId", data.UserId.ToString(), options);
                     }
 
-                    LoginSessionConfigure(userDTO);
+                    LoginSessionConfigure(userDTO.Data);
+                    HttpContext.Session.SetString("AuthToken", data.Token);
                     if (TempData["returnURL"] != null)
                     {
-                        string pageUrl = TempData["returnURL"] as string;
+                        string? pageUrl = TempData["returnURL"] as string;
                         return Redirect(pageUrl);
 
                     }
