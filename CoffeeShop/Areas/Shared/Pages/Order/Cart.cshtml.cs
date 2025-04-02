@@ -162,7 +162,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 				}
 			}
 
-			return Redirect($"/Shared/Order/Bill/{1}");
+			return Redirect($"/Shared/Order/Bill/{orderId}/{1}");
 		}
 	}
 }
