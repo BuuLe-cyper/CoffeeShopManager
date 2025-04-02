@@ -1,7 +1,5 @@
 using AutoMapper;
-using BussinessObjects.Services;
 using CoffeeShop.ViewModels;
-using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,11 +12,13 @@ namespace CoffeeShop.Areas.Admin.Pages.Statistics
     {
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapper _mapper;
+		private readonly string _baseUrlApi;
 
-		public ViewOrderDetailModel(IHttpClientFactory httpClientFactory, IMapper mapper)
+		public ViewOrderDetailModel(IHttpClientFactory httpClientFactory, IMapper mapper, IConfiguration configuration)
 		{
 			_httpClientFactory = httpClientFactory;
 			_mapper = mapper;
+			_baseUrlApi = configuration["BaseUrlApi"];
 		}
 
 		public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
@@ -33,16 +33,14 @@ namespace CoffeeShop.Areas.Admin.Pages.Statistics
 
 			try
 			{
-				// L?y thông tin ??n hàng t? API
-				var orderResponse = await client.GetAsync($"https://localhost:7158/api/Order/{id}");
+				var orderResponse = await client.GetAsync($"{_baseUrlApi}/api/Order/{id}");
 				if (orderResponse.IsSuccessStatusCode)
 				{
 					string orderJson = await orderResponse.Content.ReadAsStringAsync();
 					orderVMs = JsonConvert.DeserializeObject<IEnumerable<OrderVM>>(orderJson) ?? new List<OrderVM>();
 				}
 
-				// L?y thông tin chi ti?t ??n hàng t? API
-				var orderDetailResponse = await client.GetAsync($"https://localhost:7158/api/OrderDetail/{id}");
+				var orderDetailResponse = await client.GetAsync($"{_baseUrlApi}/api/OrderDetail/{id}");
 				if (orderDetailResponse.IsSuccessStatusCode)
 				{
 					string orderDetailJson = await orderDetailResponse.Content.ReadAsStringAsync();
@@ -54,7 +52,6 @@ namespace CoffeeShop.Areas.Admin.Pages.Statistics
 				ModelState.AddModelError(string.Empty, "Error calling API: " + ex.Message);
 			}
 
-			// Gán giá tr? vào thu?c tính c?a ViewModel
 			OrderDetails = orderDetailVMs;
 			Orders = orderVMs;
 

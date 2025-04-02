@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using BussinessObjects.DTOs;
-using BussinessObjects.Services;
-using CoffeeShop.ViewModels;
+﻿using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Net.payOS.Types;
@@ -16,14 +13,14 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
     public class CartModel : PageModel
     {
 		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly string _orderApiUrl = "https://localhost:7158/api/Order"; 
-		private readonly string _orderDetailApiUrl = "https://localhost:7158/api/OrderDetail";
 		private readonly PayOS _payOS;
+		private readonly string _baseUrlApi;
 
-		public CartModel(IHttpClientFactory httpClientFactory, PayOS payOS)
+		public CartModel(IHttpClientFactory httpClientFactory, PayOS payOS, IConfiguration configuration)
 		{
 			_httpClientFactory = httpClientFactory;
 			_payOS = payOS;
+			_baseUrlApi = configuration["BaseUrlApi"];
 		}
 
 		public OrderVM Order { get; set; }
@@ -37,6 +34,9 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
 		public async Task<IActionResult> OnPostCheckoutAsync(string cartData, CreatePaymentLinkRequest body)
 		{
+			string _orderApiUrl = $"{_baseUrlApi}/api/Order";
+			string _orderDetailApiUrl = $"{_baseUrlApi}/api/OrderDetail";
+
 			if (string.IsNullOrEmpty(cartData))
 			{
 				return BadRequest("Cart data is empty or invalid.");
@@ -96,6 +96,8 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
 		private async Task<HttpResponseMessage> CreateOrderAsync(OrderVM orderVM)
 		{
+			string _orderApiUrl = $"{_baseUrlApi}/api/Order";
+
 			using (var client = _httpClientFactory.CreateClient())
 			{
 				var content = new StringContent(JsonConvert.SerializeObject(orderVM), Encoding.UTF8, "application/json");
@@ -106,6 +108,8 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 
 		private async Task<HttpResponseMessage> AddOrderDetailAsync(OrderDetailVM orderDetailVM)
 		{
+			string _orderDetailApiUrl = $"{_baseUrlApi}/api/OrderDetail";
+
 			using (var client = _httpClientFactory.CreateClient())
 			{
 				var content = new StringContent(JsonConvert.SerializeObject(orderDetailVM), Encoding.UTF8, "application/json");

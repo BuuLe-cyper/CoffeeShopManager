@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BussinessObjects.Services;
 using CoffeeShop.Helper;
 using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -16,11 +15,13 @@ namespace CoffeeShop.Areas.Admin.Pages.Statistics
     {
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapper _mapper;
+		private readonly string _baseUrlApi;
 
-		public ListOrderModel(IHttpClientFactory httpClientFactory, IMapper mapper)
+		public ListOrderModel(IHttpClientFactory httpClientFactory, IMapper mapper, IConfiguration configuration)
 		{
 			_httpClientFactory = httpClientFactory;
 			_mapper = mapper;
+			_baseUrlApi = configuration["BaseUrlApi"];
 		}
 
 		public PaginatedList<OrderVM> Orders { get; set; } = default!;
@@ -33,7 +34,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Statistics
 			try
 			{
 				// Gọi API để lấy danh sách tất cả đơn hàng
-				var response = await client.GetAsync("https://localhost:7158/api/Order");
+				var response = await client.GetAsync($"{_baseUrlApi}/api/Order");
 				if (response.IsSuccessStatusCode)
 				{
 					string json = await response.Content.ReadAsStringAsync();

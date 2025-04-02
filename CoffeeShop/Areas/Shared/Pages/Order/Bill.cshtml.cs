@@ -12,12 +12,14 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IMessService _messService;
+		private readonly string _baseUrlApi;
 
-		public BillModel(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor, IMessService messService)
+		public BillModel(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor, IMessService messService, IConfiguration configuration)
 		{
 			_httpClientFactory = httpClientFactory;
 			_httpContextAccessor = httpContextAccessor;
 			_messService = messService;
+			_baseUrlApi = configuration["BaseUrlApi"];
 		}
 
 		public IEnumerable<OrderDetailVM> OrderDetails { get; set; } = default!;
@@ -41,7 +43,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 			try
 			{
 				// Lấy Order Details từ API
-				string orderDetailUrl = $"https://localhost:7158/api/OrderDetail/{orderId}";
+				string orderDetailUrl = $"{_baseUrlApi}/api/OrderDetail/{orderId}";
 				HttpResponseMessage orderDetailResponse = await client.GetAsync(orderDetailUrl);
 
 				if (orderDetailResponse.IsSuccessStatusCode)
@@ -55,7 +57,7 @@ namespace CoffeeShop.Areas.Shared.Pages.Order
 				}
 
 				// Lấy Order từ API
-				string orderUrl = $"https://localhost:7158/api/Order/{orderId}";
+				string orderUrl = $"{_baseUrlApi}/api/Order/{orderId}";
 				HttpResponseMessage orderResponse = await client.GetAsync(orderUrl);
 
 				if (orderResponse.IsSuccessStatusCode)

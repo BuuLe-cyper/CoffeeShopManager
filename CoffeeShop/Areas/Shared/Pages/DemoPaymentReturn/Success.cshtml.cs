@@ -11,12 +11,12 @@ namespace CoffeeShop.Areas.Shared.Pages.DemoPaymentReturn
 	public class SuccessModel : PageModel
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly string _orderApiUrl = "https://localhost:7158/api/Order";
-		private readonly string _orderDetailApiUrl = "https://localhost:7158/api/OrderDetail";
+		private readonly string _baseUrlApi;
 
-		public SuccessModel(IHttpClientFactory httpClientFactory)
+		public SuccessModel(IHttpClientFactory httpClientFactory, IConfiguration configuration)
 		{
 			_httpClientFactory = httpClientFactory;
+			_baseUrlApi = configuration["BaseUrlApi"];
 		}
 
 		public async Task<IActionResult> OnGetAsync(string cartData, string tableId)
@@ -85,6 +85,7 @@ namespace CoffeeShop.Areas.Shared.Pages.DemoPaymentReturn
 
 		private async Task<HttpResponseMessage> CreateOrderAsync(OrderVM orderVM)
 		{
+			string _orderApiUrl = $"{_baseUrlApi}/api/Order";
 			using (var client = _httpClientFactory.CreateClient())
 			{
 				var content = new StringContent(JsonConvert.SerializeObject(orderVM), Encoding.UTF8, "application/json");
@@ -95,6 +96,7 @@ namespace CoffeeShop.Areas.Shared.Pages.DemoPaymentReturn
 
 		private async Task<HttpResponseMessage> AddOrderDetailAsync(OrderDetailVM orderDetailVM)
 		{
+			string _orderDetailApiUrl = $"{_baseUrlApi}/api/OrderDetail";
 			using (var client = _httpClientFactory.CreateClient())
 			{
 				var content = new StringContent(JsonConvert.SerializeObject(orderDetailVM), Encoding.UTF8, "application/json");
