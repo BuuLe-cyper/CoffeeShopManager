@@ -1,4 +1,3 @@
-
 using BusinessObjects.Services;
 using BussinessObjects.ImageService;
 using BussinessObjects.Services;
@@ -18,7 +17,18 @@ namespace CoffeeShopAPI
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            // Configure the builder to use the custom appsettings filename
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            {
+                Args = args,
+                ContentRootPath = Directory.GetCurrentDirectory(),
+                ApplicationName = typeof(Program).Assembly.FullName,
+            });
+
+            // Add custom configuration sources
+            builder.Configuration.AddJsonFile("api.appsettings.json", optional: false, reloadOnChange: true);
+            builder.Configuration.AddJsonFile($"api.appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+            builder.Configuration.AddEnvironmentVariables();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -76,7 +86,7 @@ namespace CoffeeShopAPI
             builder.Services.AddScoped(typeof(IProductSizesRepository), typeof(ProductSizesRepository));
             builder.Services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
             builder.Services.AddScoped(typeof(IOrderDetailRepository), typeof(OrderDetailRepository));
-    
+
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(MappingProfileView).Assembly);
