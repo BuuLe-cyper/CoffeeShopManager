@@ -4,11 +4,15 @@ using BussinessObjects.ImageService;
 using BussinessObjects.Services;
 using BussinessObjects.Utility;
 using CoffeeShop.AutoMapper;
+using CoffeeShopAPI.Services;
 using DataAccess.DataContext;
 using DataAccess.Qr;
 using DataAccess.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CoffeeShopAPI
 {
@@ -23,6 +27,28 @@ namespace CoffeeShopAPI
                 ContentRootPath = Directory.GetCurrentDirectory(),
                 ApplicationName = typeof(Program).Assembly.FullName,
             });
+
+            //Add JWT configuration
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
+            builder.Services.AddAuthorization();
 
             // Add custom configuration sources
             builder.Configuration.AddJsonFile("api.appsettings.json", optional: false, reloadOnChange: true);
@@ -61,6 +87,8 @@ namespace CoffeeShopAPI
             builder.Services.AddHttpContextAccessor();
 
             //Add Services
+            builder.Services.AddScoped<TokenService>(provider =>  new TokenService(builder.Configuration));
+
             builder.Services.AddScoped<ITableService, TableService>();
             builder.Services.AddScoped<IMessService, MessService>();
             builder.Services.AddScoped(typeof(ISizeService), typeof(SizeService));
@@ -108,11 +136,11 @@ namespace CoffeeShopAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

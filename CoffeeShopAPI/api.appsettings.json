@@ -27,5 +27,10 @@
     "PAYOS_CLIENT_ID": "0d9cf390-3bb0-477e-adbc-e488f25fbcd6",
     "PAYOS_API_KEY": "85af153b-9c22-41d2-b8ea-6bcca108c6f1",
     "PAYOS_CHECKSUM_KEY": "de510669764def7b9a6807875cc1fa67f7f0a8f87f327882768d8f34f3817a87"
+  },
+  "Jwt": {
+    "Key": "S5C2gsFto7ToCLXxDgjiDpmwUEg3ahYC",
+    "Issuer": "CoffeeShopAPI",
+    "Audience": "CoffeeShop"
   }
 }
