@@ -90,7 +90,7 @@ namespace CoffeeShopAPI
             .AddOData(options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(100))
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.ReferenceHandler = null;
                 options.JsonSerializerOptions.WriteIndented = true;
             });
 

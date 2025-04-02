@@ -44,7 +44,7 @@
                                                 data-product-price="@productSize.Price"
                                                 data-product-sizes='@Html.Raw(Json.Serialize(Model.ProductSize
                                                  .Where(p => p.ProductID == product.ProductID)
-                                                 .Select(p => new { SizeID = p.SizeID, Price = p.Price })
+                                                 .Select(p => new { SizeID = p.SizeID, Price = p.Price, ProductSizeID = p.ProductSizeID})
                                                  .ToList()))'>
                                             Choose Item
                                         </button>
@@ -215,7 +215,7 @@
             if (selectedSize) {
                 const sizeValue = selectedSize.value;
                 const sizePrice = parseFloat(selectedSize.getAttribute('data-price'));
-                const selectedProductSizeId = selectedProduct.productSizes.find(size => size.sizeID == sizeValue)?.productSizeId;
+                const selectedProductSizeId = selectedProduct.productSizes.find(size => size.sizeID == selectedSize.value).productSizeID;
 
                 const existingProduct = cart.find(item => item.productId === selectedProduct.productId && item.size === sizeValue);
                 if (existingProduct) {
@@ -227,7 +227,7 @@
                         productPrice: sizePrice,
                         quantity: 1,
                         size: sizeValue,
-                        productSizeId: selectedProductSizeId
+                        productSizeId: selectedProductSizeId,
                     });
                 }
                 console.log(cart);

@@ -1,10 +1,6 @@
 ﻿using DataAccess.DataContext;
 using DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories
 {
@@ -13,5 +9,16 @@ namespace DataAccess.Repositories
         public OrderDetailRepository(ApplicationDbContext context) : base(context)
         {
         }
-    }
+
+		public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByOrderIdAsync(Guid orderId)
+		{
+			return await _context.OrderDetails
+				.Where(od => od.OrderID == orderId)
+				.Include(od => od.ProductSize)
+					.ThenInclude(ps => ps.Product) 
+				.Include(od => od.ProductSize)
+					.ThenInclude(ps => ps.Size)   
+				.ToListAsync();
+		}
+	}
 }
