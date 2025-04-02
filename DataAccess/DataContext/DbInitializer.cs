@@ -47,6 +47,7 @@ namespace DataAccess.DataContext
                 {
                     new User { Username = "staff1", FullName = "Staff One", PhoneNumber = "1234567890", Password = "password1", AccountType = 1, Email = "admin@gmail.com" }, // Staff
                     new User { Username = "customer1", FullName = "Customer One", PhoneNumber = "0987654321", Password = "password2", AccountType = 0, Email = "buule.210303@gmail.com" }, // Customer
+                    new User { Username = "guest", FullName = "Guest", PhoneNumber = "0987654321", Password = "123456", AccountType = 0, Email = "guest@gmail.com", UserID = Guid.Parse("00000000-0000-0000-0000-000000000000") }, // Guest
                 };
                 context.Users.AddRange(users);
                 context.SaveChanges();
@@ -84,21 +85,21 @@ namespace DataAccess.DataContext
             {
                 var productSizes = new List<ProductSize>
                 {
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Latte").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "S").SizeID, Price = 4.99m, OriginalPrice = 5.50m },
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Latte").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 5.99m, OriginalPrice = 6.50m },
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Latte").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "L").SizeID, Price = 6.99m, OriginalPrice = 7.50m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Latte").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "S").SizeID, Price = 19000m, OriginalPrice = 22000m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Latte").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 22000m, OriginalPrice = 25000m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Latte").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "L").SizeID, Price = 25000m, OriginalPrice = 28000m },
 
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Americano").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "S").SizeID, Price = 3.99m, OriginalPrice = 4.50m },
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Americano").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 4.49m, OriginalPrice = 5.00m },
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Americano").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "L").SizeID, Price = 4.99m, OriginalPrice = 5.50m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Americano").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "S").SizeID, Price = 18000m, OriginalPrice = 21000m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Americano").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 21000m, OriginalPrice = 24000m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Americano").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "L").SizeID, Price = 24000m, OriginalPrice = 27000m },
 
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cappuccino").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "S").SizeID, Price = 4.99m, OriginalPrice = 5.50m },
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cappuccino").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 5.49m, OriginalPrice = 6.00m },
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cappuccino").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "L").SizeID, Price = 5.99m, OriginalPrice = 6.50m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cappuccino").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "S").SizeID, Price = 20000m, OriginalPrice = 23000m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cappuccino").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 23000m, OriginalPrice = 26000m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cappuccino").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "L").SizeID, Price = 26000m, OriginalPrice = 29000m },
 
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cheesecake").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 6.99m, OriginalPrice = 8.00m },
-                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Burger").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 9.99m, OriginalPrice = 11.00m }
-                };
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Cheesecake").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 27000m, OriginalPrice = 30000m },
+                    new ProductSize { ProductID = context.Products.First(p => p.ProductName == "Burger").ProductID, SizeID = context.Sizes.First(s => s.SizeName == "M").SizeID, Price = 35000m, OriginalPrice = 38000m }
+				};
                 context.ProductSizes.AddRange(productSizes);
                 context.SaveChanges();
             }

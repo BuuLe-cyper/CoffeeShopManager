@@ -11,5 +11,7 @@ namespace DataAccess.Repositories
     {
         public Task<decimal> CalculateTotalAmount(Guid orderId);
         public Task<IEnumerable<Order>> GetOrdersByOrderId(Guid orderId);
-    }
+        Task<bool> CheckIfUserExists(Guid userId);
+
+	}
 }

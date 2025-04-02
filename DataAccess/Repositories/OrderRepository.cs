@@ -26,5 +26,13 @@ namespace DataAccess.Repositories
                                     .Where(order => order.OrderID == orderId)
                                     .ToListAsync();
         }
-    }
+
+		public async Task<bool> CheckIfUserExists(Guid userId)
+		{
+			if (userId == Guid.Empty) return true;
+
+			return await _context.Users.AnyAsync(u => u.UserID == userId);
+		}
+
+	}
 }
