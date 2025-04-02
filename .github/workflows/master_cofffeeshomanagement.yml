@@ -1,5 +1,6 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy ASP.Net Core app to Azure Web App - CofffeeShoManagement
 
 on:
@@ -13,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -24,38 +26,18 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      # Publish API project
-      - name: Publish API project
-        run: dotnet publish CoffeeShopAPI/CoffeeShopAPI.csproj -c Release -o ${{env.DOTNET_ROOT}}/api
+      # Publish cả API và Web vào cùng thư mục
+      - name: dotnet publish API
+        run: dotnet publish CoffeeShopAPI/CoffeeShopAPI.csproj -c Release -o ./myapp
 
-      # Publish Web project  
-      - name: Publish Web project
-        run: dotnet publish CoffeeShop/CoffeeShop.csproj -c Release -o ${{env.DOTNET_ROOT}}/web
+      - name: dotnet publish Web
+        run: dotnet publish CoffeeShop/CoffeeShop.csproj -c Release -o ./myapp/web
 
-      # Create combined directory and copy outputs
-      - name: Create combined directory
-        run: |
-          mkdir -p ${{env.DOTNET_ROOT}}/combined
-          cp -r ${{env.DOTNET_ROOT}}/api/* ${{env.DOTNET_ROOT}}/combined/
-          mkdir -p ${{env.DOTNET_ROOT}}/combined/web
-          cp -r ${{env.DOTNET_ROOT}}/web/* ${{env.DOTNET_ROOT}}/combined/web/
-
-      # Create startup.sh file
-      - name: Create startup.sh
-        run: |
-          echo '#!/bin/bash' > ${{env.DOTNET_ROOT}}/combined/startup.sh
-          echo '# Start API on port 7197' >> ${{env.DOTNET_ROOT}}/combined/startup.sh
-          echo 'dotnet /home/site/wwwroot/combined/CoffeeShopAPI.dll --urls=http://0.0.0.0:7197 &' >> ${{env.DOTNET_ROOT}}/combined/startup.sh
-          echo '' >> ${{env.DOTNET_ROOT}}/combined/startup.sh
-          echo '# Start Web on port 8080 (required by Azure)' >> ${{env.DOTNET_ROOT}}/combined/startup.sh
-          echo 'dotnet /home/site/wwwroot/combined/web/CoffeeShop.dll --urls=http://0.0.0.0:8080' >> ${{env.DOTNET_ROOT}}/combined/startup.sh
-
-      # Upload the combined artifact
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/combined
+          path: ./myapp
 
   deploy:
     runs-on: ubuntu-latest
@@ -66,6 +48,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
