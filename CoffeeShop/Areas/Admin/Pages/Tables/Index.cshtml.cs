@@ -15,10 +15,12 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
     public class IndexModel : PageModel
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrlApi;
 
-        public IndexModel(HttpClient httpClient)
+        public IndexModel(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrlApi = configuration["BaseUrlApi"];
         }
 
         public string CurrentFilter { get; set; }
@@ -48,10 +50,9 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                     var escapedSearch = Uri.EscapeDataString(searchString);
                     query += $"&$filter=contains(Description,'{escapedSearch}')";
                 }
-                var fullUrl = $"{apiBaseUrl}/api/Tables{query}";
-                Console.WriteLine(fullUrl);
+                var fullUrl = $"{_baseUrlApi}/api/Tables{query}";
+                var response = await _httpClient.GetAsync(fullUrl);
 
-                var response = await _httpClient.GetAsync($"{apiBaseUrl}/api/Tables{query}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -63,9 +64,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
                 using var doc = JsonDocument.Parse(jsonResponse);
 
-                var valuesElement = doc.RootElement.GetProperty("$values");
-
-                var allTables = JsonSerializer.Deserialize<List<TableVM>>(valuesElement.GetRawText(), new JsonSerializerOptions
+                var allTables = JsonSerializer.Deserialize<List<TableVM>>(doc.RootElement.GetRawText(), new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
@@ -89,7 +88,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
         {
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}/QRCode");
+                var response = await _httpClient.GetAsync($"{_baseUrlApi}/api/Tables/{id}/QRCode");
 
                 if (!response.IsSuccessStatusCode)
                 {

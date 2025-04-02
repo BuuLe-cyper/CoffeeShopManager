@@ -2,6 +2,7 @@
 using BussinessObjects.DTOs;
 using DataAccess.Models;
 using DataAccess.Repositories;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace BussinessObjects.Services
         private readonly IProductRepository _productRepository;
         private readonly ISizeRepository _sizeRepository;
         private readonly IMapper _mapper;
+
         public ProductSizesService(IProductSizesRepository productSizesRepository, IProductRepository productRepository, ISizeRepository sizeRepository, IMapper mapper)
         {
             _productSizesRepository = productSizesRepository;

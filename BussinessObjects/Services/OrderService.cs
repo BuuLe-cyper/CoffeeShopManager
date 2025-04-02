@@ -2,11 +2,6 @@
 using BussinessObjects.DTOs;
 using DataAccess.Models;
 using DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BussinessObjects.Services
 {
@@ -19,20 +14,29 @@ namespace BussinessObjects.Services
             _orderRepository = orderRepository;
             _mapper = mapper;
         }
-        public async Task CreateOrder(OrderDTO orderDTO)
-        {
-            ArgumentNullException.ThrowIfNull(orderDTO);
-            try
-            {
-                var order = _mapper.Map<Order>(orderDTO);
-                await _orderRepository.CreateAsync(order);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<IEnumerable<OrderDTO>> GetOrderByOrderId(Guid orderId)
+		public async Task CreateOrder(OrderDTO orderDTO)
+		{
+			ArgumentNullException.ThrowIfNull(orderDTO);
+			try
+			{
+				// Kiểm tra UserID trong Users bảng trước khi tạo Order
+				var userExists = await _orderRepository.CheckIfUserExists(orderDTO.UserID);
+				if (!userExists)
+				{
+					throw new InvalidOperationException("User does not exist.");
+				}
+
+				var order = _mapper.Map<Order>(orderDTO);
+				await _orderRepository.CreateAsync(order);
+			}
+			catch (Exception ex)
+			{
+				// Xử lý ngoại lệ nếu có
+				throw new Exception($"An error occurred while creating the order: {ex.Message}", ex);
+			}
+		}
+
+		public async Task<IEnumerable<OrderDTO>> GetOrderByOrderId(Guid orderId)
         {
             var orders = await _orderRepository.GetOrdersByOrderId(orderId);
             return _mapper.Map<IEnumerable<OrderDTO>>(orders); 

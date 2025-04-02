@@ -20,11 +20,14 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
     public class DetailsModel : PageModel
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrlApi;
 
-        public DetailsModel(HttpClient httpClient)
+        public DetailsModel(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrlApi = configuration["BaseUrlApi"];
         }
+
 
         public TableVM Table { get; set; } = default!;
 
@@ -37,7 +40,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}");
+                var response = await _httpClient.GetAsync($"{_baseUrlApi}/api/Tables/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {

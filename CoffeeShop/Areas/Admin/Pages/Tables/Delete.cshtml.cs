@@ -20,10 +20,12 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
     public class DeleteModel : PageModel
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrlApi;
 
-        public DeleteModel(HttpClient httpClient)
+        public DeleteModel(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrlApi = configuration["BaseUrlApi"];
         }
 
         [BindProperty]
@@ -38,7 +40,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}");
+                var response = await _httpClient.GetAsync($"{_baseUrlApi}/api/Tables/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -68,7 +70,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
             try
             {
-                var response = await _httpClient.DeleteAsync($"https://localhost:7158/api/Tables/{id}");
+                var response = await _httpClient.DeleteAsync($"{_baseUrlApi}/api/Tables/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -84,5 +86,6 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
                 return Page();
             }
         }
+
     }
 }

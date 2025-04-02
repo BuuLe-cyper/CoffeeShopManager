@@ -3,8 +3,11 @@ using BussinessObjects.DTOs;
 using BussinessObjects.Services;
 using CoffeeShop.Helper;
 using CoffeeShop.ViewModels;
+using DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Nest;
 
 namespace CoffeeShopAPI.Controllers
 {
@@ -14,12 +17,33 @@ namespace CoffeeShopAPI.Controllers
     {
         private readonly IProductSizesService _productSizesService;
         private readonly IMapper _mapper;
-
-        public MenuController(IProductSizesService productSizesService, IMapper mapper)
+        private readonly IElasticClient _elasticClient;
+        public MenuController(IProductSizesService productSizesService, IMapper mapper, IElasticClient elasticClient)
         {
             _productSizesService = productSizesService;
             _mapper = mapper;
+            _elasticClient = elasticClient;
         }
+        [HttpGet("searchodata")]
+        [EnableQuery]
+        public async Task<IActionResult> GetAllMenus()
+        {
+            var result = await _productSizesService.GetAllProductSizes();
+            if (result == null || !result.Any()) return NotFound("No menu items found.");
+
+            var filteredResults = result.Where(x => !x.Size.IsDeleted);
+
+            // Nhóm theo ProductID
+            var groupedResults = filteredResults.GroupBy(x => x.ProductID);
+            int count = groupedResults.Count();
+
+            var items = groupedResults
+                .SelectMany(g => g.Select(x => _mapper.Map<ProductSizeVM>(x)))
+                .ToList();
+
+            return Ok(new PaginatedList<ProductSizeVM>(items, count, 1, count));
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllMenus(
@@ -46,7 +70,7 @@ namespace CoffeeShopAPI.Controllers
         }
 
         [HttpPost("CreateItem")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateMenuItem([FromBody] MenuItemVMDto productSizeDto)
         {
             if (productSizeDto == null || productSizeDto.SizePrices == null || !productSizeDto.SizePrices.Any())

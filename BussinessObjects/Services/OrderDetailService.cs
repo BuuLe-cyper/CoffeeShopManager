@@ -21,18 +21,28 @@ namespace BussinessObjects.Services
             _orderRepository = orderRepository;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<OrderDetailDTO>> GetOrderDetailsByOrderId(Guid orderId)
-        {
-            var orderDetail = await _orderDetailRepository.GetAllAsync(
-              it => it.OrderID == orderId && !it.IsDeleted,
-              includeProperties: "ProductSize.Product,ProductSize.Size"
-              );
-            //var orderExist = await _orderRepository.GetAsync(it => it.OrderID == orderId);
-            //var total = orderExist.TotalAmount;
-            var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailDTO>>(orderDetail);
-            return orderDetailDTOs;
-        }
-        public async Task<bool> AddOrderDetail(OrderDetailDTO orderDetailDTO)
+		public async Task<IEnumerable<OrderDetailDTO>> GetOrderDetailsByOrderId(Guid orderId)
+		{
+			var orderDetails = await _orderDetailRepository.GetAllAsync(
+				it => it.OrderID == orderId && !it.IsDeleted,
+				includeProperties: "ProductSize.Product,ProductSize.Size"
+			);
+
+			var orderDetailDTOs = orderDetails.Select(od => new OrderDetailDTO
+			{
+				OrderDetailId = od.OrderDetailID,
+				UnitPrice = od.UnitPrice,
+				Quantity = od.Quantity,
+				Discount = od.Discount,
+				OrderID = od.OrderID,
+				ProductSizeID = od.ProductSizeID,
+				ProductName = od.ProductSize?.Product?.ProductName ?? "Unknown",
+				SizeName = od.ProductSize?.Size?.SizeName ?? "Unknown"
+			});
+
+			return orderDetailDTOs;
+		}
+		public async Task<bool> AddOrderDetail(OrderDetailDTO orderDetailDTO)
         {
             if (orderDetailDTO == null)
                 throw new ArgumentNullException(nameof(orderDetailDTO));

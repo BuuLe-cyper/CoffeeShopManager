@@ -1,5 +1,4 @@
 using BusinessObjects.Services;
-using BussinessObjects.AutoMapper;
 using BussinessObjects.ImageService;
 using BussinessObjects.Services;
 using BussinessObjects.Utility;
@@ -13,6 +12,8 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Elasticsearch.Net;
+using Nest;
 
 namespace CoffeeShopAPI
 {
@@ -72,6 +73,7 @@ namespace CoffeeShopAPI
                            .AllowAnyHeader();
                 });
             });
+
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 
@@ -120,7 +122,7 @@ namespace CoffeeShopAPI
             .AddOData(options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(100))
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.ReferenceHandler = null;
                 options.JsonSerializerOptions.WriteIndented = true;
             });
 

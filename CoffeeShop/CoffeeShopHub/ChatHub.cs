@@ -37,9 +37,8 @@ namespace CoffeeShop.CoffeeShopHub
             var json = await response.Content.ReadAsStringAsync();
 
             using var doc = JsonDocument.Parse(json);
-            var valuesElement = doc.RootElement.GetProperty("$values");
 
-            var messages = JsonSerializer.Deserialize<List<MessageVM>>(valuesElement.GetRawText(), new JsonSerializerOptions
+            var messages = JsonSerializer.Deserialize<List<MessageVM>>(doc.RootElement.GetRawText(), new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             }) ?? new();

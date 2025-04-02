@@ -36,8 +36,8 @@
             {
                 <tr>
                     <td>@index</td>
-                    <td>@orderDetail.ProductSize.Product.ProductName</td>
-                    <td>@orderDetail.ProductSize.Size.SizeName</td>
+                    <td>@orderDetail.ProductName</td>
+                    <td>@orderDetail.SizeName</td>
                     <td>@orderDetail.UnitPrice.ToString("N0")</td>
                     <td>@orderDetail.Quantity</td>
                     <td>@((orderDetail.UnitPrice * orderDetail.Quantity).ToString("N0"))</td>

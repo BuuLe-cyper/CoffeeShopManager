@@ -160,6 +160,7 @@
                                 <td style="text-align: center; border: 2px solid black">${formatCurrency(item.productPrice * item.quantity)}</td>
                                 <input type="hidden" name="itemid" value="${item.productId}">
                                 <input type="hidden" name="subprice" value="${item.productPrice}">
+                                <input type="hidden" name="subprice" value="${item.productSizeId}">
                             `;
                     cartItemsBody.appendChild(productElement);
                     totalPrice += item.productPrice * item.quantity;
@@ -200,7 +201,8 @@
                         SizeId: item.size,
                         UnitPrice: item.productPrice,
                         Quantity: item.quantity,
-                        Discount: item.discount || 0
+                        Discount: item.discount || 0,
+                        ProductSizeId: item.productSizeId,
                     }));
 
                     const userId = '@User.FindFirst("userId")?.Value' || "00000000-0000-0000-0000-000000000000";
@@ -228,7 +230,8 @@
                     SizeId: item.size,
                     UnitPrice: item.productPrice,
                     Quantity: item.quantity,
-                    Discount: item.discount || 0
+                    Discount: item.discount || 0,
+                    ProductSizeId: item.productSizeId
                 })),
                 userId: '@User.FindFirst("userId")?.Value' || "00000000-0000-0000-0000-000000000000",
                 totalAmount: totalPrice,

@@ -24,12 +24,15 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly string _baseUrlApi;
 
-        public EditModel(HttpClient httpClient, IMapper mapper)
+        public EditModel(HttpClient httpClient, IMapper mapper, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _mapper = mapper;
+            _baseUrlApi = configuration["BaseUrlApi"];
         }
+
 
         [BindProperty]
         public TableVM Table { get; set; } = default!;
@@ -43,7 +46,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
             try
             {
-                var response = await _httpClient.GetAsync($"https://localhost:7158/api/Tables/{id}");
+                var response = await _httpClient.GetAsync($"{_baseUrlApi}/api/Tables/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -79,7 +82,8 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
 
                 var content = new StringContent(JsonSerializer.Serialize(tableDto), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PutAsync($"https://localhost:7158/api/Tables", content);
+                var response = await _httpClient.PutAsync($"{_baseUrlApi}/api/Tables", content);
+
 
                 if (!response.IsSuccessStatusCode)
                 {

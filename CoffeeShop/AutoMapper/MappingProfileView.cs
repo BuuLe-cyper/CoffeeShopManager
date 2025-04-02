@@ -9,7 +9,7 @@ using DataAccess.Models;
 
 namespace CoffeeShop.AutoMapper
 {
-    public class MappingProfileView : Profile
+    public class    MappingProfileView : Profile
     {
         public MappingProfileView()
         {
@@ -31,6 +31,6 @@ namespace CoffeeShop.AutoMapper
             CreateMap<MenuItemVMDto, ProductSizesViewDto>().ReverseMap();
             CreateMap<MenuItemVMDto, ProductSizeVM>().ReverseMap();
             CreateMap<ProductSizesViewDto, ProductSizeDto>().ReverseMap();
-        }
+		}
     }
 }
