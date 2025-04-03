@@ -2,6 +2,7 @@
 using BussinessObjects.DTOs;
 using BussinessObjects.Services;
 using CoffeeShop.Helper;
+using CoffeeShop.Services;
 using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +14,48 @@ namespace CoffeeShop.Areas.Admin.Pages.User
     [Authorize(Policy = "AdminOnly")]
     public class IndexModel : PageModel
     {
-        private readonly IUserService _service;
+        private const string ENDPOINT = "User";
+        private readonly ApiClientService _service;
         private readonly IMapper _mapper;
         public SelectList PageSizeList { get; set; } = new(new[] { 5, 10, 15, 20 }, selectedValue: 5);
-        public IndexModel(IUserService userService, IMapper mapper)
+        public IndexModel(ApiClientService clientSv, IMapper mapper)
         {
-            _service = userService;
+            _service = clientSv;
             _mapper = mapper;
         }
         public PaginatedList<UserVM> Users { get; set; } = default!;
         public async Task<IActionResult> OnGetAsync(string? filter,int pageIndex = 1,int pageSize = 5)
         {
+
+            var _token = HttpContext.Session.GetString("AuthToken");
+            if(_token == null)
+            {
+                return Redirect("/Shared/Login");
+            }
+            _service.SetBearerToken(_token);
+
             IEnumerable<UsersDTO> users = [];
             if(filter!=null)
             {   
                 string[] filters = filter.Split('-');
-                users = await _service.GetUsersWithFilter(filters[0], bool.Parse(filters[1]), filters[2]);
+                var sortBy = $"?$orderby= {filters[0]} {filters[1]}";
+                string displayRole = "";
+                switch(filters[2])
+                {
+                    case "all":
+                        break;
+                    case "admin":
+                        displayRole = "& $filter = AccountType eq 1";
+                        break;
+                    case "user":
+                        displayRole = "& $filter = AccountType eq 0";
+                        break;
+                }
+                string trueEndpoint = ENDPOINT + sortBy + displayRole;
+                users = (await _service.GetAsync<IEnumerable<UsersDTO>>(trueEndpoint)).Data;
             }
-            else users = await _service.GetUsers();
+            else users = (await _service.GetAsync<IEnumerable<UsersDTO>>(ENDPOINT)).Data;
+
             List<UserVM> dislayUsers = [];
             foreach (var user in users)
             {
@@ -44,7 +69,14 @@ namespace CoffeeShop.Areas.Admin.Pages.User
 
         public async Task<IActionResult> OnPostSearchAsync(string searchBy, string search)
         {
-            IEnumerable<UsersDTO> users = await _service.SearchUsers(searchBy,search);
+            var _token = HttpContext.Session.GetString("AuthToken");
+            if (_token == null)
+            {
+                return Redirect("/Shared/Login");
+            }
+            _service.SetBearerToken(_token);
+            var endPoint = ENDPOINT + $"? $filter = contains({searchBy},'{search}')";
+            IEnumerable<UsersDTO> users = (await _service.GetAsync< IEnumerable<UsersDTO>>(endPoint)).Data;
             List<UserVM> displayUsers = [];
             foreach (var user in users)
             {

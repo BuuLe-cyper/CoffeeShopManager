@@ -1,6 +1,6 @@
 using AutoMapper;
-using BussinessObjects.Services;
 using CoffeeShop.Helper;
+using CoffeeShop.Services;
 using CoffeeShop.Validations;
 using CoffeeShop.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +12,9 @@ namespace CoffeeShop.Areas.Shared.Pages
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly IMapper _mapper;
-        private readonly IUserService _service;
-        public RegisterModel(IMapper mapper, IUserService service)
+        private readonly ApiClientService _service;
+        public RegisterModel(ApiClientService service)
         {
-            _mapper = mapper;
             _service = service;
         }
 
@@ -49,33 +47,22 @@ namespace CoffeeShop.Areas.Shared.Pages
         }
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return Page();
+            var registrationData = new RegisterVM(UserName, Password,EmailAddress);
+
+            var response = await _service.PostAsync<string>("User/register", registrationData);
+
+            if (response.IsSuccess)
             {
-                ErrorMessage = string.Empty;
-                var user = await _service.GetUser(UserName);
-                if (user != null)
-                {
-                    ErrorMessage = "This username is already exist!Please try another one";
-                    return Page();
-                }
-                user = await _service.GetUserByEmail(EmailAddress);
-                if (user != null)
-                {
-                    ErrorMessage = "This email is already exist!Please try another one";
-                    return Page();
-                }
-                var userVM = new UserVM
-                {
-                    Username = UserName,
-                    Password = Password,
-                    Email = EmailAddress
-                };
-                var userJson = JsonDeserializeHelper.SerializeObject(userVM);
-                TempData["RegisterUser"] = userJson;
-                return RedirectToPage("./ConfirmEmail", new{ email= userVM.Email,action="register"});
+                return RedirectToPage("./Login");
             }
             else
+            {
+                // Handle API errors
+                ErrorMessage = response.ErrorMessage ?? "Registration failed. Please try again later.";
                 return Page();
+            }
         }
     }
 }

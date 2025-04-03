@@ -2,20 +2,17 @@ using BusinessObjects.Services;
 using BussinessObjects.AutoMapper;
 using BussinessObjects.ImageService;
 using BussinessObjects.Services;
+using BussinessObjects.Utility;
 using CoffeeShop.AutoMapper;
 using CoffeeShop.CoffeeShopHub;
-using BussinessObjects.Utility;
+using CoffeeShop.Services;
 using DataAccess.DataContext;
+using DataAccess.Qr;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System.Threading.RateLimiting;
-using DataAccess.Qr;
 using Net.payOS;
-using Nest;
 
 namespace CoffeeShop
 {
@@ -57,7 +54,13 @@ namespace CoffeeShop
                     });
             });
 
+            var apiSettings = builder.Configuration["BaseUrlApi"];
 
+            builder.Services.AddHttpClient<ApiClientService>(client =>
+            {
+                client.BaseAddress = new Uri(apiSettings+"/api/");
+            });
+            
             builder.Services.AddSignalR();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
