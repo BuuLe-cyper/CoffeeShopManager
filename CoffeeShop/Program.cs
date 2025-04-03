@@ -58,7 +58,7 @@ namespace CoffeeShop
 
             builder.Services.AddHttpClient<ApiClientService>(client =>
             {
-                client.BaseAddress = new Uri(apiSettings);
+                client.BaseAddress = new Uri(apiSettings+"api/");
             });
             
             builder.Services.AddSignalR();
