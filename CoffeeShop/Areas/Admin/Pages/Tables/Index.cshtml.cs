@@ -43,7 +43,6 @@ namespace CoffeeShop.Areas.Admin.Pages.Tables
 
                 CurrentFilter = searchString;
 
-                var apiBaseUrl = "https://localhost:7158";
                 var query = "?$orderby=CreateDate desc";
                 if (!string.IsNullOrEmpty(searchString))
                 {

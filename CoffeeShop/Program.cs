@@ -129,30 +129,30 @@ namespace CoffeeShop
             var app = builder.Build();
 
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate();
-            }
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            //    dbContext.Database.Migrate();
+            //}
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            if (!app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
 
-                var context = services.GetRequiredService<ApplicationDbContext>();
+            //    var context = services.GetRequiredService<ApplicationDbContext>();
 
-                context.Database.EnsureCreated();
+            //    context.Database.EnsureCreated();
 
-                DbInitializer.Initialize(context);
-            }
+            //    DbInitializer.Initialize(context);
+            //}
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

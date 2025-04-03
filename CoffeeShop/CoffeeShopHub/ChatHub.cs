@@ -17,11 +17,13 @@ namespace CoffeeShop.CoffeeShopHub
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly string _baseUrlApi;
 
-        public ChatHub(IHttpClientFactory httpClientFactory, IMapper mapper)
+        public ChatHub(IHttpClientFactory httpClientFactory, IMapper mapper, IConfiguration configuration)
         {
             _httpClient = httpClientFactory.CreateClient();
             _mapper = mapper;
+            _baseUrlApi = configuration["BaseUrlApi"];
         }
 
         public async Task JoinRoom(string tableId)
@@ -29,9 +31,9 @@ namespace CoffeeShop.CoffeeShopHub
             await Groups.AddToGroupAsync(Context.ConnectionId, tableId);
 
 
-            await _httpClient.DeleteAsync("https://localhost:7158/api/Messages/CleanOldMessages");
+            await _httpClient.DeleteAsync($"{_baseUrlApi}/api/Messages/CleanOldMessages");
 
-            var response = await _httpClient.GetAsync($"https://localhost:7158/api/Messages/ByTable/{tableId}");
+            var response = await _httpClient.GetAsync($"{_baseUrlApi}/api/Messages/ByTable/{tableId}");
             if (!response.IsSuccessStatusCode) return;
 
             var json = await response.Content.ReadAsStringAsync();
@@ -71,7 +73,7 @@ namespace CoffeeShop.CoffeeShopHub
 
             var json = JsonSerializer.Serialize(newMessage);
             var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            await _httpClient.PostAsync("https://localhost:7158/api/Messages", content);
+            await _httpClient.PostAsync($"{_baseUrlApi}/api/Messages", content);
 
             var displayName = Context.User?.FindFirst(ClaimTypes.Name)?.Value ?? "User";
             var isAdminMessage = Context.User?.FindFirst(ClaimTypes.Role)?.Value == "Admin";

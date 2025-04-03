@@ -10,10 +10,12 @@ namespace CoffeeShop.Areas.Admin.Pages.Chats
     public class IndexModel : PageModel
     {
         private readonly HttpClient _httpClient;
+        private readonly string _baseUrlApi;
 
-        public IndexModel(HttpClient httpClient)
+        public IndexModel(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _baseUrlApi = configuration["BaseUrlApi"];
         }
 
         public List<TableVM> Tables { get; set; } = new List<TableVM>();
@@ -22,7 +24,7 @@ namespace CoffeeShop.Areas.Admin.Pages.Chats
         {
             try
             {
-                var response = await _httpClient.GetAsync("https://localhost:7158/api/Tables");
+                var response = await _httpClient.GetAsync($"{_baseUrlApi}/api/Tables");
                 if (!response.IsSuccessStatusCode)
                 {
                     Tables = new List<TableVM>();
